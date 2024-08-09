@@ -1,0 +1,25 @@
+﻿@model IEnumerable<Calendar_by_I_M_Marinov.Models.CalendarViewModel>
+
+@{
+    ViewData["Title"] = "List of all Calendars";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Calendar Name</th>
+            <th>Calendar ID</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var calendar in Model)
+        {
+            <tr>
+                <td>@calendar.CalendarName</td>
+                <td>@calendar.CalendarId</td>
+            </tr>
+        }
+    </tbody>
+</table>

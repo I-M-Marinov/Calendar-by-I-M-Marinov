@@ -41,9 +41,16 @@ public class GoogleCalendarService: IGoogleCalendarService
         });
     }
 
-	public async Task<IList<Event>> GetEventsAsync()
+    public async Task<IList<CalendarListEntry>> GetCalendarsAsync()
+    {
+        var calendarListRequest = _service.CalendarList.List();
+        var calendarList = await calendarListRequest.ExecuteAsync();
+        return calendarList.Items;
+    }
+
+    public async Task<IList<Event>> GetEventsAsync(string calendarId)
 	{
-		var request = _service.Events.List("primary");
+		var request = _service.Events.List(calendarId);
 		request.TimeMin = DateTime.Now;
 		request.ShowDeleted = false;
 		request.SingleEvents = true;
@@ -61,5 +68,7 @@ public class GoogleCalendarService: IGoogleCalendarService
 		return createdEvent;
 	}
 
-	// Add methods for AddEventAsync, UpdateEventAsync, DeleteEventAsync if needed.
+
+
+    // Add methods for UpdateEventAsync, DeleteEventAsync if needed.
 }

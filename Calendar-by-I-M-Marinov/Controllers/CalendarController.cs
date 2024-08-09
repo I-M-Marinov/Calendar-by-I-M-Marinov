@@ -13,10 +13,57 @@ public class CalendarController : Controller
 		_googleCalendarService = googleCalendarService; 
 	}
 
-	public async Task<IActionResult> ViewAll()
+    public async Task<IActionResult> ListCalendars()
+    {
+	    var calendars = await _googleCalendarService.GetCalendarsAsync();
+	    var calendarViewModels = new List<CalendarViewModel>();
+
+	    foreach (var calendar in calendars)
+	    {
+		    calendarViewModels.Add(new CalendarViewModel
+		    {
+			    CalendarName = calendar.Summary,
+			    CalendarId = calendar.Id
+		    });
+	    }
+
+	    return View(calendarViewModels);
+    }
+
+    public async Task<IActionResult> ListCalendarsAndEvents(string selectedCalendarId)
+    {
+        var calendars = await _googleCalendarService.GetCalendarsAsync();
+        var calendarViewModels = new List<CalendarViewModel>();
+
+        foreach (var calendar in calendars)
+        {
+            calendarViewModels.Add(new CalendarViewModel
+            {
+                CalendarName = calendar.Summary,
+                CalendarId = calendar.Id
+            });
+        }
+
+        var events = new List<Event>();
+        if (!string.IsNullOrEmpty(selectedCalendarId))
+        {
+            events = (await _googleCalendarService.GetEventsAsync(selectedCalendarId)).ToList();
+        }
+
+        var viewModel = new CalendarEventsViewModel
+        {
+            Calendars = calendarViewModels,
+            SelectedCalendarId = selectedCalendarId,
+            Events = events
+        };
+
+        return View(viewModel);
+    }
+
+    public async Task<IActionResult> ViewAllPrimary()
 	{
 		// Fetch events from Google Calendar and store them in the database
-		var events = await _googleCalendarService.GetEventsAsync();
+		var events = await _googleCalendarService.GetEventsAsync("primary");
 		return View(events);
 	}
 
@@ -48,7 +95,7 @@ public class CalendarController : Controller
 			};
 
 			await _googleCalendarService.AddEventAsync(newEvent);
-			return RedirectToAction("ViewAll");
+			return RedirectToAction("ViewAllPrimary");
 		}
 
 		return View(model);
