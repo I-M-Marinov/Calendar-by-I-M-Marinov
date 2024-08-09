@@ -45,6 +45,7 @@ public class GoogleCalendarService: IGoogleCalendarService
     {
         var calendarListRequest = _service.CalendarList.List();
         var calendarList = await calendarListRequest.ExecuteAsync();
+
         return calendarList.Items;
     }
 
@@ -52,9 +53,10 @@ public class GoogleCalendarService: IGoogleCalendarService
 	{
 		var request = _service.Events.List(calendarId);
 		request.TimeMin = DateTime.Now;
-		request.ShowDeleted = false;
+        request.TimeMax = new DateTime(DateTime.Now.Year, 12, 31, 23, 59, 59); // Until the end of the year
+        request.ShowDeleted = false;
 		request.SingleEvents = true;
-		request.MaxResults = 10;
+		request.MaxResults = 100;
 		request.OrderBy = EventsResource.ListRequest.OrderByEnum.StartTime;
 
 		var events = await request.ExecuteAsync();
