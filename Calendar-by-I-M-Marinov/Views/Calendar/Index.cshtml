@@ -1,0 +1,27 @@
+﻿@model IEnumerable<Google.Apis.Calendar.v3.Data.Event>
+
+@{
+	ViewData["Title"] = "Google Calendar Events";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<table class="table">
+	<thead>
+	<tr>
+		<th>Event</th>
+		<th>Start</th>
+		<th>End</th>
+	</tr>
+	</thead>
+	<tbody>
+	@foreach (var calendarEvent in Model)
+	{
+		<tr>
+			<td>@calendarEvent.Summary</td>
+			<td>@calendarEvent.Start.DateTime?.ToString("f") ?? calendarEvent.Start.Date</td>
+			<td>@calendarEvent.End.DateTime?.ToString("f") ?? calendarEvent.End.Date</td>
+		</tr>
+	}
+	</tbody>
+</table>
