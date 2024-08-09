@@ -363,3 +363,4 @@ MigrationBackup/
 FodyWeavers.xsd
 /Calendar-by-I-M-Marinov/token.json
 *.TokenResponse-user
+/Calendar-by-I-M-Marinov/token.json/Google.Apis.Auth.OAuth2.Responses.TokenResponse-user
