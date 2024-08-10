@@ -1,0 +1,36 @@
+﻿@model IEnumerable<Calendar_by_I_M_Marinov.Models.UpdatedEventViewModel>
+
+<h2>Update Events Status</h2>
+
+@if (Model != null && Model.Any())
+{
+    <div class="container">
+        @foreach (var eventModel in Model)
+        {
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h3>Event ID: @eventModel.EventId</h3>
+                </div>
+                <div class="card-body">
+                    <p><strong>Summary:</strong> @eventModel.Summary</p>
+                    <p><strong>Start:</strong> @(eventModel.Start.HasValue ? eventModel.Start.Value.ToString("MMMM dd, yyyy HH:mm") : "N/A")</p>
+                    <p><strong>End:</strong> @(eventModel.End.HasValue ? eventModel.End.Value.ToString("MMMM dd, yyyy HH:mm") : "N/A")</p>
+                    <p><strong>Location:</strong> @eventModel.Location</p>
+
+                    @if (eventModel.IsUpdated)
+                    {
+                        <p class="text-success">Update successful.</p>
+                    }
+                    else
+                    {
+                        <p class="text-danger">Update failed: @eventModel.ErrorMessage</p>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <p>No events were updated.</p>
+}

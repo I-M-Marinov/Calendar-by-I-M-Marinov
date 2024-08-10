@@ -131,6 +131,14 @@ public class GoogleCalendarService: IGoogleCalendarService
         return matchingEvents;
     }
 
+    public async Task<Event> UpdateEventAsync(string calendarId, string eventId, Event updatedEvent)
+    {
+        var updateRequest = _service.Events.Update(updatedEvent, calendarId, eventId);
+
+        var result = await updateRequest.ExecuteAsync();
+        return result;
+    }
+
     //TODO:
-    // Add methods for UpdateEventAsync, DeleteEventAsync if needed.
+    // Add methods like DeleteEventAsync.
 }

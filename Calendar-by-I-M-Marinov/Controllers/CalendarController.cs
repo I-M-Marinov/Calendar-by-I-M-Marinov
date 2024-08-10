@@ -2,6 +2,7 @@
 using Google.Apis.Calendar.v3.Data;
 using Calendar_by_I_M_Marinov.Services.Contracts;
 using Calendar_by_I_M_Marinov.Models;
+using System.Reflection;
 
 public class CalendarController : Controller
 {
@@ -185,7 +186,6 @@ public class CalendarController : Controller
         return View(viewModel);
     }
 
-
     [HttpPost]
     public async Task<IActionResult> EditEvents(Dictionary<string, EditEventViewModel> events)
     {
@@ -232,5 +232,63 @@ public class CalendarController : Controller
             CalendarId = e.Organizer?.Email
         }).ToList());
     }
+
+    [HttpPost]
+    [HttpPost]
+    public async Task<IActionResult> UpdateEvents(Dictionary<string, EditEventViewModel> events)
+    {
+        if (events == null || !events.Any())
+        {
+            ModelState.AddModelError("", "No events to update.");
+            return View("EditEvents", events.Values); // Return to the same view with the current model
+        }
+
+        var updatedEvents = new List<UpdatedEventViewModel>();
+
+        foreach (var eventEntry in events)
+        {
+            var eventId = eventEntry.Key;
+            var eventModel = eventEntry.Value;
+            var updatedEventViewModel = new UpdatedEventViewModel
+            {
+                EventId = eventId,
+                CalendarId = eventModel.CalendarId,
+                Summary = eventModel.Summary,
+                Start = eventModel.Start,
+                End = eventModel.End,
+                Location = eventModel.Location
+            };
+
+            try
+            {
+                var updatedEvent = new Event
+                {
+                    Id = eventId,
+                    Summary = eventModel.Summary,
+                    Start = new EventDateTime { DateTime = eventModel.Start },
+                    End = new EventDateTime { DateTime = eventModel.End },
+                    Location = eventModel.Location
+                };
+
+                await _googleCalendarService.UpdateEventAsync(eventModel.CalendarId, eventId, updatedEvent);
+
+                updatedEventViewModel.IsUpdated = true;
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions for each individual event
+                Console.WriteLine($"Error updating event with ID {eventId}: {ex.Message}"); // input in the console just in case 
+                updatedEventViewModel.IsUpdated = false;
+                updatedEventViewModel.ErrorMessage = $"Error updating event with ID {eventId}: {ex.Message}";
+            }
+
+            updatedEvents.Add(updatedEventViewModel);
+        }
+
+        // Pass the list of updated events to the view
+        return View("UpdateEvents", updatedEvents);
+    }
+
+
 
 }

@@ -11,5 +11,6 @@ namespace Calendar_by_I_M_Marinov.Services.Contracts
          Task<Event> AddEventAsync(Event newEvent);
          Task<Event> AddEventAsync(string calendarId, string eventId, Event newEvent);
          Task<IList<Event>> GetEventByIdAcrossAllCalendarsAsync(string eventId);
+         Task<Event> UpdateEventAsync(string calendarId, string eventId, Event updatedEvent);
     }
 }
