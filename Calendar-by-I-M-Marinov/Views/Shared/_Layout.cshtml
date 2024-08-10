@@ -1,4 +1,11 @@
-﻿<!DOCTYPE html>
+﻿@using Calendar_by_I_M_Marinov.Common
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    string currentYear = DateTime.UtcNow.Year == GeneralApplicationConstants.ApplicationReleaseYear ? "" : DateTime.UtcNow.Year.ToString();
+}
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -12,7 +19,7 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Calendar_by_I_M_Marinov</a>
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">G Easy Calendar</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -25,8 +32,9 @@
 				                Events
 			                </a>
 			                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Calendar" asp-action="CreateEvent">Add an Event</a>
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Calendar" asp-action="ListCalendarsAndEvents">Events per calendar</a>
+				                <a class="nav-link text-dark" asp-area="" asp-controller="Calendar" asp-action="ListCalendarsAndEvents">Events per calendar</a>
+				                <a class="nav-link text-dark" asp-area="" asp-controller="Calendar" asp-action="CreateEvent">Add an Event</a>
+				                <a class="nav-link text-dark" asp-area="" asp-controller="Calendar" asp-action="SearchEventByName">Edit an Event</a>
 			                </div>
 		                </li>
 	                </ul>
@@ -49,11 +57,12 @@
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2024 - Calendar_by_I_M_Marinov - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
+<footer class="border-top footer text-muted">
+	<div class="container">
+            &copy; @GeneralApplicationConstants.ApplicationReleaseYear - @currentYear @GeneralApplicationConstants.ApplicationName - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+	</div>
+</footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

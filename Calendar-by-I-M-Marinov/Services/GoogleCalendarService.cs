@@ -9,11 +9,12 @@ using System.Threading.Tasks;
 using Google.Apis.Calendar.v3.Data;
 using System.Collections.Generic;
 using Calendar_by_I_M_Marinov.Services.Contracts;
+using Google;
 
 public class GoogleCalendarService: IGoogleCalendarService
 {
 	private readonly CalendarService _service;
-	private string applicationName = "Calendar-by-I-M-Marinov";
+	private readonly string _applicationName = "Calendar-by-I-M-Marinov";
 
 	public GoogleCalendarService(IConfiguration configuration)
 	{
@@ -37,7 +38,7 @@ public class GoogleCalendarService: IGoogleCalendarService
         _service = new CalendarService(new BaseClientService.Initializer()
         {
             HttpClientInitializer = credential,
-            ApplicationName = applicationName,
+            ApplicationName = _applicationName,
         });
     }
 
@@ -63,14 +64,78 @@ public class GoogleCalendarService: IGoogleCalendarService
 		return events.Items;
 	}
 
-	public async Task<Event> AddEventAsync(Event newEvent)
+
+    public async Task<List<Event>> GetEventsByNameAsync(string searchString)
+    {
+        var allEvents = new List<Event>();
+
+        var calendars = await GetCalendarsAsync();
+
+        foreach (var calendar in calendars)
+        {
+            var events = await GetEventsAsync(calendar.Id);
+
+            // Filter events where the summary contains the search string (case-insensitive)
+            var matchingEvents = events
+                .Where(e => e.Summary != null && e.Summary.IndexOf(searchString, StringComparison.OrdinalIgnoreCase) >= 0)
+                .ToList();
+
+            allEvents.AddRange(matchingEvents);
+        }
+
+        return allEvents;
+    }
+
+    // this method is only returning events by id from the Primary calendar !!!! 
+    public virtual async Task<Event> GetEventByIdAsync(string eventId)
+    {
+        var request = _service.Events.Get("primary", eventId); 
+        return await request.ExecuteAsync();
+    }
+
+    public async Task<Event> GetEventByIdAsync(string calendarId, string eventId)
+    {
+        var request = _service.Events.Get(calendarId, eventId);
+        return await request.ExecuteAsync();
+    }
+
+    public async Task<Event> AddEventAsync(Event newEvent)
 	{
 		var insertRequest = _service.Events.Insert(newEvent, "primary");
 		var createdEvent = await insertRequest.ExecuteAsync();
 		return createdEvent;
 	}
 
+    public async Task<IList<Event>> GetEventByIdAcrossAllCalendarsAsync(string eventId)
+    {
+        var calendars = await GetCalendarsAsync();
+        var matchingEvents = new List<Event>();
 
+        foreach (var calendar in calendars)
+        {
+            try
+            {
+                var events = await GetEventsAsync(calendar.Id);
 
+                var filteredEvents = events.Where(e =>
+                    (e.Id != null && e.Id.Contains(eventId, StringComparison.OrdinalIgnoreCase)) ||
+                    (e.Summary != null && e.Summary.Contains(eventId, StringComparison.OrdinalIgnoreCase))
+                ).ToList();
+
+                if (filteredEvents.Count > 0)
+                {
+                    matchingEvents.AddRange(filteredEvents);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error retrieving events from calendar {calendar.Id}: {ex.Message}");
+            }
+        }
+
+        return matchingEvents;
+    }
+
+    //TODO:
     // Add methods for UpdateEventAsync, DeleteEventAsync if needed.
 }

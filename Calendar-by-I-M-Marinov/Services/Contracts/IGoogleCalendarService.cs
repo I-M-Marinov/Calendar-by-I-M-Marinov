@@ -4,11 +4,12 @@ namespace Calendar_by_I_M_Marinov.Services.Contracts
 {
     public interface IGoogleCalendarService
     {
-        public Task<IList<CalendarListEntry>> GetCalendarsAsync();
-        public Task<IList<Event>> GetEventsAsync(string calendarId);
-	    public Task<Event> AddEventAsync(Event newEvent);
-
+         Task<IList<CalendarListEntry>> GetCalendarsAsync();
+         Task<IList<Event>> GetEventsAsync(string calendarId);
+         Task<Event> GetEventByIdAsync(string eventId);
+         Task<Event> GetEventByIdAsync(string calendarId, string eventId);
+         Task<List<Event>> GetEventsByNameAsync(string searchString);
+         Task<Event> AddEventAsync(Event newEvent);
+         Task<IList<Event>> GetEventByIdAcrossAllCalendarsAsync(string eventId);
     }
-
-
 }

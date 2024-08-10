@@ -1,10 +1,10 @@
 ﻿@model IList<Google.Apis.Calendar.v3.Data.Event>
 
-<h2>New Calendar Event Added!</h2>
+<h2>Editing an Event</h2>
 
 @if (Model != null && Model.Count > 0)
 {
-    var lastAdded = Model.OrderByDescending(m => m.Created ?? m.Updated).FirstOrDefault();
+    var lastAdded = Model.OrderByDescending(m => m.Updated).FirstOrDefault();
 
     if (lastAdded != null)
     {

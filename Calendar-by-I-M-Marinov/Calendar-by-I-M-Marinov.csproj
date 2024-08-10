@@ -16,4 +16,11 @@
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="6.0.32" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="Views\Calendar\ViewEditedEvent.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>
