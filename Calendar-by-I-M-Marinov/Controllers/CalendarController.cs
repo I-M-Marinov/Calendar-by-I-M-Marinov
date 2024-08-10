@@ -82,9 +82,6 @@ public class CalendarController : Controller
 
 		return View(viewModel);
 	}
-
-
-
 	public async Task<IActionResult> ViewNewEventAdded()
 	{
 		// Fetch events from Google Calendar and store them in the database
