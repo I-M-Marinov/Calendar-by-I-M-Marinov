@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 using Google.Apis.Calendar.v3.Data;
 using Calendar_by_I_M_Marinov.Services.Contracts;
 using Calendar_by_I_M_Marinov.Models;
@@ -116,6 +115,7 @@ public class CalendarController : Controller
 
         return View(model);
     }
+
     [HttpGet]
     public async Task<IActionResult> SearchEventByName(SearchEventViewModel model)
     {
@@ -125,9 +125,7 @@ public class CalendarController : Controller
             return View(model);
         }
 
-        string eventNameString = model.EventName;
-
-        var matchingEvents = await _googleCalendarService.GetEventByIdAcrossAllCalendarsAsync(eventNameString);
+        var matchingEvents = await _googleCalendarService.GetEventByIdAcrossAllCalendarsAsync(model.EventName);
 
         if (matchingEvents == null || !matchingEvents.Any())
         {
@@ -135,10 +133,20 @@ public class CalendarController : Controller
             return View(model);
         }
 
-        var eventToEdit = matchingEvents.First();
+        // Map the matching events to the EditEventViewModel and add them to a List
+        var eventViewModels = matchingEvents.Select(e => new EditEventViewModel
+        {
+            EventId = e.Id,
+            Summary = e.Summary,
+            Start = e.Start.DateTime,
+            End = e.End.DateTime,
+            Location = e.Location,
+            CalendarId = e.Organizer?.Email 
+        }).ToList();
 
-        return RedirectToAction("EditEvents", new { eventId = eventToEdit.Id });
+        return View("EditEvents", eventViewModels);
     }
+
 
     [HttpGet]
     public async Task<IActionResult> Edit(string id)
@@ -155,21 +163,74 @@ public class CalendarController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> EditEvents(string eventId)
+    public async Task<IActionResult> EditEvent(string eventId, string calendarId)
     {
-        var eventItems = await _googleCalendarService.GetEventByIdAcrossAllCalendarsAsync(eventId);
+        var eventToEdit = await _googleCalendarService.GetEventByIdAsync(calendarId, eventId);
 
-        // Create a list of view models for each matching event
-        var eventViewModels = eventItems.Select(eventItem => new EditEventViewModel
+        if (eventToEdit == null)
         {
-            EventId = eventItem.Id,
-            Summary = eventItem.Summary,
-            Start = eventItem.Start.DateTime ?? DateTime.Now,  // Default to DateTime.Now if null
-            End = eventItem.End.DateTime ?? DateTime.Now,      // Default to DateTime.Now if null
-            Location = eventItem.Location
-        }).ToList();
+            return NotFound($"Event with ID {eventId} not found.");
+        }
 
-        // Return a view that displays all matching events
-        return View("EditEvent", eventViewModels);
+        var viewModel = new EditEventViewModel
+        {
+            EventId = eventToEdit.Id,
+            Summary = eventToEdit.Summary,
+            Start = eventToEdit.Start.DateTime,
+            End = eventToEdit.End.DateTime,
+            Location = eventToEdit.Location,
+            CalendarId = calendarId
+        };
+
+        return View(viewModel);
     }
+
+
+    [HttpPost]
+    public async Task<IActionResult> EditEvents(Dictionary<string, EditEventViewModel> events)
+    {
+        // Validate and process each event
+        foreach (var eventModel in events.Values)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var eventToUpdate = new Event
+                    {
+                        Id = eventModel.EventId,
+                        Summary = eventModel.Summary,
+                        Start = new EventDateTime { DateTime = eventModel.Start },
+                        End = new EventDateTime { DateTime = eventModel.End },
+                        Location = eventModel.Location
+                    };
+
+                    await _googleCalendarService.AddEventAsync(eventModel.CalendarId, eventModel.EventId, eventToUpdate);
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", $"Error updating event {eventModel.EventId}: {ex.Message}");
+                }
+            }
+        }
+
+        if (ModelState.IsValid)
+        {
+            return RedirectToAction("SearchEventByName");
+        }
+
+        // Redisplay the form with validation errors
+
+        var matchingEvents = await _googleCalendarService.GetEventByIdAcrossAllCalendarsAsync(events.Values.First().Summary);
+        return View("EditEvents", matchingEvents.Select(e => new EditEventViewModel
+        {
+            EventId = e.Id,
+            Summary = e.Summary,
+            Start = e.Start.DateTime,
+            End = e.End.DateTime,
+            Location = e.Location,
+            CalendarId = e.Organizer?.Email
+        }).ToList());
+    }
+
 }

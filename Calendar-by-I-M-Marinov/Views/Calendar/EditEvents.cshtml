@@ -1,0 +1,49 @@
+﻿@model IEnumerable<Calendar_by_I_M_Marinov.Models.EditEventViewModel>
+
+<h2>Edit Events</h2>
+
+@if (Model != null && Model.Any())
+{
+    <form asp-action="EditEvent" method="post">
+        @foreach (var eventModel in Model)
+        {
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h3>Edit Event: @eventModel.Summary</h3>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="Summary_@eventModel.EventId">Event Name (Summary)</label>
+                        <input type="text" id="Summary_@eventModel.EventId" name="events[@eventModel.EventId].Summary" class="form-control" value="@eventModel.Summary" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="Start_@eventModel.EventId">Start Time</label>
+                        <input type="datetime-local" id="Start_@eventModel.EventId" name="events[@eventModel.EventId].Start" class="form-control"
+                               value="@(eventModel.Start.HasValue ? eventModel.Start.Value.ToString("MMMM dd, yyyy") : "")" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="End_@eventModel.EventId">End Time</label>
+                        <input type="datetime-local" id="End_@eventModel.EventId" name="events[@eventModel.EventId].End" class="form-control"
+                               value="@(eventModel.End.HasValue ? eventModel.End.Value.ToString("MMMM dd, yyyy") : "")" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="Location_@eventModel.EventId">Location</label>
+                        <input type="text" id="Location_@eventModel.EventId" name="events[@eventModel.EventId].Location" class="form-control" value="@eventModel.Location" />
+                    </div>
+
+                    <input type="hidden" name="events[@eventModel.EventId].EventId" value="@eventModel.EventId" />
+                    <input type="hidden" name="events[@eventModel.EventId].CalendarId" value="@eventModel.CalendarId" />
+                </div>
+            </div>
+        }
+
+        <button type="submit" class="btn btn-success">Save Changes</button>
+    </form>
+}
+else
+{
+    <p>No events found to edit.</p>
+}

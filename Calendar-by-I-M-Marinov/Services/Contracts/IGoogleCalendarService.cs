@@ -8,8 +8,8 @@ namespace Calendar_by_I_M_Marinov.Services.Contracts
          Task<IList<Event>> GetEventsAsync(string calendarId);
          Task<Event> GetEventByIdAsync(string eventId);
          Task<Event> GetEventByIdAsync(string calendarId, string eventId);
-         Task<List<Event>> GetEventsByNameAsync(string searchString);
          Task<Event> AddEventAsync(Event newEvent);
+         Task<Event> AddEventAsync(string calendarId, string eventId, Event newEvent);
          Task<IList<Event>> GetEventByIdAcrossAllCalendarsAsync(string eventId);
     }
 }

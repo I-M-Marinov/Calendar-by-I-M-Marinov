@@ -2,6 +2,6 @@
 {
     public class SearchEventViewModel
     {
-        public string EventName { get; set; }
+        public string EventName { get; set; } = null!;
     }
 }

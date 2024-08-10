@@ -64,28 +64,6 @@ public class GoogleCalendarService: IGoogleCalendarService
 		return events.Items;
 	}
 
-
-    public async Task<List<Event>> GetEventsByNameAsync(string searchString)
-    {
-        var allEvents = new List<Event>();
-
-        var calendars = await GetCalendarsAsync();
-
-        foreach (var calendar in calendars)
-        {
-            var events = await GetEventsAsync(calendar.Id);
-
-            // Filter events where the summary contains the search string (case-insensitive)
-            var matchingEvents = events
-                .Where(e => e.Summary != null && e.Summary.IndexOf(searchString, StringComparison.OrdinalIgnoreCase) >= 0)
-                .ToList();
-
-            allEvents.AddRange(matchingEvents);
-        }
-
-        return allEvents;
-    }
-
     // this method is only returning events by id from the Primary calendar !!!! 
     public virtual async Task<Event> GetEventByIdAsync(string eventId)
     {
@@ -106,9 +84,26 @@ public class GoogleCalendarService: IGoogleCalendarService
 		return createdEvent;
 	}
 
+    public async Task<Event> AddEventAsync(string calendarId, string eventId, Event newEvent)
+    {
+        if (newEvent == null)
+            throw new ArgumentNullException(nameof(newEvent), "Event cannot be null.");
+
+        // If you want to update an existing event, use the Update method
+        if (!string.IsNullOrEmpty(eventId))
+        {
+            var updateRequest = _service.Events.Update(newEvent, calendarId, eventId);
+            return await updateRequest.ExecuteAsync();
+        }
+
+        // Otherwise, create a new event
+        var insertRequest = _service.Events.Insert(newEvent, calendarId);
+        return await insertRequest.ExecuteAsync();
+    }
+
     public async Task<IList<Event>> GetEventByIdAcrossAllCalendarsAsync(string eventId)
     {
-        var calendars = await GetCalendarsAsync();
+        var calendars = await GetCalendarsAsync(); // get all calendars
         var matchingEvents = new List<Event>();
 
         foreach (var calendar in calendars)
