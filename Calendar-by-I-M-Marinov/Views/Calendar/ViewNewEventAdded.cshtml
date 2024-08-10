@@ -1,0 +1,33 @@
+﻿@model IList<Google.Apis.Calendar.v3.Data.Event>
+
+<h2>New Calendar Event Added!</h2>
+
+@if (Model != null && Model.Count > 0)
+{
+    var lastAdded = Model.OrderByDescending(m => m.Created ?? m.Updated).FirstOrDefault();
+
+    if (lastAdded != null)
+    {
+        <ul style="align-self:center">
+            <li>
+                <strong>@lastAdded.Summary</strong><br />
+                Start: @lastAdded.Start.DateTime?.ToString("MMMM dd, yyyy h:mm tt")<br />
+                End: @lastAdded.End.DateTime?.ToString("MMMM dd, yyyy h:mm tt")<br />
+                Location: @lastAdded.Location<br />
+                <br />
+                <!-- Edit Button -->
+                <a asp-action="Edit" asp-route-id="@lastAdded.Id" class="btn btn-primary btn-sm">Edit</a>
+
+                <!-- Delete Button -->
+                <form asp-action="Delete" asp-route-id="@lastAdded.Id" method="post" style="display:inline;">
+                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this event ?');">Delete</button>
+                </form>
+            </li>
+        </ul>
+    }
+
+}
+else
+{
+    <p>No upcoming events found.</p>
+}

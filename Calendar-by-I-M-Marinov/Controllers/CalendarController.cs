@@ -85,13 +85,12 @@ public class CalendarController : Controller
 
 
 
-	public async Task<IActionResult> ViewAllPrimary()
+	public async Task<IActionResult> ViewNewEventAdded()
 	{
 		// Fetch events from Google Calendar and store them in the database
 		var events = await _googleCalendarService.GetEventsAsync("primary");
 		return View(events);
 	}
-
 	public IActionResult CreateEvent()
 	{
 		return View();
@@ -120,7 +119,7 @@ public class CalendarController : Controller
 			};
 
 			await _googleCalendarService.AddEventAsync(newEvent);
-			return RedirectToAction("ViewAllPrimary");
+			return RedirectToAction("ViewNewEventAdded");
 		}
 
 		return View(model);
