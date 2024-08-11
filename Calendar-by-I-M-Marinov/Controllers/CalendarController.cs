@@ -76,7 +76,6 @@ public class CalendarController : Controller
         return View(viewModel);
     }
 
-
     public async Task<IActionResult> ViewNewEventAdded()
     {
         var events = await _googleCalendarService.GetEventsAsync("primary");
@@ -104,12 +103,12 @@ public class CalendarController : Controller
                 Description = model.Description,
                 Start = new EventDateTime
                 {
-                    DateTime = model.Start,
+                    DateTimeDateTimeOffset = model.Start,
                     TimeZone = "Europe/Sofia"
                 },
                 End = new EventDateTime
                 {
-                    DateTime = model.End,
+                    DateTimeDateTimeOffset = model.End,
                     TimeZone = "Europe/Sofia"
                 }
             };
