@@ -1,86 +1,78 @@
 ﻿@model Calendar_by_I_M_Marinov.Models.CalendarEventsViewModel
 
-
 <h2>Select a Calendar</h2>
 
 <form method="get" asp-action="ListCalendarsAndEvents">
-	<div class="form-group">
-		<label for="calendarSelect">Select Calendar:</label>
-		<select id="calendarSelect" name="selectedCalendarId" class="form-control">
-			<option value="default">-- Select Calendar --</option>
-			<option value="all">All Calendars</option>
+    <div class="form-group">
+        <label for="calendarSelect">Select Calendar:</label>
+        <select id="calendarSelect" name="selectedCalendarId" class="form-control">
+            <option value="default">-- Select Calendar --</option>
+            <option value="all">All Calendars</option>
 
-			@foreach (var calendar in Model.Calendars)
-			{
-				var isSelected = calendar.CalendarId == Model.SelectedCalendarId;
-				<option value="@calendar.CalendarId" selected="@(isSelected ? "selected" : "")">
-					@calendar.CalendarName
-				</option>
-			}
-		</select>
-	</div>
-	<br />
-	<button type="submit" class="btn btn-primary">Load Events</button>
-	<br />
+            @foreach (var calendar in Model.Calendars)
+            {
+                var isSelected = calendar.CalendarId == Model.SelectedCalendarId;
+                <option value="@calendar.CalendarId" selected="@(isSelected ? "selected" : "")">
+                    @calendar.CalendarName
+                </option>
+            }
+        </select>
+    </div>
+    <br />
+    <button type="submit" class="btn btn-primary">Load Events</button>
+    <br />
 </form>
 
 <h2>Events for @Model.SelectedCalendarName</h2>
 
-@if (Model.Events != null && Model.Events.Count > 0)
+@if (Model.Events != null && Model.Events.Any())
 {
-	<ul>
-		<br />
-		<h4>The Calendar "@Model.SelectedCalendarName" has @Model.Events.Count events/entries. </h4>
-		<br />
-		@foreach (var evt in Model.Events)
-		{
-			<li>
-				<strong>@evt.Summary</strong><br />
+    <ul>
+        <br />
+        <h4>The Calendar "@Model.SelectedCalendarName" has @Model.Events.Count events/entries. </h4>
+        <br />
+        @foreach (var evt in Model.Events)
+        {
+            <li>
+                <strong>@evt.Summary</strong><br />
 
-				@if (evt.Start.Date != null && evt.End.Date != null && evt.Gadget != null)
-				{
-					<span>Start: @DateTime.Parse(evt.Start.Date).ToString("MMMM dd, yyyy")</span>
+                @if (evt.Start.Date != null && evt.End.Date != null && evt.Gadget != null)
+                {
+                    <span>Start: @DateTime.Parse(evt.Start.Date).ToString("MMMM dd, yyyy")</span>
+                    <br />
+                    <span>End: @DateTime.Parse(evt.End.Date).ToString("MMMM dd, yyyy")</span>
+                    <br />
+                }
+                else if (evt.Start.Date != null && evt.End.Date != null)
+                {
+                    <span>All Day: @DateTime.Parse(evt.Start.Date).ToString("MMMM dd, yyyy")</span>
+                    <br />
+                }
+                else if (evt.Start.DateTimeDateTimeOffset != null && evt.End.DateTimeDateTimeOffset != null)
+                {
+                    <span>Start: @evt.Start.DateTimeDateTimeOffset.Value.ToString("MMMM dd, yyyy h:mm tt")</span>
+                    <br />
+                    <span>End: @evt.End.DateTimeDateTimeOffset.Value.ToString("MMMM dd, yyyy h:mm tt")</span>
+                    <br />
+                }
+                else
+                {
+                    <span>Start: Not Available</span>
+                    <br />
+                    <span>End: Not Available</span>
+                    <br />
+                }
 
-					<br />
-					<span>End: @DateTime.Parse(evt.End.Date).ToString("MMMM dd, yyyy")</span>
-
-					<br />
-				}
-				else if (evt.Start.Date != null && evt.End.Date != null)
-				{
-					<span>All Day: @DateTime.Parse(evt.Start.Date).ToString("MMMM dd, yyyy")</span>
-
-					<br />
-				}
-				else if (evt.Start.DateTimeDateTimeOffset != null && evt.End.DateTimeDateTimeOffset != null)
-				{
-					<span>Start: @evt.Start.DateTimeDateTimeOffset.Value.ToString("MMMM dd, yyyy h:mm tt")</span>
-
-					<br />
-					<span>End: @evt.End.DateTimeDateTimeOffset.Value.ToString("MMMM dd, yyyy h:mm tt")</span>
-
-					<br />
-				}
-				else
-				{
-					<span>Start: Not Available</span>
-
-					<br />
-					<span>End: Not Available</span>
-
-					<br />
-				}
-
-				@if (!string.IsNullOrEmpty(evt.Location))
-				{
-					<span>Location: @evt.Location</span>
-				}
-			</li>
-			<br />
-		}
-	</ul>
+                @if (!string.IsNullOrEmpty(evt.Location))
+                {
+                    <span>Location: @evt.Location</span>
+                }
+            </li>
+            <br />
+        }
+    </ul>
 }
 else if (Model.SelectedCalendarId != null)
 {
-	<p>No events found for the selected calendar.</p>
+    <p>No events found for the selected calendar.</p>
 }

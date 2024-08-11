@@ -4,6 +4,8 @@
 	{
 		public string CalendarName { get; set; } = null!;
 		public string CalendarId { get; set; } = null!;
+		public string Description { get; set; } = null!;
+		public string AccessRole { get; set; } = null!;
 
 	}
 }

@@ -16,20 +16,20 @@ public class CalendarController : Controller
     public async Task<IActionResult> ListCalendars()
     {
         var calendars = await _googleCalendarService.GetCalendarsAsync();
-        var calendarViewModels = new List<CalendarViewModel>();
-
-        foreach (var calendar in calendars)
+        var calendarViewModels = calendars.Select(c => new CalendarViewModel
         {
-            calendarViewModels.Add(new CalendarViewModel
-            {
-                CalendarName = calendar.Summary,
-                CalendarId = calendar.Id
-            });
-        }
+            CalendarName = c.Summary,
+            CalendarId = c.Id,
+            Description = c.Description,
+            AccessRole = c.AccessRole
+        }).ToList();
 
-        return View(calendarViewModels);
+
+
+        return View("ListAllCalendars", calendarViewModels);
     }
 
+    [HttpGet]
     public async Task<IActionResult> ListCalendarsAndEvents(string selectedCalendarId)
     {
         var calendars = await _googleCalendarService.GetCalendarsAsync();
@@ -40,8 +40,7 @@ public class CalendarController : Controller
         }).ToList();
 
         IList<Event> events = new List<Event>();
-
-        var selectedCalendarName = "";
+        string selectedCalendarName = "";
 
         if (selectedCalendarId == "all")
         {
@@ -76,6 +75,7 @@ public class CalendarController : Controller
 
         return View(viewModel);
     }
+
 
     public async Task<IActionResult> ViewNewEventAdded()
     {
@@ -244,8 +244,6 @@ public class CalendarController : Controller
         return View("CreateEvent", model);
     }
 
-
-
     [HttpPost]
     public async Task<IActionResult> EditEvents(Dictionary<string, EditEventViewModel> events)
     {
@@ -292,8 +290,6 @@ public class CalendarController : Controller
             CalendarId = e.Organizer?.Email
         }).ToList());
     }
-
-    [HttpPost]
     [HttpPost]
     public async Task<IActionResult> UpdateEvents(Dictionary<string, EditEventViewModel> events)
     {

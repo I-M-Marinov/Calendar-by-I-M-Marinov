@@ -20,3 +20,23 @@ body {
 form-group{
     align-items: center;
 }
+
+/* CSS for the table in the ListAllCalendars View */
+
+.centered-table {
+    margin: 0 auto; 
+    width: 45%; 
+    max-width: 800px; 
+    border-collapse: collapse; 
+}
+
+.centered-table th, .centered-table td {
+    text-align: center; 
+    padding: 8px; 
+}
+
+.centered-table thead {
+    background-color: #4489cf;
+}
+
+

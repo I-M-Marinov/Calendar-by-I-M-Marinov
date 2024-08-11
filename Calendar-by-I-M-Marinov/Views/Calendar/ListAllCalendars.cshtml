@@ -1,25 +1,33 @@
 ﻿@model IEnumerable<Calendar_by_I_M_Marinov.Models.CalendarViewModel>
 
 @{
-    ViewData["Title"] = "List of all Calendars";
+	ViewData["Title"] = "List of all Calendars";
 }
 
-<h2>@ViewData["Title"]</h2>
+<h2 style="text-align: center;">@ViewData["Title"]</h2>
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Calendar Name</th>
-            <th>Calendar ID</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var calendar in Model)
-        {
-            <tr>
-                <td>@calendar.CalendarName</td>
-                <td>@calendar.CalendarId</td>
-            </tr>
-        }
-    </tbody>
+<table class="table table-striped centered-table">
+	<thead>
+	<tr>
+		<th>Calendar Name</th>
+		<th>Access Role</th>
+	</tr>
+	</thead>
+	<tbody style>
+	@foreach (var calendar in Model)
+	{
+		<tr>
+			<!-- Link around the calendar name -->
+			<td>
+				<a asp-action="ListCalendarsAndEvents" asp-route-selectedCalendarId="@calendar.CalendarId">
+					@calendar.CalendarName
+				</a>
+			</td>
+			<!-- Display Access Role -->
+			<td>
+				@calendar.AccessRole
+			</td>
+		</tr>
+	}
+	</tbody>
 </table>
