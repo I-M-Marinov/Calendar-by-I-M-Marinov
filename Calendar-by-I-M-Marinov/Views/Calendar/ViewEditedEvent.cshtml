@@ -16,7 +16,7 @@
                 Location: @lastAdded.Location<br />
                 <br />
                 <!-- Edit Button -->
-                <a asp-action="Edit" asp-route-id="@lastAdded.Id" class="btn btn-primary btn-sm">Edit</a>
+                <a asp-action="EditEvent" asp-route-id="@lastAdded.Id" class="btn btn-primary btn-sm">Edit</a>
 
                 <!-- Delete Button -->
                 <form asp-action="Delete" asp-route-id="@lastAdded.Id" method="post" style="display:inline;">

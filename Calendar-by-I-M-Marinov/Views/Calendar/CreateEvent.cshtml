@@ -1,8 +1,9 @@
-﻿@model EventViewModel
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model Calendar_by_I_M_Marinov.Models.EventViewModel
 
-<h2>Create New Event</h2>
+<h2>@ViewBag.PageTitle</h2>
 
-<form asp-action="CreateEvent" method="post">
+<form asp-action="@ViewBag.FormAction" method="post">
 	<div class="form-group">
 		<label asp-for="Summary"></label>
 		<input asp-for="Summary" class="form-control" />
@@ -23,5 +24,9 @@
 		<label asp-for="End"></label>
 		<input asp-for="End" type="datetime-local" class="form-control" />
 	</div>
-	<button type="submit" class="btn btn-primary">Create Event</button>
+	@if (ViewBag.EventId != null)
+	{
+		<input type="hidden" name="EventId" value="@ViewBag.EventId" />
+	}
+	<button type="submit" class="btn btn-primary">@ViewBag.ButtonText</button>
 </form>

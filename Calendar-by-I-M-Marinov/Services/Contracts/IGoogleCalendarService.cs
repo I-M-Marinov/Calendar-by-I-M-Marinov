@@ -1,4 +1,6 @@
-﻿using Google.Apis.Calendar.v3.Data;
+﻿using Calendar_by_I_M_Marinov.Models;
+using Google.Apis.Calendar.v3.Data;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Calendar_by_I_M_Marinov.Services.Contracts
 {
@@ -12,5 +14,6 @@ namespace Calendar_by_I_M_Marinov.Services.Contracts
          Task<Event> AddEventAsync(string calendarId, string eventId, Event newEvent);
          Task<IList<Event>> GetEventByIdAcrossAllCalendarsAsync(string eventId);
          Task<Event> UpdateEventAsync(string calendarId, string eventId, Event updatedEvent);
+         Task<Event> GetLastCreatedEventAsync(string calendarId);
     }
 }

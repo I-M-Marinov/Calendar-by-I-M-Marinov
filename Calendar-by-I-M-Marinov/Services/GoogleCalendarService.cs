@@ -71,12 +71,14 @@ public class GoogleCalendarService: IGoogleCalendarService
         return await request.ExecuteAsync();
     }
 
+    // overload of the original method taking calendarId and eventId
     public async Task<Event> GetEventByIdAsync(string calendarId, string eventId)
     {
         var request = _service.Events.Get(calendarId, eventId);
         return await request.ExecuteAsync();
     }
 
+    /* The two methods below are used for Adding and Editing events respectively */
     public async Task<Event> AddEventAsync(Event newEvent)
 	{
 		var insertRequest = _service.Events.Insert(newEvent, "primary");
@@ -137,6 +139,23 @@ public class GoogleCalendarService: IGoogleCalendarService
 
         var result = await updateRequest.ExecuteAsync();
         return result;
+    }
+
+    public async Task<Event> GetLastCreatedEventAsync(string calendarId)
+    {
+        // Create the request to fetch events from the calendar
+        var request = _service.Events.List(calendarId);
+        request.OrderBy = EventsResource.ListRequest.OrderByEnum.StartTime;
+        request.SingleEvents = true;
+        request.MaxResults = 1;
+        request.TimeMin = DateTime.Now.AddYears(-1); // Adjust the time range as needed
+        request.TimeMax = DateTime.Now; // Adjust the time range as needed
+
+        // Execute the request
+        var events = await request.ExecuteAsync();
+
+        // Return the last created event if any
+        return events.Items?.FirstOrDefault();
     }
 
     //TODO:
