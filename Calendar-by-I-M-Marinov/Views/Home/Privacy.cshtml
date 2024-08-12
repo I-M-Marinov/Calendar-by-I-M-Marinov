@@ -1,6 +1,110 @@
 ﻿@{
     ViewData["Title"] = "Privacy Policy";
 }
+
 <h1>@ViewData["Title"]</h1>
 
-<p>Use this page to detail your site's privacy policy.</p>
+<p><strong>Last updated:</strong> 12/08/2024</p>
+
+<div class="accordion" id="privacyPolicyAccordion">
+
+    <div class="card">
+        <div class="card-header" id="headingOne">
+            <h2 class="mb-0">
+                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                    1. Information Collection and Use
+                </button>
+            </h2>
+        </div>
+
+        <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#privacyPolicyAccordion">
+            <div class="card-body">
+                <h5>1.1 No Data Collection</h5>
+                <p>Our website does not collect, store, or process any personal data from users. We do not store any user information, including but not limited to names, email addresses, or calendar data.</p>
+                <h5>1.2 Use of Google Calendar API</h5>
+                <p>Our website uses the Google Calendar API to interact with your Google Calendar account. When you connect your Google Calendar to our website, the data exchange occurs directly between your browser and Google's servers. We do not have access to your Google Calendar data, and no data is stored on our servers.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header" id="headingTwo">
+            <h2 class="mb-0">
+                <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                    2. Authentication and Permissions
+                </button>
+            </h2>
+        </div>
+        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#privacyPolicyAccordion">
+            <div class="card-body">
+                <h5>2.1 OAuth 2.0</h5>
+                <p>To use our services, you may be required to authenticate with your Google account using OAuth 2.0. This process is handled securely by Google, and our website only receives a temporary access token that allows us to perform actions on your behalf, such as reading or writing calendar events.</p>
+                <h5>2.2 Permissions</h5>
+                <p>During authentication, you will be asked to grant our website certain permissions to interact with your Google Calendar. These permissions are limited to the actions required for our website to function (e.g., creating, viewing, or modifying calendar events). You can revoke these permissions at any time through your Google account settings.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header" id="headingThree">
+            <h2 class="mb-0">
+                <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                    3. Third-Party Services
+                </button>
+            </h2>
+        </div>
+        <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#privacyPolicyAccordion">
+            <div class="card-body">
+                <h5>3.1 Google Calendar</h5>
+                <p>All interactions with your calendar data are handled by Google Calendar. For more information on how Google handles your data, please refer to the <a href="https://policies.google.com/privacy">Google Privacy Policy</a>.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header" id="headingFour">
+            <h2 class="mb-0">
+                <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                    4. Security
+                </button>
+            </h2>
+        </div>
+        <div id="collapseFour" class="collapse" aria-labelledby="headingFour" data-parent="#privacyPolicyAccordion">
+            <div class="card-body">
+                <h5>4.1 Data Security</h5>
+                <p>Since our website does not collect or store user data, there are no specific security measures in place for protecting data on our end. However, we ensure that all interactions with the Google Calendar API are conducted over secure HTTPS connections to protect your data in transit.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header" id="headingFive">
+            <h2 class="mb-0">
+                <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                    5. Changes to This Privacy Policy
+                </button>
+            </h2>
+        </div>
+        <div id="collapseFive" class="collapse" aria-labelledby="headingFive" data-parent="#privacyPolicyAccordion">
+            <div class="card-body">
+                <p>We may update this Privacy Policy from time to time. Any changes will be reflected on this page with an updated "Last updated" date. We encourage you to review this Privacy Policy periodically to stay informed about how we are protecting your privacy.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header" id="headingSix">
+            <h2 class="mb-0">
+                <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseSix" aria-expanded="false" aria-controls="collapseSix">
+                    6. Contact Us
+                </button>
+            </h2>
+        </div>
+        <div id="collapseSix" class="collapse" aria-labelledby="headingSix" data-parent="#privacyPolicyAccordion">
+            <div class="card-body">
+                <p>If you have any questions or concerns about this Privacy Policy, please contact us at <strong>lcfrrr@gmail.com</strong>.</p>
+            </div>
+        </div>
+    </div>
+
+</div>
