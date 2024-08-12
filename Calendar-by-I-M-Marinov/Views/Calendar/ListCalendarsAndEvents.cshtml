@@ -27,46 +27,63 @@
 
 @if (Model.Events != null && Model.Events.Any())
 {
-    <ul>
+    <ul class="list-unstyled">
         <br />
         <h4>The Calendar "@Model.SelectedCalendarName" has @Model.Events.Count events/entries. </h4>
         <br />
         @foreach (var evt in Model.Events)
         {
-            <li>
-                <strong>@evt.Summary</strong><br />
+            <li class="event-item">
+                <div class="event-info">
+                    <strong>@evt.Summary</strong><br />
 
-                @if (evt.Start.Date != null && evt.End.Date != null && evt.Gadget != null)
-                {
-                    <span>Start: @DateTime.Parse(evt.Start.Date).ToString("MMMM dd, yyyy")</span>
-                    <br />
-                    <span>End: @DateTime.Parse(evt.End.Date).ToString("MMMM dd, yyyy")</span>
-                    <br />
-                }
-                else if (evt.Start.Date != null && evt.End.Date != null)
-                {
-                    <span>All Day: @DateTime.Parse(evt.Start.Date).ToString("MMMM dd, yyyy")</span>
-                    <br />
-                }
-                else if (evt.Start.DateTimeDateTimeOffset != null && evt.End.DateTimeDateTimeOffset != null)
-                {
-                    <span>Start: @evt.Start.DateTimeDateTimeOffset.Value.ToString("MMMM dd, yyyy h:mm tt")</span>
-                    <br />
-                    <span>End: @evt.End.DateTimeDateTimeOffset.Value.ToString("MMMM dd, yyyy h:mm tt")</span>
-                    <br />
-                }
-                else
-                {
-                    <span>Start: Not Available</span>
-                    <br />
-                    <span>End: Not Available</span>
-                    <br />
-                }
+                    @if (evt.Start.Date != null && evt.End.Date != null && evt.Gadget != null)
+                    {
+                        <span>Start: @DateTime.Parse(evt.Start.Date).ToString("MMMM dd, yyyy")</span>
+                        <br />
+                        <span>End: @DateTime.Parse(evt.End.Date).ToString("MMMM dd, yyyy")</span>
+                        <br />
+                    }
+                    else if (evt.Start.Date != null && evt.End.Date != null)
+                    {
+                        <span>All Day: @DateTime.Parse(evt.Start.Date).ToString("MMMM dd, yyyy")</span>
+                        <br />
+                    }
+                    else if (evt.Start.DateTimeDateTimeOffset != null && evt.End.DateTimeDateTimeOffset != null)
+                    {
+                        <span>Start: @evt.Start.DateTimeDateTimeOffset.Value.ToString("MMMM dd, yyyy h:mm tt")</span>
+                        <br />
+                        <span>End: @evt.End.DateTimeDateTimeOffset.Value.ToString("MMMM dd, yyyy h:mm tt")</span>
+                        <br />
+                    }
+                    else
+                    {
+                        <span>Start: Not Available</span>
+                        <br />
+                        <span>End: Not Available</span>
+                        <br />
+                    }
 
-                @if (!string.IsNullOrEmpty(evt.Location))
+                    @if (!string.IsNullOrEmpty(evt.Location))
+                    {
+                        <span>Location: @evt.Location</span>
+                    }
+                </div>
+
+                @if (Model.Calendars.FirstOrDefault(c => c.CalendarId == Model.SelectedCalendarId)?.AccessRole == "owner")
                 {
-                    <span>Location: @evt.Location</span>
+                    <div class="event-actions">
+                        <!-- Edit Button -->
+                        <a asp-action="EditEvent" asp-route-eventId="@evt.Id" class="btn btn-warning btn-sm">Edit</a>
+
+                        <!-- Delete Button -->
+                        <form asp-action="ConfirmDelete" method="get" style="display:inline;">
+                            <input type="hidden" name="eventId" value="@evt.Id" />
+                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                        </form>
+                    </div>
                 }
+                <br />
             </li>
             <br />
         }

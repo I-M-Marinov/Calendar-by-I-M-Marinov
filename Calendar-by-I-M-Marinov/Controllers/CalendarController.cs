@@ -3,6 +3,9 @@ using Google.Apis.Calendar.v3.Data;
 using Calendar_by_I_M_Marinov.Services.Contracts;
 using Calendar_by_I_M_Marinov.Models;
 using System.Reflection;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
 
 public class CalendarController : Controller
 {
@@ -13,7 +16,7 @@ public class CalendarController : Controller
         _googleCalendarService = googleCalendarService;
     }
 
-    public async Task<IActionResult> ListCalendars()
+	public async Task<IActionResult> ListCalendars()
     {
         var calendars = await _googleCalendarService.GetCalendarsAsync();
         var calendarViewModels = calendars.Select(c => new CalendarViewModel
@@ -28,24 +31,30 @@ public class CalendarController : Controller
 
         return View("ListAllCalendars", calendarViewModels);
     }
-
     [HttpGet]
     public async Task<IActionResult> ListCalendarsAndEvents(string selectedCalendarId)
     {
+        // Get all calendars
         var calendars = await _googleCalendarService.GetCalendarsAsync();
+
+        // Map calendar data to view models
         var calendarViewModels = calendars.Select(c => new CalendarViewModel
         {
             CalendarName = c.Summary,
-            CalendarId = c.Id
+            CalendarId = c.Id,
+            AccessRole = c.AccessRole
         }).ToList();
 
         IList<Event> events = new List<Event>();
         string selectedCalendarName = "";
+        string accessRole = "";
 
+        // Check if the "all" calendars option is selected
         if (selectedCalendarId == "all")
         {
             var allEvents = new List<Event>();
 
+            // Load events from all calendars
             foreach (var calendar in calendars)
             {
                 var calendarEvents = await _googleCalendarService.GetEventsAsync(calendar.Id);
@@ -60,9 +69,12 @@ public class CalendarController : Controller
         }
         else if (!string.IsNullOrEmpty(selectedCalendarId))
         {
+            // Load events for the specific calendar
             events = (await _googleCalendarService.GetEventsAsync(selectedCalendarId)).ToList();
-            selectedCalendarName = calendarViewModels
-                .FirstOrDefault(c => c.CalendarId == selectedCalendarId)?.CalendarName ?? "Unknown Calendar";
+
+            var selectedCalendar = calendarViewModels.FirstOrDefault(c => c.CalendarId == selectedCalendarId);
+            selectedCalendarName = selectedCalendar?.CalendarName ?? "Unknown Calendar";
+            accessRole = selectedCalendar!.AccessRole;
         }
 
         var viewModel = new CalendarEventsViewModel
@@ -70,9 +82,11 @@ public class CalendarController : Controller
             Calendars = calendarViewModels,
             SelectedCalendarId = selectedCalendarId,
             SelectedCalendarName = selectedCalendarName,
+            AccessRole = accessRole, 
             Events = events
         };
 
+        // Return the view with the view model
         return View(viewModel);
     }
 
@@ -81,7 +95,6 @@ public class CalendarController : Controller
         var events = await _googleCalendarService.GetEventsAsync("primary");
         return View(events);
     }
-
     [HttpGet]
     public IActionResult CreateEvent()
     {
@@ -90,7 +103,6 @@ public class CalendarController : Controller
         ViewBag.ButtonText = "Create Event";
         return View(new EventViewModel());
     }
-
     [HttpPost]
     public async Task<IActionResult> CreateEvent(EventViewModel model)
     {
@@ -126,7 +138,6 @@ public class CalendarController : Controller
 
         return View(model);
     }
-
     [HttpPost]
     public async Task<IActionResult> DeletePrimaryEvent(string eventId)
     {
@@ -144,7 +155,6 @@ public class CalendarController : Controller
         var events = await _googleCalendarService.GetEventsAsync("primary");
         return View("ViewNewEventAdded", events);
     }
-
     [HttpGet]
     public async Task<IActionResult> ConfirmDelete(string eventId)
     {
@@ -171,8 +181,6 @@ public class CalendarController : Controller
             return RedirectToAction("ViewNewEventAdded", new { message = $"Failed to load event details. Error: {ex.Message}" });
         }
     }
-
-
 
     [HttpGet]
     public async Task<IActionResult> SearchEventByName(SearchEventViewModel model)

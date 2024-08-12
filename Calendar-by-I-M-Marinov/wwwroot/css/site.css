@@ -39,4 +39,29 @@ form-group{
     background-color: #4489cf;
 }
 
+.event-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px;
+    border-bottom: 1.5px solid #808080;
+}
 
+.event-item:first-child{
+    font-weight: 800;
+    font-size: 20px;
+
+}
+
+.event-info {
+    flex: 1;
+    text-align: center; /* Center-align the text within the event-info div */
+}
+
+.event-actions {
+    text-align: center; /* Align the buttons to the right */
+}
+
+    .event-actions form {
+        display: inline; /* Ensure the form is inline with other elements */
+    }
