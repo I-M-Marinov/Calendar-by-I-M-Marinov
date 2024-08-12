@@ -127,6 +127,52 @@ public class CalendarController : Controller
         return View(model);
     }
 
+    [HttpPost]
+    public async Task<IActionResult> DeletePrimaryEvent(string eventId)
+    {
+        try
+        {
+            await _googleCalendarService.DeleteEventAsync("primary", eventId);
+            ViewBag.DeleteMessage = "Event deleted successfully.";
+        }
+        catch (Exception ex)
+        {
+            ViewBag.DeleteMessage = $"Failed to delete the event. Error: {ex.Message}";
+        }
+
+        // Reload the view to show the confirmation message
+        var events = await _googleCalendarService.GetEventsAsync("primary");
+        return View("ViewNewEventAdded", events);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> ConfirmDelete(string eventId)
+    {
+        if (string.IsNullOrEmpty(eventId))
+        {
+            return RedirectToAction("ViewNewEventAdded", new { message = "Event ID is missing." });
+        }
+
+        try
+        {
+            var eventToDelete = await _googleCalendarService.GetEventByIdAsync("primary", eventId);
+
+            if (eventToDelete != null)
+            {
+                return View(eventToDelete); // Ensure this view path matches the file location
+            }
+            else
+            {
+                return RedirectToAction("ViewNewEventAdded", new { message = "Event does not exist." });
+            }
+        }
+        catch (Exception ex)
+        {
+            return RedirectToAction("ViewNewEventAdded", new { message = $"Failed to load event details. Error: {ex.Message}" });
+        }
+    }
+
+
 
     [HttpGet]
     public async Task<IActionResult> SearchEventByName(SearchEventViewModel model)
@@ -158,7 +204,6 @@ public class CalendarController : Controller
 
         return View("EditEvents", eventViewModels);
     }
-
 
     [HttpGet]
     public async Task<IActionResult> Edit(string id)
@@ -343,7 +388,5 @@ public class CalendarController : Controller
         // Pass the list of updated events to the view
         return View("UpdateEvents", updatedEvents);
     }
-
-
 
 }

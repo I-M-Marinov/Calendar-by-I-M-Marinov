@@ -1,0 +1,23 @@
+﻿@model Google.Apis.Calendar.v3.Data.Event
+
+
+<h2 style="text-align: center;">Are you sure you want to delete the following event?</h2>
+
+
+<ul style="text-align: center; list-style-type: none;">
+	<li style="text-align: center;">
+		<br />
+		<br />
+		<strong>@Model.Summary</strong><br/>
+		Start: @Model.Start.DateTime?.ToString("MMMM dd, yyyy h:mm")<br/>
+		End: @Model.End.DateTime?.ToString("MMMM dd, yyyy h:mm")<br/>
+		Location: @Model.Location<br/>
+	</li>
+</ul>
+<br />
+<!-- Form to confirm deletion -->
+<form asp-action="DeletePrimaryEvent" method="post" style="text-align: center;">
+	<input type="hidden" name="eventId" value="@Model.Id" />
+	<button type="submit" class="btn btn-danger btn-sm">Confirm Delete</button>
+	<a href="@Url.Action("ViewNewEventAdded")" class="btn btn-secondary btn-sm">Cancel</a>
+</form>

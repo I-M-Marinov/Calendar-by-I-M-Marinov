@@ -2,28 +2,41 @@
 
 <h2>New Calendar Event Added!</h2>
 
+@if (ViewBag.DeleteMessage != null)
+{
+	<div class="alert @((ViewBag.DeleteMessage.Contains("Failed") ? "alert-danger" : "alert-success"))">
+		@ViewBag.DeleteMessage
+	</div>
+}
+
 @if (Model != null && Model.Count > 0)
 {
-    var lastAdded = Model.OrderByDescending(m => m.Created ?? m.Updated).FirstOrDefault();
+	var lastAdded = Model.OrderByDescending(m => m.Created ?? m.Updated).FirstOrDefault();
 
-    if (lastAdded != null)
-    {
-        <ul style="align-self:center">
-            <li>
-                <strong>@lastAdded.Summary</strong><br />
-                Start: @lastAdded.Start.DateTime?.ToString("MMMM dd, yyyy h:mm")<br />
-                End: @lastAdded.End.DateTime?.ToString("MMMM dd, yyyy h:mm")<br />
-                Location: @lastAdded.Location<br />
-                <br />
-                <!-- Edit Button -->
-                <a asp-action="EditEvent" asp-route-eventId="@lastAdded.Id" class="btn btn-primary btn-sm">Edit</a>
+	if (lastAdded != null)
+	{
+		<span>
+			<ul>
+				<li style="align-text:center">
+					<strong>@lastAdded.Summary</strong><br />
+					Start: @lastAdded.Start.DateTime?.ToString("MMMM dd, yyyy h:mm")<br />
+					End: @lastAdded.End.DateTime?.ToString("MMMM dd, yyyy h:mm")<br />
+					Location: @lastAdded.Location<br />
+					<br />
+					<!-- Edit Button -->
+					<a asp-action="EditEvent" asp-route-eventId="@lastAdded.Id" class="btn btn-primary btn-sm">Edit</a>
 
-                <!-- Delete Button -->
-                <form asp-action="Delete" asp-route-id="@lastAdded.Id" method="post" style="display:inline;">
-                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this event ?');">Delete</button>
-                </form>
-            </li>
-        </ul>
-    }
-
+					<!-- Delete Button -->
+					<form asp-action="ConfirmDelete" method="get" style="display:inline;">
+						<input type="hidden" name="eventId" value="@lastAdded.Id" />
+						<button type="submit" class="btn btn-danger btn-sm">Delete</button>
+					</form>
+				</li>
+			</ul>
+		</span>
+	}
+}
+else
+{
+	<p>No events found.</p>
 }

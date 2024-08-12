@@ -28,5 +28,11 @@ namespace Calendar_by_I_M_Marinov.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+        public IActionResult Error(string message)
+        {
+            ViewBag.ErrorMessage = message;
+            return View();
+        }
     }
 }

@@ -63,14 +63,12 @@ public class GoogleCalendarService: IGoogleCalendarService
 		var events = await request.ExecuteAsync();
 		return events.Items;
 	}
-
     // this method is only returning events by id from the Primary calendar !!!! 
     public virtual async Task<Event> GetEventByIdAsync(string eventId)
     {
         var request = _service.Events.Get("primary", eventId); 
         return await request.ExecuteAsync();
     }
-
     // overload of the original method taking calendarId and eventId
     public async Task<Event> GetEventByIdAsync(string calendarId, string eventId)
     {
@@ -101,6 +99,29 @@ public class GoogleCalendarService: IGoogleCalendarService
         // Otherwise, create a new event
         var insertRequest = _service.Events.Insert(newEvent, calendarId);
         return await insertRequest.ExecuteAsync();
+    }
+
+    public async Task DeleteEventAsync(string calendarId, string eventId)
+    {
+        try
+        {
+            var request = _service.Events.Delete(calendarId, eventId);
+            await request.ExecuteAsync();
+        }
+        catch (Google.GoogleApiException ex) when (ex.HttpStatusCode == System.Net.HttpStatusCode.NotFound)
+        {
+            Console.WriteLine($"The event with ID '{eventId}' in calendar '{calendarId}' was not found.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred while trying to delete the event: {ex.Message}");
+        }
+    }
+
+    public async Task DeleteEventAsync(string eventId)
+    {
+        var request = _service.Events.Delete("primary", eventId);
+        await request.ExecuteAsync();
     }
 
     public async Task<IList<Event>> GetEventByIdAcrossAllCalendarsAsync(string eventId)
@@ -139,23 +160,6 @@ public class GoogleCalendarService: IGoogleCalendarService
 
         var result = await updateRequest.ExecuteAsync();
         return result;
-    }
-
-    public async Task<Event> GetLastCreatedEventAsync(string calendarId)
-    {
-        // Create the request to fetch events from the calendar
-        var request = _service.Events.List(calendarId);
-        request.OrderBy = EventsResource.ListRequest.OrderByEnum.StartTime;
-        request.SingleEvents = true;
-        request.MaxResults = 1;
-        request.TimeMin = DateTime.Now.AddYears(-1); // Adjust the time range as needed
-        request.TimeMax = DateTime.Now; // Adjust the time range as needed
-
-        // Execute the request
-        var events = await request.ExecuteAsync();
-
-        // Return the last created event if any
-        return events.Items?.FirstOrDefault();
     }
 
     //TODO:
