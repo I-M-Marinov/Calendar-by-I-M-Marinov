@@ -10,7 +10,7 @@
         </div>
         <div class="card-body">
             <!-- Form for each event -->
-            <form asp-action="EditEvent" asp-route-calendarId="@eventModel.CalendarId" asp-route-eventId="@eventModel.EventId" method="post">
+            <form asp-action="EditEvents" method="post">
                 <div class="form-group">
                     <label for="Summary_@eventModel.EventId">Event Name (Summary)</label>
                     <input type="text" id="Summary_@eventModel.EventId" name="events[@eventModel.EventId].Summary" class="form-control" value="@eventModel.Summary" />

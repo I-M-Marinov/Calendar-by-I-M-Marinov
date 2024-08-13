@@ -86,6 +86,9 @@ public class CalendarController : Controller
             Events = events
         };
 
+        ViewBag.SuccessMessage = TempData["SuccessMessage"];
+        ViewBag.SuccessEventId = TempData["SuccessEventId"];
+
         // Return the view with the view model
         return View(viewModel);
     }
@@ -104,7 +107,7 @@ public class CalendarController : Controller
         return View(new EventViewModel());
     }
     [HttpPost]
-    public async Task<IActionResult> CreateEvent(EventViewModel model)
+    public virtual async Task<IActionResult> CreateEvent(EventViewModel model)
     {
         if (ModelState.IsValid)
         {
@@ -138,7 +141,8 @@ public class CalendarController : Controller
 
         return View(model);
     }
-    [HttpPost]
+
+	[HttpPost]
     public async Task<IActionResult> DeletePrimaryEvent(string eventId)
     {
         try
@@ -227,7 +231,7 @@ public class CalendarController : Controller
         return View(eventToEdit);
     }
     [HttpGet]
-    public async Task<IActionResult> EditEvent(string eventId)
+    public async Task<IActionResult> EditPrimaryEvent(string eventId)
     {
         var eventToEdit = await _googleCalendarService.GetEventByIdAsync("primary", eventId);
 
@@ -246,7 +250,7 @@ public class CalendarController : Controller
         };
 
         ViewBag.PageTitle = "Edit Event";
-        ViewBag.FormAction = "EditEvent";
+        ViewBag.FormAction = "EditPrimaryEvent";
         ViewBag.ButtonText = "Save Changes";
         ViewBag.EventId = eventId;
 
@@ -254,7 +258,7 @@ public class CalendarController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> EditEvent(EventViewModel model, string eventId)
+    public async Task<IActionResult> EditPrimaryEvent(EventViewModel model, string eventId)
     {
         if (ModelState.IsValid)
         {
@@ -289,14 +293,44 @@ public class CalendarController : Controller
 
         // Redisplay form with errors
         ViewBag.PageTitle = "Edit Event";
-        ViewBag.FormAction = "EditEvent";
+        ViewBag.FormAction = "EditPrimaryEvent";
         ViewBag.ButtonText = "Save Changes";
         ViewBag.EventId = eventId;
 
         return View("CreateEvent", model);
     }
 
-    [HttpPost]
+    public async Task<IActionResult> EditEvent(string calendarId, string eventId)
+    {
+	    // Retrieve the event from the Google Calendar
+	    var eventToEdit = await _googleCalendarService.GetEventByIdAsync(calendarId, eventId);
+
+	    if (eventToEdit == null)
+	    {
+		    return NotFound($"Event with ID {eventId} not found.");
+	    }
+
+	    // Map the retrieved event to the EditEventViewModel
+	    var viewModel = new EditEventViewModel
+	    {
+		    EventId = eventToEdit.Id,
+		    CalendarId = calendarId,
+		    Summary = eventToEdit.Summary,
+		    Location = eventToEdit.Location,
+		    Start = eventToEdit.Start.DateTime ?? DateTime.MinValue,
+		    End = eventToEdit.End.DateTime ?? DateTime.MinValue
+	    };
+
+	    // Set the ViewBag properties for the view
+	    ViewBag.PageTitle = "Edit Event";
+	    ViewBag.FormAction = "UpdateEvent";
+	    ViewBag.ButtonText = "Save Changes";
+
+	    // Return the view for editing the event
+	    return View("UpdateEvent", viewModel);
+
+    }
+	[HttpPost]
     public async Task<IActionResult> EditEvents(Dictionary<string, EditEventViewModel> events)
     {
         // Validate and process each event
@@ -395,6 +429,49 @@ public class CalendarController : Controller
 
         // Pass the list of updated events to the view
         return View("UpdateEvents", updatedEvents);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> UpdateEvent(EditEventViewModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            // If the model state is invalid, return to the view with the current model.
+            ViewBag.PageTitle = "Edit Event";
+            ViewBag.FormAction = "UpdateEvent";
+            ViewBag.ButtonText = "Save Changes";
+            return View("UpdateEvent", model);
+        }
+
+        try
+        {
+            var updatedEvent = new Event
+            {
+                Id = model.EventId,
+                Summary = model.Summary,
+                Start = new EventDateTime { DateTime = model.Start },
+                End = new EventDateTime { DateTime = model.End },
+                Location = model.Location
+            };
+
+            // Update the event in the Google Calendar
+            await _googleCalendarService.UpdateEventAsync(model.CalendarId, model.EventId, updatedEvent);
+
+            TempData["SuccessMessage"] = $"The event was updated successfully.";
+            TempData["SuccessEventId"] = model.EventId;
+
+            // Redirect to the calendar view after successful update
+            return RedirectToAction("ListCalendarsAndEvents", new { selectedCalendarId = model.CalendarId });
+        }
+        catch (Exception ex)
+        {
+            // Handle exceptions and return an error view or message
+            ModelState.AddModelError("", $"Error updating event: {ex.Message}");
+            ViewBag.PageTitle = "Edit Event";
+            ViewBag.FormAction = "UpdateEvent";
+            ViewBag.ButtonText = "Save Changes";
+            return View("UpdateEvent", model);
+        }
     }
 
 }

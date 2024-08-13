@@ -84,6 +84,13 @@ public class GoogleCalendarService: IGoogleCalendarService
 		return createdEvent;
 	}
 
+    public async Task<Event> AddEventAsync(string calendarId, Event newEvent)
+    {
+        var insertRequest = _service.Events.Insert(newEvent, calendarId);
+        var createdEvent = await insertRequest.ExecuteAsync();
+        return createdEvent;
+    }
+
     public async Task<Event> AddEventAsync(string calendarId, string eventId, Event newEvent)
     {
         if (newEvent == null)
