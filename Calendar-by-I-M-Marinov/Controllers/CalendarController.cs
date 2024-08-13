@@ -2,10 +2,7 @@
 using Google.Apis.Calendar.v3.Data;
 using Calendar_by_I_M_Marinov.Services.Contracts;
 using Calendar_by_I_M_Marinov.Models;
-using System.Reflection;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.Google;
+using static Calendar_by_I_M_Marinov.Common.DateTimeExtensions;
 
 public class CalendarController : Controller
 {
@@ -218,9 +215,9 @@ public class CalendarController : Controller
         {
             EventId = e.Id,
             Summary = e.Summary,
-            Start = e.Start.DateTime,
-            End = e.End.DateTime,
-            Location = e.Location,
+            Start = e.Start.DateTimeDateTimeOffset?.ToDateTime(),
+            End = e.End.DateTimeDateTimeOffset?.ToDateTime(),
+			Location = e.Location,
             CalendarId = e.Organizer?.Email 
         }).ToList();
 
@@ -255,9 +252,9 @@ public class CalendarController : Controller
             Summary = eventToEdit.Summary,
             Description = eventToEdit.Description,
             Location = eventToEdit.Location,
-            Start = eventToEdit.Start.DateTime ?? DateTime.MinValue,
-            End = eventToEdit.End.DateTime ?? DateTime.MinValue
-        };
+            Start = eventToEdit.Start.DateTimeDateTimeOffset?.ToDateTime(),
+			End = eventToEdit.End.DateTimeDateTimeOffset?.ToDateTime()
+		};
 
         ViewBag.PageTitle = "Edit Event";
         ViewBag.FormAction = "EditPrimaryEvent";
@@ -280,12 +277,12 @@ public class CalendarController : Controller
                 Location = model.Location,
                 Start = new EventDateTime
                 {
-                    DateTime = model.Start,
+                    DateTimeDateTimeOffset = model.Start,
                     TimeZone = "Europe/Sofia"
                 },
                 End = new EventDateTime
                 {
-                    DateTime = model.End,
+	                DateTimeDateTimeOffset = model.End,
                     TimeZone = "Europe/Sofia"
                 }
             };
@@ -310,7 +307,8 @@ public class CalendarController : Controller
         return View("CreateEvent", model);
     }
 
-    public async Task<IActionResult> EditEvent(string calendarId, string eventId)
+    [HttpGet]
+	public async Task<IActionResult> EditEvent(string calendarId, string eventId)
     {
 	    // Retrieve the event from the Google Calendar
 	    var eventToEdit = await _googleCalendarService.GetEventByIdAsync(calendarId, eventId);
@@ -320,19 +318,19 @@ public class CalendarController : Controller
 		    return NotFound($"Event with ID {eventId} not found.");
 	    }
 
-	    // Map the retrieved event to the EditEventViewModel
-	    var viewModel = new EditEventViewModel
-	    {
-		    EventId = eventToEdit.Id,
-		    CalendarId = calendarId,
-		    Summary = eventToEdit.Summary,
-		    Location = eventToEdit.Location,
-		    Start = eventToEdit.Start.DateTime ?? DateTime.MinValue,
-		    End = eventToEdit.End.DateTime ?? DateTime.MinValue
-	    };
+		// Map the retrieved event to the EditEventViewModel
+		var viewModel = new EditEventViewModel
+		{
+			EventId = eventToEdit.Id,
+			CalendarId = calendarId,
+			Summary = eventToEdit.Summary,
+			Location = eventToEdit.Location,
+			Start = eventToEdit.Start.DateTimeDateTimeOffset?.ToDateTime(), 
+			End = eventToEdit.End.DateTimeDateTimeOffset?.ToDateTime() 
+		};
 
-	    // Set the ViewBag properties for the view
-	    ViewBag.PageTitle = "Edit Event";
+		// Set the ViewBag properties for the view
+		ViewBag.PageTitle = "Edit Event";
 	    ViewBag.FormAction = "UpdateEvent";
 	    ViewBag.ButtonText = "Save Changes";
 
@@ -340,6 +338,7 @@ public class CalendarController : Controller
 	    return View("UpdateEvent", viewModel);
 
     }
+
 	[HttpPost]
     public async Task<IActionResult> EditEvents(Dictionary<string, EditEventViewModel> events)
     {
@@ -417,8 +416,8 @@ public class CalendarController : Controller
                 {
                     Id = eventId,
                     Summary = eventModel.Summary,
-                    Start = new EventDateTime { DateTime = eventModel.Start },
-                    End = new EventDateTime { DateTime = eventModel.End },
+                    Start = new EventDateTime { DateTimeDateTimeOffset = eventModel.Start },
+                    End = new EventDateTime { DateTimeDateTimeOffset = eventModel.End },
                     Location = eventModel.Location
                 };
 

@@ -76,7 +76,7 @@ public class GoogleCalendarService: IGoogleCalendarService
         return await request.ExecuteAsync();
     }
 
-    /* The two methods below are used for Adding and Editing events respectively */
+    /* The three methods below are used for Adding and Editing events respectively */
     public async Task<Event> AddEventAsync(Event newEvent)
 	{
 		var insertRequest = _service.Events.Insert(newEvent, "primary");
