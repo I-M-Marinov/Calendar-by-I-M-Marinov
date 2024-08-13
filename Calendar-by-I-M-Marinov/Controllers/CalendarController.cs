@@ -15,7 +15,7 @@ public class CalendarController : Controller
 
 	public async Task<IActionResult> ListCalendars()
     {
-        var calendars = await _googleCalendarService.GetCalendarsAsync();
+        var calendars = await _googleCalendarService.GetAllCalendarsAsync();
         var calendarViewModels = calendars.Select(c => new CalendarViewModel
         {
             CalendarName = c.Summary,
@@ -32,7 +32,7 @@ public class CalendarController : Controller
     public async Task<IActionResult> ListCalendarsAndEvents(string selectedCalendarId)
     {
         // Get all calendars
-        var calendars = await _googleCalendarService.GetCalendarsAsync();
+        var calendars = await _googleCalendarService.GetAllCalendarsAsync();
 
         // Map calendar data to view models
         var calendarViewModels = calendars.Select(c => new CalendarViewModel
@@ -204,6 +204,14 @@ public class CalendarController : Controller
 
         var matchingEvents = await _googleCalendarService.GetEventByIdAcrossAllCalendarsAsync(model.EventName);
 
+        foreach (var evt in matchingEvents)
+        {
+            Console.WriteLine($"Event ID: {evt.Id}");
+            Console.WriteLine($"Creator.Self: {evt.Creator.Self}");
+            Console.WriteLine($"GuestsCanModify: {evt.GuestsCanModify}");
+            Console.WriteLine($"Status: {evt.Status}");
+        }
+
         if (matchingEvents == null || !matchingEvents.Any())
         {
             ModelState.AddModelError("", "No events found with the provided name.");
@@ -218,11 +226,18 @@ public class CalendarController : Controller
             Start = e.Start.DateTimeDateTimeOffset?.ToDateTime(),
             End = e.End.DateTimeDateTimeOffset?.ToDateTime(),
 			Location = e.Location,
-            CalendarId = e.Organizer?.Email 
+            CalendarId = e.Organizer?.Email!,
+            IsCreator = e.Creator?.Self ?? false, 
+            GuestsCanModify = e.GuestsCanModify ?? false,
+            Status = e.Status
         }).ToList();
+
+
 
         return View("EditEvents", eventViewModels);
     }
+
+
 
     [HttpGet]
     public async Task<IActionResult> Edit(string id)

@@ -12,26 +12,33 @@
                     <h3>Edit Event: @eventModel.Summary</h3>
                 </div>
                 <div class="card-body">
+                    @if (!eventModel.IsEditable)
+                    {
+                        <div class="alert alert-warning">
+                            You do not have permission to edit this event.
+                        </div>
+                    }
+
                     <div class="form-group">
                         <label for="Summary_@eventModel.EventId">Event Name (Summary)</label>
-                        <input type="text" id="Summary_@eventModel.EventId" name="events[@eventModel.EventId].Summary" class="form-control" value="@eventModel.Summary" />
+                        <input type="text" id="Summary_@eventModel.EventId" name="events[@eventModel.EventId].Summary" class="form-control" value="@eventModel.Summary" @(eventModel.IsEditable ? "" : "disabled") />
                     </div>
 
                     <div class="form-group">
                         <label for="Start_@eventModel.EventId">Start Time</label>
                         <input type="datetime-local" id="Start_@eventModel.EventId" name="events[@eventModel.EventId].Start" class="form-control"
-                               value="@(eventModel.Start.HasValue ? eventModel.Start.Value.ToString("yyyy-MM-ddTHH:mm") : "")" />
+                               value="@(eventModel.Start.HasValue ? eventModel.Start.Value.ToString("yyyy-MM-ddTHH:mm") : "")" @(eventModel.IsEditable ? "" : "disabled") />
                     </div>
 
                     <div class="form-group">
                         <label for="End_@eventModel.EventId">End Time</label>
                         <input type="datetime-local" id="End_@eventModel.EventId" name="events[@eventModel.EventId].End" class="form-control"
-                               value="@(eventModel.End.HasValue ? eventModel.End.Value.ToString("yyyy-MM-ddTHH:mm") : "")" />
+                               value="@(eventModel.End.HasValue ? eventModel.End.Value.ToString("yyyy-MM-ddTHH:mm") : "")" @(eventModel.IsEditable ? "" : "disabled") />
                     </div>
 
                     <div class="form-group">
                         <label for="Location_@eventModel.EventId">Location</label>
-                        <input type="text" id="Location_@eventModel.EventId" name="events[@eventModel.EventId].Location" class="form-control" value="@eventModel.Location" />
+                        <input type="text" id="Location_@eventModel.EventId" name="events[@eventModel.EventId].Location" class="form-control" value="@eventModel.Location" @(eventModel.IsEditable ? "" : "disabled") />
                     </div>
 
                     <input type="hidden" name="events[@eventModel.EventId].EventId" value="@eventModel.EventId" />
@@ -40,7 +47,7 @@
             </div>
         }
 
-        <button type="submit" class="btn btn-success">Save Changes</button>
+        <button type="submit" class="btn btn-success" @(Model.Any(e => !e.IsEditable) ? "disabled" : "")>Save Changes</button>
     </form>
 }
 else

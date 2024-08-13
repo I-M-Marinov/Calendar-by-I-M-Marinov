@@ -6,7 +6,8 @@ namespace Calendar_by_I_M_Marinov.Services.Contracts
 {
     public interface IGoogleCalendarService
     {
-         Task<IList<CalendarListEntry>> GetCalendarsAsync();
+         Task<IList<CalendarListEntry>> GetAllCalendarsAsync();
+         Task<IList<CalendarListEntry>> GetEditableCalendarsAsync();
          Task<IList<Event>> GetEventsAsync(string calendarId);
          Task<Event> GetEventByIdAsync(string eventId);
          Task<Event> GetEventByIdAsync(string calendarId, string eventId);

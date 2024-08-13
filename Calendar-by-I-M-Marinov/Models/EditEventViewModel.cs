@@ -8,6 +8,15 @@
         public DateTime? Start { get; set; }
         public DateTime? End { get; set; }
         public string? Location { get; set; }
+        
+        // New properties to verify the bool isEditable
+        public bool IsCreator { get; set; }
+        public bool GuestsCanModify { get; set; }
+        public string Status { get; set; }
+
+        public bool IsEditable => (IsCreator || GuestsCanModify) && Status != "cancelled";
+
+
     }
 
 }
