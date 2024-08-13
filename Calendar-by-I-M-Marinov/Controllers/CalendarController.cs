@@ -104,40 +104,67 @@ public class CalendarController : Controller
         return View(new EventViewModel());
     }
     [HttpPost]
-    public virtual async Task<IActionResult> CreateEvent(EventViewModel model)
+    public async Task<IActionResult> CreateEvent(EventViewModel model)
     {
-        if (ModelState.IsValid)
-        {
-            var newEvent = new Event
-            {
-                Summary = model.Summary,
-                Location = model.Location,
-                Description = model.Description,
-                Start = new EventDateTime
-                {
-                    DateTimeDateTimeOffset = model.Start,
-                    TimeZone = "Europe/Sofia"
-                },
-                End = new EventDateTime
-                {
-                    DateTimeDateTimeOffset = model.End,
-                    TimeZone = "Europe/Sofia"
-                }
-            };
+       
+        // Convert nullable DateTime to string in required format
+        var startDateTime = model.Start.HasValue ? model.Start.Value.ToString("yyyy-MM-ddTHH:mm:ssZ") : null;
+        var endDateTime = model.End.HasValue ? model.End.Value.ToString("yyyy-MM-ddTHH:mm:ssZ") : null;
 
-            try
+        var newEvent = new Event
+        {
+            Summary = model.Summary,
+            Description = model.Description,
+            Location = model.Location,
+            Visibility = model.Visibility, // Set visibility based on user selection
+
+            Start = model.EventType == "allDay" ? new EventDateTime
             {
-                await _googleCalendarService.AddEventAsync(newEvent);
-                return RedirectToAction("ViewNewEventAdded");
-            }
-            catch (Exception ex)
+                Date = model.Start?.ToString("yyyy-MM-dd"), // Date-only format
+                TimeZone = "Europe/Sofia"
+            } : new EventDateTime
             {
-                ModelState.AddModelError("", $"Error creating event: {ex.Message}");
-            }
+                DateTime = DateTime.Parse(startDateTime), // Full datetime format
+                TimeZone = "Europe/Sofia"
+            },
+
+            End = model.EventType == "allDay" ? new EventDateTime
+            {
+                Date = model.End?.ToString("yyyy-MM-dd"), // Date-only format
+                TimeZone = "Europe/Sofia"
+            } : new EventDateTime
+            {
+                DateTime = DateTime.Parse(endDateTime), // Full datetime format
+                TimeZone = "Europe/Sofia"
+            },
+
+            // Add recurrence rule for annual events if needed
+            Recurrence = model.EventType == "annual" ? new List<string>
+        {
+            $"RRULE:FREQ=YEARLY;BYMONTH={model.Start?.Month};BYMONTHDAY={model.Start?.Day}"
+        } : null
+        };
+
+        try
+        {
+            await _googleCalendarService.AddEventAsync("primary", newEvent);
+            return RedirectToAction("ViewNewEventAdded", new { message = "Event created successfully." });
         }
+        catch (Exception ex)
+        {
+            ModelState.AddModelError("", $"Error creating event: {ex.Message}");
+        }
+    
 
         return View(model);
     }
+
+
+
+
+
+
+
 
     [HttpPost]
     public async Task<IActionResult> DeletePrimaryEvent(string eventId)
@@ -236,8 +263,6 @@ public class CalendarController : Controller
 
         return View("EditEvents", eventViewModels);
     }
-
-
 
     [HttpGet]
     public async Task<IActionResult> Edit(string id)
