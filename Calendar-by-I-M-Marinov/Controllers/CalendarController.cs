@@ -142,51 +142,61 @@ public class CalendarController : Controller
         return View(model);
     }
 
-	[HttpPost]
+    [HttpPost]
     public async Task<IActionResult> DeletePrimaryEvent(string eventId)
     {
-        try
-        {
-            await _googleCalendarService.DeleteEventAsync("primary", eventId);
-            ViewBag.DeleteMessage = "Event deleted successfully.";
-        }
-        catch (Exception ex)
-        {
-            ViewBag.DeleteMessage = $"Failed to delete the event. Error: {ex.Message}";
-        }
+	    if (string.IsNullOrEmpty(eventId))
+	    {
+		    TempData["ErrorMessage"] = "Event ID is missing.";
+		    TempData["IsSuccess"] = false;
+		    return RedirectToAction("ConfirmDelete", new { eventId });
+	    }
 
-        // Reload the view to show the confirmation message
-        var events = await _googleCalendarService.GetEventsAsync("primary");
-        return View("ViewNewEventAdded", events);
+	    try
+	    {
+		    await _googleCalendarService.DeleteEventAsync("primary", eventId);
+		    TempData["IsSuccess"] = true;
+	    }
+	    catch (Exception ex)
+	    {
+		    TempData["ErrorMessage"] = $"Failed to delete event. Error: {ex.Message}";
+		    TempData["IsSuccess"] = false;
+	    }
+
+	    return RedirectToAction("ConfirmDelete", new { eventId });
     }
-    [HttpGet]
-    public async Task<IActionResult> ConfirmDelete(string eventId)
-    {
-        if (string.IsNullOrEmpty(eventId))
-        {
-            return RedirectToAction("ViewNewEventAdded", new { message = "Event ID is missing." });
-        }
+	[HttpGet]
+	public async Task<IActionResult> ConfirmDelete(string eventId)
+	{
+		if (string.IsNullOrEmpty(eventId))
+		{
+			TempData["ErrorMessage"] = "Event ID is missing.";
+			return RedirectToAction("ListCalendarsAndEvents");
+		}
 
-        try
-        {
-            var eventToDelete = await _googleCalendarService.GetEventByIdAsync("primary", eventId);
+		try
+		{
+			var eventToDelete = await _googleCalendarService.GetEventByIdAsync("primary", eventId);
 
-            if (eventToDelete != null)
-            {
-                return View(eventToDelete); // Ensure this view path matches the file location
-            }
-            else
-            {
-                return RedirectToAction("ViewNewEventAdded", new { message = "Event does not exist." });
-            }
-        }
-        catch (Exception ex)
-        {
-            return RedirectToAction("ViewNewEventAdded", new { message = $"Failed to load event details. Error: {ex.Message}" });
-        }
-    }
+			if (eventToDelete != null)
+			{
+				// Pass the event details to the view
+				return View(eventToDelete);
+			}
+			else
+			{
+				TempData["ErrorMessage"] = "Event does not exist.";
+				return RedirectToAction("ListCalendarsAndEvents");
+			}
+		}
+		catch (Exception ex)
+		{
+			TempData["ErrorMessage"] = $"Failed to load event details. Error: {ex.Message}";
+			return RedirectToAction("ListCalendarsAndEvents");
+		}
+	}
 
-    [HttpGet]
+	[HttpGet]
     public async Task<IActionResult> SearchEventByName(SearchEventViewModel model)
     {
         if (string.IsNullOrEmpty(model.EventName))
