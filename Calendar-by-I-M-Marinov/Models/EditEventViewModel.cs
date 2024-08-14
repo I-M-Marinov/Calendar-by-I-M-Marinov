@@ -1,4 +1,6 @@
-﻿namespace Calendar_by_I_M_Marinov.Models
+﻿using Google.Apis.Calendar.v3.Data;
+
+namespace Calendar_by_I_M_Marinov.Models
 {
     public class EditEventViewModel
     {
@@ -14,8 +16,18 @@
         public bool GuestsCanModify { get; set; }
         public string Status { get; set; }
 
-        public bool IsEditable => (IsCreator || GuestsCanModify) && Status != "cancelled";
+        // New properties to assess editability
+        public string? Source { get; set; } // Event source (e.g., Gmail, Reservation)
+        public bool? Locked { get; set; }   // Indicates if the event is locked
+        public string? Transparency { get; set; } // Event transparency (e.g., "opaque", "transparent")
 
+        // Enhanced logic for determining if the event is editable
+        public bool IsEditable =>
+            (IsCreator || GuestsCanModify) &&
+            Status != "cancelled" &&
+            (Locked != true) &&
+            (Source?.ToLower() != "gmail") &&
+            (Transparency?.ToLower() != "transparent");
 
     }
 

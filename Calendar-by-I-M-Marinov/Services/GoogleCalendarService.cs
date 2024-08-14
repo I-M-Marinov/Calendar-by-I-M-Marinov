@@ -67,8 +67,8 @@ public class GoogleCalendarService : IGoogleCalendarService
     {
         var request = _service.Events.List(calendarId);
 
-        
-        request.Fields = "items(id,summary,start,end,location,creator,guestsCanModify,status)"; // all fields needed
+
+        request.Fields = "items(id,summary,start,end,location,creator,guestsCanModify,status,transparency,extendedProperties)";
 
         request.TimeMin = DateTime.UtcNow; // Use UTC
         request.TimeMax = new DateTime(DateTime.Now.Year, 12, 31, 23, 59, 59); // End of the year

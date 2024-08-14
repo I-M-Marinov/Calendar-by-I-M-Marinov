@@ -18,7 +18,7 @@ namespace Calendar_by_I_M_Marinov.Models
         public DateTime? End { get; set; } = DateTime.Now;
 
         public string Visibility { get; set; } = "public"; // Default to public
-        public string EventType { get; set; } = "single"; // Options: single, annual, allDay
+        public string EventType { get; set; } = "single"; // Options: single, annual, allDay // Default to single
     }
 
 }

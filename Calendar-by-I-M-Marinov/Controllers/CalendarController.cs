@@ -158,14 +158,6 @@ public class CalendarController : Controller
 
         return View(model);
     }
-
-
-
-
-
-
-
-
     [HttpPost]
     public async Task<IActionResult> DeletePrimaryEvent(string eventId)
     {
@@ -231,12 +223,15 @@ public class CalendarController : Controller
 
         var matchingEvents = await _googleCalendarService.GetEventByIdAcrossAllCalendarsAsync(model.EventName);
 
+        // for debugging purposes only
         foreach (var evt in matchingEvents)
         {
             Console.WriteLine($"Event ID: {evt.Id}");
             Console.WriteLine($"Creator.Self: {evt.Creator.Self}");
             Console.WriteLine($"GuestsCanModify: {evt.GuestsCanModify}");
-            Console.WriteLine($"Status: {evt.Status}");
+            Console.WriteLine($"Source: {evt.Source}");
+            Console.WriteLine($"Locked: {evt.Locked}");
+            Console.WriteLine($"Transparency: {evt.Transparency}");
         }
 
         if (matchingEvents == null || !matchingEvents.Any())
@@ -256,7 +251,10 @@ public class CalendarController : Controller
             CalendarId = e.Organizer?.Email!,
             IsCreator = e.Creator?.Self ?? false, 
             GuestsCanModify = e.GuestsCanModify ?? false,
-            Status = e.Status
+            Status = e.Status,
+            Source = e.Source?.ToString() ?? string.Empty,
+            Locked = e.Locked ?? false,
+            Transparency = e.Transparency ?? string.Empty
         }).ToList();
 
 
