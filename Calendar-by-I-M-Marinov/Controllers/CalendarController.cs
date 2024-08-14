@@ -22,7 +22,9 @@ public class CalendarController : Controller
             CalendarId = c.Id,
             Description = c.Description,
             AccessRole = c.AccessRole
-        }).ToList();
+        })
+        .OrderBy(c => c.AccessRole)
+            .ToList();
 
 
 
