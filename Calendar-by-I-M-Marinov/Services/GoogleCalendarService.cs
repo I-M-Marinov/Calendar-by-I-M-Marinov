@@ -50,39 +50,64 @@ public class GoogleCalendarService : IGoogleCalendarService
 		return calendarList.Items;
 	}
 
-    public async Task<IList<CalendarListEntry>> GetEditableCalendarsAsync()
-    {
-        var calendarListRequest = _service.CalendarList.List();
-        var calendarList = await calendarListRequest.ExecuteAsync();
+	public async Task<IList<CalendarListEntry>> GetEditableCalendarsAsync()
+	{
+		var calendarListRequest = _service.CalendarList.List();
+		var calendarList = await calendarListRequest.ExecuteAsync();
 
-        // Filter the calendars to include only those where the access role is 'owner' or 'writer'
-        var filteredCalendars = calendarList.Items
-            .Where(c => c.AccessRole == "owner" || c.AccessRole == "writer")
-            .ToList();
+		// Filter the calendars to include only those where the access role is 'owner' or 'writer'
+		var filteredCalendars = calendarList.Items
+			.Where(c => c.AccessRole == "owner" || c.AccessRole == "writer")
+			.ToList();
 
-        return filteredCalendars;
-    }
+		return filteredCalendars;
+	}
 
-    public async Task<IList<Event>> GetEventsAsync(string calendarId)
-    {
-        var request = _service.Events.List(calendarId);
+	public async Task<List<Event>> GetEventsForCalendarAsync(string calendarId)
+	{
+		var events = new List<Event>();
+		var request = _service.Events.List(calendarId);
+
+		request.TimeMin = DateTime.UtcNow; // Use UTC
+		request.TimeMax = new DateTime(DateTime.Now.Year, 12, 31, 23, 59, 59); // End of the year
+		request.ShowDeleted = false; // Exclude deleted events
+		request.SingleEvents = true; // Expand recurring events
+		request.MaxResults = 100; // Limit to 100 events
+		request.OrderBy = EventsResource.ListRequest.OrderByEnum.StartTime; // Order by start time
+
+		do
+		{
+			var response = await request.ExecuteAsync();
+			events.AddRange(response.Items);
+
+			// Check if there are more pages of events
+			request.PageToken = response.NextPageToken;
+		} while (!string.IsNullOrEmpty(request.PageToken));
+
+		return events;
+	}
+
+	public async Task<IList<Event>> GetEventsAsync(string calendarId)
+	{
+		var request = _service.Events.List(calendarId);
 
 
-        request.Fields = "items(id,summary,start,end,location,creator,guestsCanModify,status,transparency,extendedProperties)";
+		request.Fields =
+			"items(id,summary,start,end,location,creator,guestsCanModify,status,transparency,extendedProperties)";
 
-        request.TimeMin = DateTime.UtcNow; // Use UTC
-        request.TimeMax = new DateTime(DateTime.Now.Year, 12, 31, 23, 59, 59); // End of the year
-        request.ShowDeleted = false; // Exclude deleted events
-        request.SingleEvents = true; // Expand recurring events
-        request.MaxResults = 100; // Limit to 100 events
-        request.OrderBy = EventsResource.ListRequest.OrderByEnum.StartTime; // Order by start time
+		request.TimeMin = DateTime.UtcNow; // Use UTC
+		request.TimeMax = new DateTime(DateTime.Now.Year, 12, 31, 23, 59, 59); // End of the year
+		request.ShowDeleted = false; // Exclude deleted events
+		request.SingleEvents = true; // Expand recurring events
+		request.MaxResults = 100; // Limit to 100 events
+		request.OrderBy = EventsResource.ListRequest.OrderByEnum.StartTime; // Order by start time
 
-        var response = await request.ExecuteAsync();
-        return response.Items;
-    }
+		var response = await request.ExecuteAsync();
+		return response.Items;
+	}
 
-    // this method is only returning events by id from the Primary calendar !!!! 
-    public virtual async Task<Event> GetEventByIdAsync(string eventId)
+	// this method is only returning events by id from the Primary calendar !!!! 
+	public virtual async Task<Event> GetEventByIdAsync(string eventId)
 	{
 		var request = _service.Events.Get("primary", eventId);
 		return await request.ExecuteAsync();
@@ -188,4 +213,3 @@ public class GoogleCalendarService : IGoogleCalendarService
 		return result;
 	}
 }
-

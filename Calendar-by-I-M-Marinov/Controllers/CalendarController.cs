@@ -3,6 +3,7 @@ using Google.Apis.Calendar.v3.Data;
 using Calendar_by_I_M_Marinov.Services.Contracts;
 using Calendar_by_I_M_Marinov.Models;
 using static Calendar_by_I_M_Marinov.Common.DateTimeExtensions;
+using Microsoft.Extensions.Logging;
 
 public class CalendarController : Controller
 {
@@ -13,24 +14,36 @@ public class CalendarController : Controller
         _googleCalendarService = googleCalendarService;
     }
 
-	public async Task<IActionResult> ListCalendars()
+    public async Task<IActionResult> ListCalendars()
     {
-        var calendars = await _googleCalendarService.GetAllCalendarsAsync();
-        var calendarViewModels = calendars.Select(c => new CalendarViewModel
-        {
-            CalendarName = c.Summary,
-            CalendarId = c.Id,
-            Description = c.Description,
-            AccessRole = c.AccessRole
-        })
-        .OrderBy(c => c.AccessRole)
-            .ToList();
+	    var calendars = await _googleCalendarService.GetAllCalendarsAsync();
 
+	    var calendarViewModels = new List<CalendarViewModel>();
 
+	    foreach (var calendar in calendars)
+	    {
+		    var events = await _googleCalendarService.GetEventsForCalendarAsync(calendar.Id);
 
-        return View("ListAllCalendars", calendarViewModels);
+		    var calendarViewModel = new CalendarViewModel
+		    {
+			    CalendarName = calendar.Summary,
+			    CalendarId = calendar.Id,
+			    Description = calendar.Description,
+			    AccessRole = calendar.AccessRole,
+			    EventsCount = events.Count 
+		    };
+
+		    calendarViewModels.Add(calendarViewModel);
+	    }
+
+	    calendarViewModels = calendarViewModels
+		    .OrderBy(c => c.AccessRole)
+		    .ToList();
+
+	    return View("ListAllCalendars", calendarViewModels);
     }
-    [HttpGet]
+
+	[HttpGet]
     public async Task<IActionResult> ListCalendarsAndEvents(string selectedCalendarId)
     {
         // Get all calendars
@@ -47,6 +60,7 @@ public class CalendarController : Controller
         IList<Event> events = new List<Event>();
         string selectedCalendarName = "";
         string accessRole = "";
+        int eventsCount = 0;
 
         // Check if the "all" calendars option is selected
         if (selectedCalendarId == "all")
@@ -70,8 +84,10 @@ public class CalendarController : Controller
         {
             // Load events for the specific calendar
             events = (await _googleCalendarService.GetEventsAsync(selectedCalendarId)).ToList();
+            eventsCount = events.Count;
 
-            var selectedCalendar = calendarViewModels.FirstOrDefault(c => c.CalendarId == selectedCalendarId);
+
+			var selectedCalendar = calendarViewModels.FirstOrDefault(c => c.CalendarId == selectedCalendarId);
             selectedCalendarName = selectedCalendar?.CalendarName ?? "Unknown Calendar";
             accessRole = selectedCalendar!.AccessRole;
         }
@@ -82,8 +98,9 @@ public class CalendarController : Controller
             SelectedCalendarId = selectedCalendarId,
             SelectedCalendarName = selectedCalendarName,
             AccessRole = accessRole, 
-            Events = events
-        };
+            Events = events,
+            EventsCount = eventsCount
+		};
 
         ViewBag.SuccessMessage = TempData["SuccessMessage"];
         ViewBag.SuccessEventId = TempData["SuccessEventId"];
@@ -213,7 +230,6 @@ public class CalendarController : Controller
 			return RedirectToAction("ListCalendarsAndEvents");
 		}
 	}
-
 	[HttpGet]
     public async Task<IActionResult> SearchEventByName(SearchEventViewModel model)
     {
