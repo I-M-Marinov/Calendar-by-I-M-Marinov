@@ -363,9 +363,9 @@ public class CalendarController : Controller
 			CalendarId = calendarId,
 			Summary = eventToEdit.Summary,
 			Location = eventToEdit.Location,
-			Start = eventToEdit.Start.DateTimeDateTimeOffset?.ToDateTime(), 
-			End = eventToEdit.End.DateTimeDateTimeOffset?.ToDateTime() 
-		};
+			Start = eventToEdit.Start.DateTimeDateTimeOffset?.ToDateTime().ToLocalTime(), 
+			End = eventToEdit.End.DateTimeDateTimeOffset?.ToDateTime().ToLocalTime()
+        };
 
 		// Set the ViewBag properties for the view
 		ViewBag.PageTitle = "Edit Event";
@@ -481,14 +481,6 @@ public class CalendarController : Controller
     [HttpPost]
     public async Task<IActionResult> UpdateEvent(EditEventViewModel model)
     {
-        if (!ModelState.IsValid)
-        {
-            // If the model state is invalid, return to the view with the current model.
-            ViewBag.PageTitle = "Edit Event";
-            ViewBag.FormAction = "UpdateEvent";
-            ViewBag.ButtonText = "Save Changes";
-            return View("UpdateEvent", model);
-        }
 
         try
         {

@@ -1,4 +1,6 @@
-﻿@model Calendar_by_I_M_Marinov.Models.CalendarEventsViewModel
+﻿@using Calendar_by_I_M_Marinov.Common
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model Calendar_by_I_M_Marinov.Models.CalendarEventsViewModel
 
 <h2>Select a Calendar</h2>
 
@@ -33,65 +35,59 @@
         <br />
         @foreach (var evt in Model.Events)
         {
+            @if (ViewBag.SuccessMessage != null && ViewBag.SuccessEventId != null && ViewBag.SuccessEventId.ToString() == evt.Id)
+            {
+                <div class="alert alert-success" style="text-align:center">
+                    @ViewBag.SuccessMessage
+                </div>
+            }
+            <li class="event-item">
+                <div class="event-info">
+                    <strong>@evt.Summary</strong><br />
 
-	        @if (ViewBag.SuccessMessage != null && ViewBag.SuccessEventId != null && ViewBag.SuccessEventId.ToString() == evt.Id)
-	        {
-		        <div class="alert alert-success" style="text-align:center">
-			        @ViewBag.SuccessMessage
-		        </div>
-	        }
-	        <li class="event-item">
-		        <div class="event-info">
-			        <strong>@evt.Summary</strong><br/>
+                    @if (!string.IsNullOrEmpty(evt.Start?.Date))
+                    {
+                        <span>Start: @DateTime.Parse(evt.Start.Date).ToLocalTime().ToString("MMMM dd, yyyy")</span>
+                        <br />
+                        <span>End: @DateTime.Parse(evt.End?.Date).ToLocalTime().ToString("MMMM dd, yyyy")</span>
+                        <br />
+                    }
+                    else if (evt.Start?.DateTimeDateTimeOffset != null && evt.End?.DateTimeDateTimeOffset != null)
+                    {
+                        <span>Start: @evt.Start.DateTimeDateTimeOffset.Value.ConvertToLocalTime("Europe/Sofia").ToString("MMMM dd, yyyy h:mm tt")</span>
+                        <br />
+                        <span>End: @evt.End.DateTimeDateTimeOffset.Value.ConvertToLocalTime("Europe/Sofia").ToString("MMMM dd, yyyy h:mm tt")</span>
+                        <br />
+                    }
+                    else
+                    {
+                        <span>Start: Not Available</span>
+                        <br />
+                        <span>End: Not Available</span>
+                        <br />
+                    }
 
-			        @if (evt.Start.Date != null && evt.End.Date != null && evt.Gadget != null)
-			        {
-				        <span>Start: @DateTime.Parse(evt.Start.Date).ToString("MMMM dd, yyyy")</span>
-				        <br/>
-				        <span>End: @DateTime.Parse(evt.End.Date).ToString("MMMM dd, yyyy")</span>
-				        <br/>
-			        }
-			        else if (evt.Start.Date != null && evt.End.Date != null)
-			        {
-				        <span>All Day: @DateTime.Parse(evt.Start.Date).ToString("MMMM dd, yyyy")</span>
-				        <br/>
-			        }
-			        else if (evt.Start.DateTimeDateTimeOffset != null && evt.End.DateTimeDateTimeOffset != null)
-			        {
-				        <span>Start: @evt.Start.DateTimeDateTimeOffset.Value.ToString("MMMM dd, yyyy h:mm tt")</span>
-				        <br/>
-				        <span>End: @evt.End.DateTimeDateTimeOffset.Value.ToString("MMMM dd, yyyy h:mm tt")</span>
-				        <br/>
-			        }
-			        else
-			        {
-				        <span>Start: Not Available</span>
-				        <br/>
-				        <span>End: Not Available</span>
-				        <br/>
-			        }
+                    @if (!string.IsNullOrEmpty(evt.Location))
+                    {
+                        <span>Location: @evt.Location</span>
+                    }
+                </div>
 
-			        @if (!string.IsNullOrEmpty(evt.Location))
-			        {
-				        <span>Location: @evt.Location</span>
-			        }
-		        </div>
+                @if (Model.Calendars.FirstOrDefault(c => c.CalendarId == Model.SelectedCalendarId)?.AccessRole == "owner")
+                {
+                    <div class="event-actions">
+                        <!-- Edit Button -->
+                        <a asp-action="EditEvent" asp-route-calendarId="@Model.SelectedCalendarId" asp-route-eventId="@evt.Id" class="btn btn-warning btn-sm">Edit</a>
 
-		        @if (Model.Calendars.FirstOrDefault(c => c.CalendarId == Model.SelectedCalendarId)?.AccessRole == "owner")
-		        {
-			        <div class="event-actions">
-				        <!-- Edit Button -->
-				        <a asp-action="EditEvent" asp-route-calendarId="@Model.SelectedCalendarId" asp-route-eventId="@evt.Id" class="btn btn-warning btn-sm">Edit</a>
-
-				        <!-- Delete Button -->
-				        <form asp-action="ConfirmDelete" method="get" style="display:inline;">
-					        <input type="hidden" name="eventId" value="@evt.Id"/>
-					        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-				        </form>
-			        </div>
-		        }
-		        <br/>
-	        </li>
+                        <!-- Delete Button -->
+                        <form asp-action="ConfirmDelete" method="get" style="display:inline;">
+                            <input type="hidden" name="eventId" value="@evt.Id" />
+                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                        </form>
+                    </div>
+                }
+                <br />
+            </li>
             <br />
         }
     </ul>
