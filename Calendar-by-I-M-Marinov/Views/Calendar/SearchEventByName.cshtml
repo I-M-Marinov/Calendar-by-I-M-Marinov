@@ -3,10 +3,9 @@
 <h2>Search Events</h2>
 
 <form method="get" asp-controller="Calendar" asp-action="SearchEventByName">
-	<div class="form-group">
-		<label for="eventName">Text to look for:</label>
+	<div class="form-group-search">
 		<input type="text" id="eventName" name="EventName" class="form-control" placeholder="Please enter text to look for" />
 	</div>
 	<br />
-	<button type="submit" class="btn btn-primary">Search</button>
+	<button type="submit" class="btn btn-primary-search">Search</button>
 </form>
