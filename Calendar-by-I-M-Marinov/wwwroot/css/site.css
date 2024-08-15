@@ -43,25 +43,80 @@ form-group{
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 8px;
-    border-bottom: 1.5px solid #808080;
+    padding: 6px;
+    border-bottom: 1.5px solid #1a8ba9;
+    max-width: 85%;
+    margin: 0 auto;
+    margin-bottom: 1em;
 }
 
 .event-item:first-child{
     font-weight: 800;
     font-size: 20px;
 
+
 }
 
 .event-info {
     flex: 1;
-    text-align: center; /* Center-align the text within the event-info div */
+    text-align: center; 
+}
+
+.event-actions form {
+    display: inline;
 }
 
 .event-actions {
-    text-align: center; /* Align the buttons to the right */
+    text-align: center;
+    padding-left: 1.5em;
+    display:flex;
+    flex-direction:column;
+    justify-content: space-around;
 }
 
-    .event-actions form {
-        display: inline; /* Ensure the form is inline with other elements */
+.event-actions a:first-child{
+    margin-bottom: 0.5em;
+}
+
+
+/* CSS for the table in the ListCalendarsAndEvents View */
+
+.list-unstyled{
+    margin: 0 auto;
+    display:flex;
+    flex-direction: column;
+    text-align: center; 
+}
+
+h2,
+h4{
+    text-align: center;
+}
+
+.btn.btn-primary-load-events {
+    margin: 0 auto;
+    display: flex;
+    flex-direction: row;
+    align-self: center;
+    color: #0026ff;
+    background-color: #00ff90;
+    border: 2px solid;
+}
+
+.btn.btn-duplicate-event {
+    margin: 0 auto;
+    display: flex;
+    font-size: .875rem;
+    flex-direction: row;
+    justify-content: center;
+    color: #000000;
+    margin-left: 1em;
+    background-color: #03fad4;
+    font-size: .875rem;
+    line-height: 1.5;
+    border-radius: .2rem;
+}
+
+    .btn.btn-duplicate-event:hover {
+        background-color: #19e4c5;
     }

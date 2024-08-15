@@ -123,61 +123,66 @@ public class CalendarController : Controller
         return View(new EventViewModel());
     }
     [HttpPost]
-    public async Task<IActionResult> CreateEvent(EventViewModel model)
-    {
-       
-        // Convert nullable DateTime to string in required format
-        var startDateTime = model.Start.HasValue ? model.Start.Value.ToString("yyyy-MM-ddTHH:mm:ssZ") : null;
-        var endDateTime = model.End.HasValue ? model.End.Value.ToString("yyyy-MM-ddTHH:mm:ssZ") : null;
+	public async Task<IActionResult> CreateEvent(EventViewModel model)
+	{
+		// Define the time zone
+		var timeZone = "Europe/Sofia";
 
-        var newEvent = new Event
-        {
-            Summary = model.Summary,
-            Description = model.Description,
-            Location = model.Location,
-            Visibility = model.Visibility, // Set visibility based on user selection
+		// Determine the start and end times for the event
+		EventDateTime startEventDateTime = model.EventType == "allDay"
+			? new EventDateTime
+			{
+				Date = model.Start?.ToString("yyyy-MM-dd"), // All-day events use Date only
+				TimeZone = timeZone
+			}
+			: new EventDateTime
+			{
+				DateTime = model.Start.HasValue ? model.Start.Value.ToUniversalTime() : DateTime.UtcNow, // Use current time if start time is not provided
+				TimeZone = timeZone
+			};
 
-            Start = model.EventType == "allDay" ? new EventDateTime
-            {
-                Date = model.Start?.ToString("yyyy-MM-dd"), // Date-only format
-                TimeZone = "Europe/Sofia"
-            } : new EventDateTime
-            {
-                DateTime = DateTime.Parse(startDateTime), // Full datetime format
-                TimeZone = "Europe/Sofia"
-            },
+		EventDateTime endEventDateTime = model.EventType == "allDay"
+			? new EventDateTime
+			{
+				Date = model.End?.ToString("yyyy-MM-dd"), // All-day events use Date only
+				TimeZone = timeZone
+			}
+			: new EventDateTime
+			{
+				DateTime = model.End.HasValue ? model.End.Value.ToUniversalTime() : startEventDateTime.DateTime, // Use start time if end time is not provided
+				TimeZone = timeZone
+			};
 
-            End = model.EventType == "allDay" ? new EventDateTime
-            {
-                Date = model.End?.ToString("yyyy-MM-dd"), // Date-only format
-                TimeZone = "Europe/Sofia"
-            } : new EventDateTime
-            {
-                DateTime = DateTime.Parse(endDateTime), // Full datetime format
-                TimeZone = "Europe/Sofia"
-            },
+		var newEvent = new Event
+		{
+			Summary = model.Summary,
+			Description = model.Description,
+			Location = model.Location,
+			Visibility = model.Visibility,
+			Start = startEventDateTime,
+			End = endEventDateTime,
+			Recurrence = model.EventType == "annual" ? new List<string>
+		{
+			$"RRULE:FREQ=YEARLY;BYMONTH={model.Start?.Month};BYMONTHDAY={model.Start?.Day}"
+		} : null
+		};
 
-            // Add recurrence rule for annual events if needed
-            Recurrence = model.EventType == "annual" ? new List<string>
-        {
-            $"RRULE:FREQ=YEARLY;BYMONTH={model.Start?.Month};BYMONTHDAY={model.Start?.Day}"
-        } : null
-        };
+		try
+		{
+			// Add the new event to the primary calendar
+			await _googleCalendarService.AddEventAsync("primary", newEvent); // Ensure the calendar ID is specified
+			return RedirectToAction("ViewNewEventAdded", new { message = "Event created successfully." });
+		}
+		catch (Exception ex)
+		{
+			// Handle any errors that occur during event creation
+			ModelState.AddModelError("", $"Error creating event: {ex.Message}");
+			return View(model); // Return the view with the model to display errors
+		}
+	}
 
-        try
-        {
-            await _googleCalendarService.AddEventAsync("primary", newEvent);
-            return RedirectToAction("ViewNewEventAdded", new { message = "Event created successfully." });
-        }
-        catch (Exception ex)
-        {
-            ModelState.AddModelError("", $"Error creating event: {ex.Message}");
-        }
-    
 
-        return View(model);
-    }
-    [HttpPost]
+	[HttpPost]
     public async Task<IActionResult> DeletePrimaryEvent(string eventId)
     {
 	    if (string.IsNullOrEmpty(eventId))
@@ -230,6 +235,42 @@ public class CalendarController : Controller
 			return RedirectToAction("ListCalendarsAndEvents");
 		}
 	}
+
+	[HttpPost]
+	public async Task<IActionResult> DuplicateEvent(string calendarId, string eventId)
+	{
+		try
+		{
+			var existingEvent = await _googleCalendarService.GetEventByIdAsync(calendarId, eventId);
+
+			if (existingEvent == null)
+			{
+				return NotFound($"Event with ID {eventId} not found in calendar {calendarId}.");
+			}
+
+			var model = new EventViewModel
+			{
+				Summary = existingEvent.Summary,
+				Description = existingEvent.Description,
+				Location = existingEvent.Location,
+				Visibility = existingEvent.Visibility,
+				Start = existingEvent.Start?.DateTimeDateTimeOffset?.DateTime,
+				End = existingEvent.End?.DateTimeDateTimeOffset?.DateTime,
+				EventType = existingEvent.Start?.Date != null ? "allDay" : "single" // Determine event type
+			};
+
+			// Create the duplicated event in the primary calendar
+			var result = await CreateEvent(model);
+
+			return RedirectToAction("ViewNewEventAdded", new { message = "Event duplicated successfully." });
+		}
+		catch (Exception ex)
+		{
+			ModelState.AddModelError("", $"Error duplicating event: {ex.Message}");
+			return RedirectToAction("Error"); // Redirect to an error page or view if something goes wrong
+		}
+	}
+
 	[HttpGet]
     public async Task<IActionResult> SearchEventByName(SearchEventViewModel model)
     {

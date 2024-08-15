@@ -66,13 +66,20 @@ public class GoogleCalendarService : IGoogleCalendarService
 	public async Task<List<Event>> GetEventsForCalendarAsync(string calendarId)
 	{
 		var events = new List<Event>();
-		var request = _service.Events.List(calendarId);
 
-		request.TimeMin = DateTime.UtcNow; // Use UTC
-		request.TimeMax = new DateTime(DateTime.Now.Year, 12, 31, 23, 59, 59); // End of the year
+		// Get the current date in UTC
+		DateTime nowUtc = DateTime.UtcNow;
+		DateTime startOfDayUtc = new DateTime(nowUtc.Year, nowUtc.Month, nowUtc.Day, 0, 0, 0, DateTimeKind.Utc);
+
+		// Set the end of the year in UTC
+		DateTime endOfYearUtc = new DateTime(nowUtc.Year, 12, 31, 23, 59, 59, DateTimeKind.Utc);
+
+		var request = _service.Events.List(calendarId);
+		request.TimeMin = startOfDayUtc;
+		request.TimeMax = endOfYearUtc;
 		request.ShowDeleted = false; // Exclude deleted events
 		request.SingleEvents = true; // Expand recurring events
-		request.MaxResults = 100; // Limit to 100 events
+		request.MaxResults = 100; // Limit to 100 events per page
 		request.OrderBy = EventsResource.ListRequest.OrderByEnum.StartTime; // Order by start time
 
 		do
@@ -87,6 +94,7 @@ public class GoogleCalendarService : IGoogleCalendarService
 		return events;
 	}
 
+
 	public async Task<IList<Event>> GetEventsAsync(string calendarId)
 	{
 		var request = _service.Events.List(calendarId);
@@ -95,11 +103,19 @@ public class GoogleCalendarService : IGoogleCalendarService
 		request.Fields =
 			"items(id,summary,start,end,location,creator,guestsCanModify,status,transparency,extendedProperties)";
 
-		request.TimeMin = DateTime.UtcNow; // Use UTC
-		request.TimeMax = new DateTime(DateTime.Now.Year, 12, 31, 23, 59, 59); // End of the year
+
+		// Get the current date in UTC
+		DateTime nowUtc = DateTime.UtcNow;
+		DateTime startOfDayUtc = new DateTime(nowUtc.Year, nowUtc.Month, nowUtc.Day, 0, 0, 0, DateTimeKind.Utc);
+
+		// Set the end of the year in UTC
+		DateTime endOfYearUtc = new DateTime(nowUtc.Year, 12, 31, 23, 59, 59, DateTimeKind.Utc);
+
+		request.TimeMin = startOfDayUtc;
+		request.TimeMax = endOfYearUtc;
 		request.ShowDeleted = false; // Exclude deleted events
 		request.SingleEvents = true; // Expand recurring events
-		request.MaxResults = 100; // Limit to 100 events
+		request.MaxResults = 100; // Limit to 100 events per page
 		request.OrderBy = EventsResource.ListRequest.OrderByEnum.StartTime; // Order by start time
 
 		var response = await request.ExecuteAsync();

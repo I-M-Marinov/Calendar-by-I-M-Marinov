@@ -9,6 +9,8 @@ namespace Calendar_by_I_M_Marinov.Models
 		public string Description { get; set; } = null!;
 		public string AccessRole { get; set; } = null!;
 		public int EventsCount { get; set; }
+		public string EventType { get; set; } = null!;
+
 
 	}
 }
