@@ -1,42 +1,48 @@
 ﻿@model Calendar_by_I_M_Marinov.Models.EventViewModel
+<script src="~/js/site.js"></script>
 
 <h2>Create Event</h2>
 
 <form asp-action="CreateEvent" method="post">
-	<div class="form-group">
-		<label asp-for="Summary"></label>
-		<input asp-for="Summary" class="form-control" />
-	</div>
-	<div class="form-group">
-		<label asp-for="Location"></label>
-		<input asp-for="Location" class="form-control" />
-	</div>
-	<div class="form-group">
-		<label asp-for="Description"></label>
-		<textarea asp-for="Description" class="form-control"></textarea>
-	</div>
-	<div class="form-group">
-		<label asp-for="Start"></label>
-		<input asp-for="Start" type="datetime-local" class="form-control" />
-	</div>
-	<div class="form-group">
-		<label asp-for="End"></label>
-		<input asp-for="End" type="datetime-local" class="form-control" />
-	</div>
-	<div class="form-group">
-		<label asp-for="Visibility">Visibility</label>
-		<select asp-for="Visibility" class="form-control">
-			<option value="public">Public</option>
-			<option value="private">Private</option>
-		</select>
-	</div>
-	<div class="form-group">
-		<label asp-for="EventType">Event Type</label>
-		<select asp-for="EventType" class="form-control">
-			<option value="single">Single</option>
-			<option value="annual">Annual</option>
-			<option value="allDay">All Day</option>
-		</select>
-	</div>
-	<button type="submit" class="btn btn-primary">Create Event</button>
+    <div class="form-group">
+        <label asp-for="Summary"></label>
+        <input asp-for="Summary" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Location"></label>
+        <input asp-for="Location" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Description"></label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Start"></label>
+        <input asp-for="Start" type="datetime-local" class="form-control" id="startDateInput" />
+    </div>
+    <div class="form-group">
+        <label asp-for="End"></label>
+        <input asp-for="End" type="datetime-local" class="form-control" id="endDateInput" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Visibility">Visibility</label>
+        <select asp-for="Visibility" class="form-control">
+            <option value="public">Public</option>
+            <option value="private">Private</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label asp-for="EventType">Event Type</label>
+        <select asp-for="EventType" class="form-control" id="eventTypeSelect">
+            <option value="single">Single</option>
+            <option value="annual">Annual</option>
+            <option value="allDay">All Day</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Create Event</button>
 </form>
+
+
+
