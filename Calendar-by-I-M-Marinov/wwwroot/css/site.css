@@ -145,7 +145,71 @@ h4{
     font-weight: 700;
 }
 
-    .btn.btn-primary-search:hover {
-        background-color: #d1610d;
-    }
+.btn.btn-primary-search:hover {
+    background-color: #d1610d;
+}
+
+/* CSS for the CreateEvent View  */
+
+.btn.btn-create-event {
+    color: black;
+    display: block;
+    margin: 0 auto;
+    color: whitesmoke;
+    background-color: #7204d3;
+    border-radius: .2rem;
+    border: 0.99px solid #000000;
+    width: 15%;
+    font-weight: 600;
+    margin-top: 0.5em;
+}
+
+.btn-create-event:hover {
+    background-color: #7204F4;
+    color: greenyellow;
+}
+
+.create-event-group{
+    margin: 0 auto;
+}
+
+.create-event-group.summary,
+.create-event-group.location {
+    max-width: 45%;
+}
+
+.create-event-group.description {
+    max-width: 60%;
+}
+
+.create-event-group2 {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding: 1.5em 0 1.5em 0;
+}
+
+.create-event-item {
+    flex: 1; /* Each item will take up equal space */
+    flex-grow: 1;
+    min-width: 200px; /* Ensure items don't get too small on smaller screens */
+    margin-bottom: 20px; /* Add some spacing at the bottom */
+}
+
+.create-event-item label {
+    display: block;
+    margin: 1em 0 1em 0;
+}
+
+.create-event-group.start,
+.create-event-group.end {
+    max-width: 20%;
+}
+
+.create-event-group.eventtype,
+.create-event-group.visibility {
+    max-width: 30%;
+    margin: 0 auto;
+}
+
 
