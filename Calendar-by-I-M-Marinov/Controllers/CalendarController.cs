@@ -135,7 +135,6 @@ public class CalendarController : Controller
         }
     }
 
-
     public async Task<IActionResult> ViewNewEventAdded()
     {
         var events = await _googleCalendarService.GetEventsAsync("primary");

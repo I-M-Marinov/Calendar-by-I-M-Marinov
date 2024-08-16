@@ -32,8 +32,7 @@ namespace Calendar_by_I_M_Marinov.Models
             (IsCreator || GuestsCanModify) &&
             Status != "cancelled" &&
             (Locked != true) &&
-            (Source?.ToLower() != "gmail") &&
-            (Transparency?.ToLower() != "transparent");
+            (Source?.ToLower() != "gmail");
 
     }
 
