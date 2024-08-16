@@ -83,17 +83,20 @@
 
                 @if (isOwnedEvent)
                 {
-                    <div class="event-actions">
-                        <!-- Edit Button -->
-                        <a asp-action="EditEvent" asp-route-calendarId="@Model.SelectedCalendarId" asp-route-eventId="@evt.Id" class="btn btn-warning btn-sm">Edit</a>
+	                <div class="event-actions">
+		                <!-- Edit Button -->
+		                <a asp-action="EditEvent" 
+		                   asp-route-calendarId="@(Model.SelectedCalendarId == "all" ? Model.EventCalendarMap[evt.Id] : Model.SelectedCalendarId)" 
+		                   asp-route-eventId="@evt.Id" 
+		                   class="btn btn-warning btn-sm">Edit</a>
 
-                        <!-- Delete Button -->
-                        <form asp-action="ConfirmDelete" method="get" style="display:inline;">
-                            <input type="hidden" name="eventId" value="@evt.Id" />
-                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                        </form>
+		                <!-- Delete Button -->
+		                <form asp-action="ConfirmDelete" method="get" style="display:inline;">
+			                <input type="hidden" name="eventId" value="@evt.Id" />
+			                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+		                </form>
 
-                    </div>
+	                </div>
                 }
 
                 @if (!isAllDayEvent)

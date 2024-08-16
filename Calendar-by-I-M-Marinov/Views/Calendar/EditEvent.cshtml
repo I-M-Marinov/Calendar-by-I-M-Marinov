@@ -10,38 +10,48 @@
         </div>
         <div class="card-body">
             <!-- Form for each event -->
-            <form asp-action="EditEvent" asp-route-calendarId="@eventModel.CalendarId" asp-route-eventId="@eventModel.EventId" method="post">
+            <form asp-action="EditEvent" asp-controller="Calendar" method="post">
                 <div class="form-group">
                     <label for="Summary_@eventModel.EventId">Event Name (Summary)</label>
                     <input type="text" id="Summary_@eventModel.EventId" name="events[@eventModel.EventId].Summary" class="form-control" value="@eventModel.Summary" />
                 </div>
 
                 <div class="form-group">
-	                <label for="Start_@eventModel.EventId">Start Time</label>
-	                <input type="@(eventModel.EventType == "allDay" ? "date" : "datetime-local")" 
-	                       id="Start_@eventModel.EventId" name="events[@eventModel.EventId].Start" 
-	                       class="form-control"
-	                       value="@(eventModel.Start.HasValue ? eventModel.Start.Value.ToString(eventModel.EventType == "allDay" ? "yyyy-MM-dd" : "yyyy-MM-ddTHH:mm") : "")" />
+                    <label for="Start_@eventModel.EventId">Start Time</label>
+                    <input type="@(eventModel.EventType == "allDay" ? "date" : "datetime-local")"
+                           id="Start_@eventModel.EventId" name="events[@eventModel.EventId].Start"
+                           class="form-control"
+                           value="@(eventModel.Start.HasValue ? eventModel.Start.Value.ToString(eventModel.EventType == "allDay" ? "yyyy-MM-dd" : "yyyy-MM-ddTHH:mm") : "")" />
                 </div>
 
                 <div class="form-group">
-	                <label for="End_@eventModel.EventId">End Time</label>
-	                <input type="@(eventModel.EventType == "allDay" ? "date" : "datetime-local")" 
-	                       id="End_@eventModel.EventId" name="events[@eventModel.EventId].End" 
-	                       class="form-control"
-	                       value="@(eventModel.End.HasValue ? eventModel.End.Value.ToString(eventModel.EventType == "allDay" ? "yyyy-MM-dd" : "yyyy-MM-ddTHH:mm") : "")" />
+                    <label for="End_@eventModel.EventId">End Time</label>
+                    <input type="@(eventModel.EventType == "allDay" ? "date" : "datetime-local")"
+                           id="End_@eventModel.EventId" name="events[@eventModel.EventId].End"
+                           class="form-control"
+                           value="@(eventModel.End.HasValue ? eventModel.End.Value.ToString(eventModel.EventType == "allDay" ? "yyyy-MM-dd" : "yyyy-MM-ddTHH:mm") : "")" />
                 </div>
 
                 <div class="form-group">
-	                <label for="Location_@eventModel.EventId">Location</label>
-	                <input type="text" id="Location_@eventModel.EventId" name="events[@eventModel.EventId].Location" class="form-control" value="@eventModel.Location" />
+                    <label for="Location_@eventModel.EventId">Location</label>
+                    <input type="text" id="Location_@eventModel.EventId" name="events[@eventModel.EventId].Location" class="form-control" value="@eventModel.Location" />
                 </div>
 
-                <input type="hidden" name="events[@eventModel.EventId].EventId" value="@eventModel.EventId" />
-                <input type="hidden" name="events[@eventModel.EventId].CalendarId" value="@eventModel.CalendarId" />
+                <!-- Ensure calendarId and eventId are passed correctly -->
+                @if (eventModel.EventCalendarMap.ContainsKey(eventModel.EventId))
+                {
+                    <input type="hidden" name="calendarId" value="@eventModel.EventCalendarMap[eventModel.EventId]" />
+                }
+                else
+                {
+                    <!-- Fallback or error message if the eventId is not found in the map -->
+                    <p class="text-danger">Calendar ID not found for this event.</p>
+                }
+
+                <input type="hidden" name="eventId" value="@eventModel.EventId" />
 
                 <button type="submit" class="btn btn-success">Save</button>
-            </form>
-        </div>
+            </form> 
+        </div> 
     </div>
 }

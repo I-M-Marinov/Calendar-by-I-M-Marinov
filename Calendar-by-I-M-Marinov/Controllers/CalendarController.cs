@@ -208,7 +208,6 @@ public class CalendarController : Controller
 		}
 	}
 
-
 	[HttpPost]
     public async Task<IActionResult> DeletePrimaryEvent(string eventId)
     {
@@ -299,7 +298,6 @@ public class CalendarController : Controller
             return RedirectToAction("Error"); // Redirect to an error page or view if something goes wrong
         }
     }
-
 
     [HttpGet]
     public async Task<IActionResult> SearchEventByName(SearchEventViewModel model)
@@ -466,7 +464,7 @@ public class CalendarController : Controller
 
     }
 
-	[HttpPost]
+    [HttpPost]
     public async Task<IActionResult> EditEvents(Dictionary<string, EditEventViewModel> events)
     {
         // Validate and process each event
@@ -476,6 +474,7 @@ public class CalendarController : Controller
             {
                 try
                 {
+                    // Prepare the event to update
                     var eventToUpdate = new Event
                     {
                         Id = eventModel.EventId,
@@ -485,7 +484,8 @@ public class CalendarController : Controller
                         Location = eventModel.Location
                     };
 
-                    await _googleCalendarService.AddEventAsync(eventModel.CalendarId, eventModel.EventId, eventToUpdate);
+                    // Update event in the correct calendar
+                    await _googleCalendarService.UpdateEventAsync(eventModel.CalendarId, eventModel.EventId, eventToUpdate);
                 }
                 catch (Exception ex)
                 {
@@ -501,17 +501,27 @@ public class CalendarController : Controller
 
         // Redisplay the form with validation errors
 
-        var matchingEvents = await _googleCalendarService.GetEventByIdAcrossAllCalendarsAsync(events.Values.First().Summary);
-        return View("EditEvents", matchingEvents.Select(e => new EditEventViewModel
+        // Retrieve the list of events again to redisplay with errors
+        // Assuming you need to show events for the same calendar that was being edited
+        // or show the list of all events for a summary search
+        var calendarId = events.Values.FirstOrDefault()?.CalendarId;
+        var matchingEvents = string.IsNullOrEmpty(calendarId)
+            ? await _googleCalendarService.GetEventByIdAcrossAllCalendarsAsync(events.Values.First().Summary)
+            : await _googleCalendarService.GetEventsAsync(calendarId);
+
+        var viewModel = matchingEvents.Select(e => new EditEventViewModel
         {
             EventId = e.Id,
             Summary = e.Summary,
             Start = e.Start.DateTime,
             End = e.End.DateTime,
             Location = e.Location,
-            CalendarId = e.Organizer?.Email
-        }).ToList());
+            CalendarId = e.Organizer?.Email  // Adjust this based on how you determine CalendarId
+        }).ToList();
+
+        return View("EditEvents", viewModel);
     }
+
     [HttpPost]
     public async Task<IActionResult> UpdateEvents(Dictionary<string, EditEventViewModel> events)
     {

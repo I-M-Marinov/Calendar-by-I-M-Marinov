@@ -23,6 +23,8 @@ namespace Calendar_by_I_M_Marinov.Models
 
         public string Visibility { get; set; } = "public"; // Default to public ( Options: public, private )
         public string EventType { get; set; } = "single"; //  Default to single ( Options: single, annual, allDay )
+        public Dictionary<string, string> EventCalendarMap { get; set; } = new Dictionary<string, string>(); // EventId to CalendarId map
+
 
 
         // Enhanced logic for determining if the event is editable
