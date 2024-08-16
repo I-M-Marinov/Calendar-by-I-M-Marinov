@@ -17,20 +17,24 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="Start_@eventModel.EventId">Start Time</label>
-                    <input type="datetime-local" id="Start_@eventModel.EventId" name="events[@eventModel.EventId].Start" class="form-control"
-                           value="@(eventModel.Start.HasValue ? eventModel.Start.Value.ToString("MMMM dd, yyyy h:mm") : "")" />
+	                <label for="Start_@eventModel.EventId">Start Time</label>
+	                <input type="@(eventModel.EventType == "allDay" ? "date" : "datetime-local")" 
+	                       id="Start_@eventModel.EventId" name="events[@eventModel.EventId].Start" 
+	                       class="form-control"
+	                       value="@(eventModel.Start.HasValue ? eventModel.Start.Value.ToString(eventModel.EventType == "allDay" ? "yyyy-MM-dd" : "yyyy-MM-ddTHH:mm") : "")" />
                 </div>
 
                 <div class="form-group">
-                    <label for="End_@eventModel.EventId">End Time</label>
-                    <input type="datetime-local" id="End_@eventModel.EventId" name="events[@eventModel.EventId].End" class="form-control"
-                           value="@(eventModel.End.HasValue ? eventModel.End.Value.ToString("MMMM dd, yyyy h:mm") : "")" />
+	                <label for="End_@eventModel.EventId">End Time</label>
+	                <input type="@(eventModel.EventType == "allDay" ? "date" : "datetime-local")" 
+	                       id="End_@eventModel.EventId" name="events[@eventModel.EventId].End" 
+	                       class="form-control"
+	                       value="@(eventModel.End.HasValue ? eventModel.End.Value.ToString(eventModel.EventType == "allDay" ? "yyyy-MM-dd" : "yyyy-MM-ddTHH:mm") : "")" />
                 </div>
 
                 <div class="form-group">
-                    <label for="Location_@eventModel.EventId">Location</label>
-                    <input type="text" id="Location_@eventModel.EventId" name="events[@eventModel.EventId].Location" class="form-control" value="@eventModel.Location" />
+	                <label for="Location_@eventModel.EventId">Location</label>
+	                <input type="text" id="Location_@eventModel.EventId" name="events[@eventModel.EventId].Location" class="form-control" value="@eventModel.Location" />
                 </div>
 
                 <input type="hidden" name="events[@eventModel.EventId].EventId" value="@eventModel.EventId" />

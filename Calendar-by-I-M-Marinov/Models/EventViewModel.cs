@@ -19,6 +19,7 @@ namespace Calendar_by_I_M_Marinov.Models
 
         public string Visibility { get; set; } = "public"; // Default to public
         public string EventType { get; set; } = "single"; // Options: single, annual, allDay // Default to single
+        public string? CalendarId { get; set; }
     }
 
 }

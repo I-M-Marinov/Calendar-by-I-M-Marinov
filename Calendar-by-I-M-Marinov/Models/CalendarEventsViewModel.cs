@@ -4,11 +4,13 @@ namespace Calendar_by_I_M_Marinov.Models
 {
 	public class CalendarEventsViewModel
 	{
-		public ICollection<CalendarViewModel> Calendars { get; set; } = new HashSet<CalendarViewModel>();
+		public List<CalendarViewModel> Calendars { get; set; } = new List<CalendarViewModel>();
 		public string SelectedCalendarId { get; set; } = null!;
         public string SelectedCalendarName { get; set; } = null!;
         public string AccessRole { get; set; } = null!;
-        public ICollection<Event>? Events { get; set; } = new HashSet<Event>();
-		public int EventsCount { get; set; }
+        public List<Event>? Events { get; set; } = new List<Event>();
+		public int EventsCount { get; set; } 
+        public Dictionary<string, string> EventCalendarMap { get; set; } = new Dictionary<string, string>(); // EventId to CalendarId map
+
     }
 }

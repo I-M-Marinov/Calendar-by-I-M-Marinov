@@ -2,6 +2,7 @@ using Calendar_by_I_M_Marinov.Services.Contracts;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,7 +34,7 @@ builder.Services.AddAuthentication(options =>
 	});
 
 
-builder.Services.AddSingleton<IGoogleCalendarService, GoogleCalendarService>();
+builder.Services.AddScoped<IGoogleCalendarService, GoogleCalendarService>();
 
 
 var app = builder.Build();

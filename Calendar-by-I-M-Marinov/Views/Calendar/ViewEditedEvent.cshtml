@@ -4,7 +4,7 @@
 
 @if (Model != null && Model.Count > 0)
 {
-    var lastAdded = Model.OrderByDescending(m => m.Updated).FirstOrDefault();
+    var lastAdded = Model.OrderByDescending(m => m.UpdatedDateTimeOffset).FirstOrDefault();
 
     if (lastAdded != null)
     {

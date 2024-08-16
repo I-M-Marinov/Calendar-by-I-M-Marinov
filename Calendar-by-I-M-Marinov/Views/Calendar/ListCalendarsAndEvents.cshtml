@@ -35,10 +35,11 @@
         <br />
         @foreach (var evt in Model.Events)
         {
-							
-	        // Determine if the event is an all-day event
-	        bool isAllDayEvent = !string.IsNullOrEmpty(evt.Start?.Date) && evt.Start?.DateTime == null;
-			bool isOwnedEvent = Model.Calendars.FirstOrDefault(c => c.CalendarId == Model.SelectedCalendarId)?.AccessRole == "owner";
+            // Determine if the event is an all-day event
+            bool isAllDayEvent = !string.IsNullOrEmpty(evt.Start?.Date) && evt.Start?.DateTime == null;
+            bool isOwnedEvent = Model.SelectedCalendarId == "all"
+            ? Model.EventCalendarMap.TryGetValue(evt.Id, out var calendarId) && Model.Calendars.FirstOrDefault(c => c.CalendarId == calendarId)?.AccessRole == "owner"
+            : Model.Calendars.FirstOrDefault(c => c.CalendarId == Model.SelectedCalendarId)?.AccessRole == "owner";
 
             @if (ViewBag.SuccessMessage != null && ViewBag.SuccessEventId != null && ViewBag.SuccessEventId.ToString() == evt.Id)
             {
@@ -48,64 +49,63 @@
             }
 
             <li class="event-item">
-	            <div class="event-info">
-		            <strong>@evt.Summary</strong><br />
+                <div class="event-info">
+                    <strong>@evt.Summary</strong><br />
 
-		            @if (!string.IsNullOrEmpty(evt.Start?.Date))
-		            {
-			            <span>Start: @DateTime.Parse(evt.Start.Date).ToLocalTime().ToString("MMMM dd, yyyy")</span>
-			            <br />
-			            <span>End: @DateTime.Parse(evt.End?.Date).ToLocalTime().ToString("MMMM dd, yyyy")</span>
-			            <br />
-		            }
-		            else if (evt.Start?.DateTimeDateTimeOffset != null && evt.End?.DateTimeDateTimeOffset != null)
-		            {
-			            <span>Start: @evt.Start.DateTimeDateTimeOffset.Value.ConvertToLocalTime("Europe/Sofia").ToString("MMMM dd, yyyy h:mm tt")</span>
-			            <br />
-			            <span>End: @evt.End.DateTimeDateTimeOffset.Value.ConvertToLocalTime("Europe/Sofia").ToString("MMMM dd, yyyy h:mm tt")</span>
-			            <br />
-		            }
-		            else
-		            {
-			            <span>Start: Not Available</span>
-			            <br />
-			            <span>End: Not Available</span>
-			            <br />
-		            }
+                    @if (!string.IsNullOrEmpty(evt.Start?.Date))
+                    {
+                        <span>Start: @DateTime.Parse(evt.Start.Date).ToLocalTime().ToString("MMMM dd, yyyy")</span>
+                        <br />
+                        <span>End: @DateTime.Parse(evt.End?.Date).ToLocalTime().ToString("MMMM dd, yyyy")</span>
+                        <br />
+                    }
+                    else if (evt.Start?.DateTimeDateTimeOffset != null && evt.End?.DateTimeDateTimeOffset != null)
+                    {
+                        <span>Start: @evt.Start.DateTimeDateTimeOffset.Value.ConvertToLocalTime("Europe/Sofia").ToString("MMMM dd, yyyy h:mm tt")</span>
+                        <br />
+                        <span>End: @evt.End.DateTimeDateTimeOffset.Value.ConvertToLocalTime("Europe/Sofia").ToString("MMMM dd, yyyy h:mm tt")</span>
+                        <br />
+                    }
+                    else
+                    {
+                        <span>Start: Not Available</span>
+                        <br />
+                        <span>End: Not Available</span>
+                        <br />
+                    }
 
-		            @if (!string.IsNullOrEmpty(evt.Location))
-		            {
-			            <span>Location: @evt.Location</span>
-		            }
-	            </div>
-	            <br />
+                    @if (!string.IsNullOrEmpty(evt.Location))
+                    {
+                        <span>Location: @evt.Location</span>
+                    }
+                </div>
+                <br />
 
-		            @if (isOwnedEvent)
-		            {
-			            <div class="event-actions">
-				            <!-- Edit Button -->
-				            <a asp-action="EditEvent" asp-route-calendarId="@Model.SelectedCalendarId" asp-route-eventId="@evt.Id" class="btn btn-warning btn-sm">Edit</a>
+                @if (isOwnedEvent)
+                {
+                    <div class="event-actions">
+                        <!-- Edit Button -->
+                        <a asp-action="EditEvent" asp-route-calendarId="@Model.SelectedCalendarId" asp-route-eventId="@evt.Id" class="btn btn-warning btn-sm">Edit</a>
 
-				            <!-- Delete Button -->
-				            <form asp-action="ConfirmDelete" method="get" style="display:inline;">
-					            <input type="hidden" name="eventId" value="@evt.Id" />
-					            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-				            </form>
+                        <!-- Delete Button -->
+                        <form asp-action="ConfirmDelete" method="get" style="display:inline;">
+                            <input type="hidden" name="eventId" value="@evt.Id" />
+                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                        </form>
 
-			            </div>
-		            }
+                    </div>
+                }
 
-	            @if (!isAllDayEvent)
-	            {
-		            <!-- Duplicate Button -->
-		            <form asp-action="DuplicateEvent" method="post">
-			            <input type="hidden" name="eventId" value="@evt.Id"/>
-			            <input type="hidden" name="calendarId" value="@Model.SelectedCalendarId"/>
-			            <button type="submit" class="btn btn-duplicate-event">Duplicate Event</button>
-		            </form>
-	            }
+                @if (!isAllDayEvent)
+                {
+                    <!-- Duplicate Button -->
+                    <form asp-action="DuplicateEvent" method="post">
+                        <input type="hidden" name="eventId" value="@evt.Id" />
+                        <input type="hidden" name="calendarId" value="@(Model.SelectedCalendarId == "all" ? (Model.EventCalendarMap.TryGetValue(evt.Id, out var calendarId) ? calendarId : Model.SelectedCalendarId) : Model.SelectedCalendarId)" />
+                        <button type="submit" class="btn btn-duplicate-event">Duplicate Event</button>
+                    </form>
+                }
             </li>
-
         }
     </ul>
 }

@@ -4,6 +4,7 @@ using Calendar_by_I_M_Marinov.Services.Contracts;
 using Calendar_by_I_M_Marinov.Models;
 using static Calendar_by_I_M_Marinov.Common.DateTimeExtensions;
 using Microsoft.Extensions.Logging;
+using System.Globalization;
 
 public class CalendarController : Controller
 {
@@ -46,68 +47,94 @@ public class CalendarController : Controller
 	[HttpGet]
     public async Task<IActionResult> ListCalendarsAndEvents(string selectedCalendarId)
     {
-        // Get all calendars
-        var calendars = await _googleCalendarService.GetAllCalendarsAsync();
-
-        // Map calendar data to view models
-        var calendarViewModels = calendars.Select(c => new CalendarViewModel
+        try
         {
-            CalendarName = c.Summary,
-            CalendarId = c.Id,
-            AccessRole = c.AccessRole
-        }).ToList();
+            // Get all calendars
+            var calendars = await _googleCalendarService.GetAllCalendarsAsync();
 
-        IList<Event> events = new List<Event>();
-        string selectedCalendarName = "";
-        string accessRole = "";
-        int eventsCount = 0;
-
-        // Check if the "all" calendars option is selected
-        if (selectedCalendarId == "all")
-        {
-            var allEvents = new List<Event>();
-
-            // Load events from all calendars
-            foreach (var calendar in calendars)
+            // Map calendar data to view models
+            var calendarViewModels = calendars.Select(c => new CalendarViewModel
             {
-                var calendarEvents = await _googleCalendarService.GetEventsAsync(calendar.Id);
-                allEvents.AddRange(calendarEvents);
+                CalendarName = c.Summary,
+                CalendarId = c.Id,
+                AccessRole = c.AccessRole
+            }).ToList();
+
+            List<Event> events = new List<Event>();
+            string selectedCalendarName = "Unknown Calendar";
+            string accessRole = "";
+            int eventsCount = 0;
+            var eventCalendarMap = new Dictionary<string, string>();
+
+            // Check if the "all" calendars option is selected
+            if (selectedCalendarId == "all")
+            {
+                var allEvents = new List<Event>();
+
+                // Load events from all calendars
+                foreach (var calendar in calendars)
+                {
+                    var calendarEvents = await _googleCalendarService.GetEventsAsync(calendar.Id);
+                    allEvents.AddRange(calendarEvents);
+
+                    // Map events to their calendar IDs
+                    foreach (var evt in calendarEvents)
+                    {
+                        eventCalendarMap[evt.Id] = calendar.Id;
+                    }
+                }
+
+                events = allEvents
+                    .OrderBy(e => e.Start.DateTimeDateTimeOffset)
+                    .ToList();
+
+                selectedCalendarName = "All Calendars";
+            }
+            else if (!string.IsNullOrEmpty(selectedCalendarId))
+            {
+                // Load events for the specific calendar
+                events = (await _googleCalendarService.GetEventsAsync(selectedCalendarId)).ToList();
+                eventsCount = events.Count;
+
+                var selectedCalendar = calendarViewModels.FirstOrDefault(c => c.CalendarId == selectedCalendarId);
+                if (selectedCalendar != null)
+                {
+                    selectedCalendarName = selectedCalendar.CalendarName;
+                    accessRole = selectedCalendar.AccessRole;
+                }
+
+                // Map events to their calendar IDs
+                foreach (var evt in events)
+                {
+                    eventCalendarMap[evt.Id] = selectedCalendarId;
+                }
             }
 
-            events = allEvents
-                .OrderBy(e => e.Start.DateTimeDateTimeOffset)
-                .ToList();
+            var viewModel = new CalendarEventsViewModel
+            {
+                Calendars = calendarViewModels,
+                SelectedCalendarId = selectedCalendarId,
+                SelectedCalendarName = selectedCalendarName,
+                AccessRole = accessRole,
+                Events = events,
+                EventsCount = eventsCount,
+                EventCalendarMap = eventCalendarMap
+            };
 
-            selectedCalendarName = "All Calendars";
+            ViewBag.SuccessMessage = TempData["SuccessMessage"];
+            ViewBag.SuccessEventId = TempData["SuccessEventId"];
+
+            // Return the view with the view model
+            return View(viewModel);
         }
-        else if (!string.IsNullOrEmpty(selectedCalendarId))
+        catch (Exception ex)
         {
-            // Load events for the specific calendar
-            events = (await _googleCalendarService.GetEventsAsync(selectedCalendarId)).ToList();
-            eventsCount = events.Count;
-
-
-			var selectedCalendar = calendarViewModels.FirstOrDefault(c => c.CalendarId == selectedCalendarId);
-            selectedCalendarName = selectedCalendar?.CalendarName ?? "Unknown Calendar";
-            accessRole = selectedCalendar!.AccessRole;
+            // Handle exceptions
+            ModelState.AddModelError("", $"An error occurred while loading events: {ex.Message}");
+            return View("Error"); // Return an error view or handle it as appropriate
         }
-
-        var viewModel = new CalendarEventsViewModel
-        {
-            Calendars = calendarViewModels,
-            SelectedCalendarId = selectedCalendarId,
-            SelectedCalendarName = selectedCalendarName,
-            AccessRole = accessRole, 
-            Events = events,
-            EventsCount = eventsCount
-		};
-
-        ViewBag.SuccessMessage = TempData["SuccessMessage"];
-        ViewBag.SuccessEventId = TempData["SuccessEventId"];
-
-        // Return the view with the view model
-        return View(viewModel);
     }
+
 
     public async Task<IActionResult> ViewNewEventAdded()
     {
@@ -237,41 +264,44 @@ public class CalendarController : Controller
 	}
 
 	[HttpPost]
-	public async Task<IActionResult> DuplicateEvent(string calendarId, string eventId)
-	{
-		try
-		{
-			var existingEvent = await _googleCalendarService.GetEventByIdAsync(calendarId, eventId);
+    public async Task<IActionResult> DuplicateEvent(string calendarId, string eventId)
+    {
+        try
+        {
+            // Retrieve the existing event from the specified calendar
+            var existingEvent = await _googleCalendarService.GetEventByIdAsync(calendarId, eventId);
 
-			if (existingEvent == null)
-			{
-				return NotFound($"Event with ID {eventId} not found in calendar {calendarId}.");
-			}
+            if (existingEvent == null)
+            {
+                return NotFound($"Event with ID {eventId} not found in calendar {calendarId}.");
+            }
 
-			var model = new EventViewModel
-			{
-				Summary = existingEvent.Summary,
-				Description = existingEvent.Description,
-				Location = existingEvent.Location,
-				Visibility = existingEvent.Visibility,
-				Start = existingEvent.Start?.DateTimeDateTimeOffset?.DateTime,
-				End = existingEvent.End?.DateTimeDateTimeOffset?.DateTime,
-				EventType = existingEvent.Start?.Date != null ? "allDay" : "single" // Determine event type
-			};
+            // Create a new event model based on the existing event
+            var model = new EventViewModel
+            {
+                Summary = existingEvent.Summary,
+                Description = existingEvent.Description,
+                Location = existingEvent.Location,
+                Visibility = existingEvent.Visibility,
+                Start = existingEvent.Start?.DateTimeDateTimeOffset?.DateTime,
+                End = existingEvent.End?.DateTimeDateTimeOffset?.DateTime,
+                EventType = existingEvent.Start?.Date != null ? "allDay" : "single" // Determine event type
+            };
 
-			// Create the duplicated event in the primary calendar
-			var result = await CreateEvent(model);
+            // Call the method to create the duplicated event in the primary calendar
+            var result = await CreateEvent(model);
 
-			return RedirectToAction("ViewNewEventAdded", new { message = "Event duplicated successfully." });
-		}
-		catch (Exception ex)
-		{
-			ModelState.AddModelError("", $"Error duplicating event: {ex.Message}");
-			return RedirectToAction("Error"); // Redirect to an error page or view if something goes wrong
-		}
-	}
+            return RedirectToAction("ViewNewEventAdded", new { message = "Event duplicated successfully." });
+        }
+        catch (Exception ex)
+        {
+            ModelState.AddModelError("", $"Error duplicating event: {ex.Message}");
+            return RedirectToAction("Error"); // Redirect to an error page or view if something goes wrong
+        }
+    }
 
-	[HttpGet]
+
+    [HttpGet]
     public async Task<IActionResult> SearchEventByName(SearchEventViewModel model)
     {
         if (string.IsNullOrEmpty(model.EventName))

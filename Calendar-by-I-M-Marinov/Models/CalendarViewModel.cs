@@ -11,6 +11,7 @@ namespace Calendar_by_I_M_Marinov.Models
 		public int EventsCount { get; set; }
 		public string EventType { get; set; } = null!;
 
-
-	}
+        // List of events associated with this calendar
+        public List<Event> Events { get; set; } = new List<Event>();
+    }
 }
