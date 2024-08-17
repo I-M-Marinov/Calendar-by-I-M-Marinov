@@ -135,12 +135,36 @@ public class CalendarController : Controller
         }
     }
 
-    public async Task<IActionResult> ViewNewEventAdded()
-    {
-        var events = await _googleCalendarService.GetEventsAsync("primary");
-        return View(events);
-    }
-    [HttpGet]
+	public async Task<IActionResult> ViewNewEventAdded()
+	{
+		var events = await _googleCalendarService.GetEventsAsync("primary");
+		var lastAdded = events.OrderByDescending(e => e.CreatedDateTimeOffset ?? e.UpdatedDateTimeOffset).FirstOrDefault();
+
+		if (lastAdded == null)
+		{
+			return NotFound("No events found.");
+		}
+
+		return View(lastAdded);
+	}
+
+	public async Task<IActionResult> ViewNewEventUpdated(string calendarId, string eventId)
+	{
+		// Retrieve the specific event by its ID
+		var eventToView = await _googleCalendarService.GetEventByIdAsync(calendarId, eventId);
+
+		if (eventToView == null)
+		{
+			return NotFound("Event not found.");
+		}
+
+		// Pass the calendarId to the view via ViewBag if needed
+		ViewBag.CalendarId = calendarId;
+
+		return View(eventToView);
+	}
+
+	[HttpGet]
     public IActionResult CreateEvent()
     {
         ViewBag.PageTitle = "Create a new Event";
@@ -292,8 +316,6 @@ public class CalendarController : Controller
             return RedirectToAction("ListCalendarsAndEvents");
         }
     }
-
-
 
     [HttpPost]
     public async Task<IActionResult> DuplicateEvent(string calendarId, string eventId)
@@ -467,14 +489,14 @@ public class CalendarController : Controller
 
     [HttpGet]
 	public async Task<IActionResult> EditEvent(string calendarId, string eventId)
-    {
-	    // Retrieve the event from the Google Calendar
-	    var eventToEdit = await _googleCalendarService.GetEventByIdAsync(calendarId, eventId);
+	{
+		// Retrieve the event from the Google Calendar
+		var eventToEdit = await _googleCalendarService.GetEventByIdAsync(calendarId, eventId);
 
-	    if (eventToEdit == null)
-	    {
-		    return NotFound($"Event with ID {eventId} not found.");
-	    }
+		if (eventToEdit == null)
+		{
+			return NotFound($"Event with ID {eventId} not found.");
+		}
 
 		// Map the retrieved event to the EditEventViewModel
 		var viewModel = new EditEventViewModel
@@ -483,21 +505,28 @@ public class CalendarController : Controller
 			CalendarId = calendarId,
 			Summary = eventToEdit.Summary,
 			Location = eventToEdit.Location,
-			Start = eventToEdit.Start.DateTimeDateTimeOffset?.ToDateTime().ToLocalTime(), 
-			End = eventToEdit.End.DateTimeDateTimeOffset?.ToDateTime().ToLocalTime()
-        };
+			Start = eventToEdit.Start.DateTimeDateTimeOffset?.ToDateTime().ToLocalTime(),
+			End = eventToEdit.End.DateTimeDateTimeOffset?.ToDateTime().ToLocalTime(),
+			IsCreator = eventToEdit.Creator?.Email == "your-email@example.com", // Example check
+			GuestsCanModify = eventToEdit.GuestsCanModify ?? false,
+			Status = eventToEdit.Status,
+			Source = eventToEdit.Source?.ToString(), // Example property
+			Locked = eventToEdit.Locked, // Example property
+			Transparency = eventToEdit.Transparency,
+			Visibility = "public", // Default value
+			EventType = "single" // Default value
+		};
 
 		// Set the ViewBag properties for the view
 		ViewBag.PageTitle = "Edit Event";
-	    ViewBag.FormAction = "UpdateEvent";
-	    ViewBag.ButtonText = "Save Changes";
+		ViewBag.FormAction = "UpdateEvent";
+		ViewBag.ButtonText = "Save Changes";
 
-	    // Return the view for editing the event
-	    return View("UpdateEvent", viewModel);
+		// Return the view for editing the event
+		return View("UpdateEvent", viewModel);
+	}
 
-    }
-
-    [HttpPost]
+	[HttpPost]
     public async Task<IActionResult> EditEvents(Dictionary<string, EditEventViewModel> events)
     {
         // Validate and process each event
@@ -610,39 +639,46 @@ public class CalendarController : Controller
         return View("UpdateEvents", updatedEvents);
     }
 
-    [HttpPost]
-    public async Task<IActionResult> UpdateEvent(EditEventViewModel model)
-    {
+	[HttpPost]
+	public async Task<IActionResult> UpdateEvent(EditEventViewModel model)
+	{
+		
+		var updatedEvent = new Event
+		{
+			Id = model.EventId,
+			Summary = model.Summary,
+			Description = model.Description,
+			Location = model.Location,
+			Start = new EventDateTime
+			{
+				DateTime = model.Start.HasValue ? model.Start.Value.ToUniversalTime() : DateTime.UtcNow,
+				TimeZone = "Europe/Sofia"
+			},
+			End = new EventDateTime
+			{
+				DateTime = model.End.HasValue ? model.End.Value.ToUniversalTime() : DateTime.UtcNow,
+				TimeZone = "Europe/Sofia"
+			}
+		};
 
-        try
-        {
-            var updatedEvent = new Event
-            {
-                Id = model.EventId,
-                Summary = model.Summary,
-                Start = new EventDateTime { DateTime = model.Start },
-                End = new EventDateTime { DateTime = model.End },
-                Location = model.Location
-            };
+		try
+		{
+			await _googleCalendarService.UpdateEventAsync(model.CalendarId, model.EventId, updatedEvent);
+			return RedirectToAction("ViewNewEventUpdated", new { message = "Event updated successfully.", model.CalendarId, model.EventId });
+		}
+		catch (Exception ex)
+		{
+			ModelState.AddModelError("", $"Error updating event: {ex.Message}");
+		}
+		
 
-            // Update the event in the Google Calendar
-            await _googleCalendarService.UpdateEventAsync(model.CalendarId, model.EventId, updatedEvent);
+		// Redisplay form with errors
+		ViewBag.PageTitle = "Edit Event";
+		ViewBag.FormAction = "UpdateEvent";
+		ViewBag.ButtonText = "Save Changes";
 
-            TempData["SuccessMessage"] = $"The event was updated successfully.";
-            TempData["SuccessEventId"] = model.EventId;
+		return View("UpdateEvent", model);
+	}
 
-            // Redirect to the calendar view after successful update
-            return RedirectToAction("ListCalendarsAndEvents", new { selectedCalendarId = model.CalendarId });
-        }
-        catch (Exception ex)
-        {
-            // Handle exceptions and return an error view or message
-            ModelState.AddModelError("", $"Error updating event: {ex.Message}");
-            ViewBag.PageTitle = "Edit Event";
-            ViewBag.FormAction = "UpdateEvent";
-            ViewBag.ButtonText = "Save Changes";
-            return View("UpdateEvent", model);
-        }
-    }
 
 }

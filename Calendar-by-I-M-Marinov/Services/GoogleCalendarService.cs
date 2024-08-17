@@ -255,11 +255,10 @@ public class GoogleCalendarService : IGoogleCalendarService
 
 		return matchingEvents;
 	}
-	public async Task<Event> UpdateEventAsync(string calendarId, string eventId, Event updatedEvent)
+	public async Task UpdateEventAsync(string calendarId, string eventId, Event updatedEvent)
 	{
-		var updateRequest = _service.Events.Update(updatedEvent, calendarId, eventId);
-
-		var result = await updateRequest.ExecuteAsync();
-		return result;
+		var request = _service.Events.Update(updatedEvent, calendarId, eventId);
+		await request.ExecuteAsync();
 	}
+
 }

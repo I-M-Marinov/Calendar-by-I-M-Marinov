@@ -4,14 +4,7 @@
 	var calendarId = ViewBag.CalendarId as string; // Retrieve calendarId from ViewBag
 }
 
-<h2>New Calendar Event Added!</h2>
-
-@if (ViewBag.DeleteMessage != null)
-{
-	<div class="alert @((ViewBag.DeleteMessage.Contains("Failed") ? "alert-danger" : "alert-success"))">
-		@ViewBag.DeleteMessage
-	</div>
-}
+<h2>Event Updated Successfully!</h2>
 
 @if (Model != null)
 {
@@ -38,5 +31,5 @@
 }
 else
 {
-	<p>No events found.</p>
+	<p>No event found.</p>
 }
