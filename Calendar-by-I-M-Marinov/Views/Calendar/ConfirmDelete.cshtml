@@ -1,45 +1,54 @@
-﻿@model Google.Apis.Calendar.v3.Data.Event
+﻿@model DeleteEventViewModel
 
 @{
-	bool isSuccess = TempData["IsSuccess"] != null && (bool)TempData["IsSuccess"];
+    bool isSuccess = TempData["IsSuccess"] != null && (bool)TempData["IsSuccess"];
+    int deletedInstancesCount = TempData["DeletedInstancesCount"] != null ? (int)TempData["DeletedInstancesCount"] : 0;
 }
 
 <h2 style="text-align: center;">@(isSuccess ? "Event Deleted Successfully" : "Are you sure you want to delete the following event?")</h2>
 
 @if (TempData["ErrorMessage"] != null)
 {
-	<div class="alert alert-danger" style="text-align: center;">
-		@TempData["ErrorMessage"]
-	</div>
+    <div class="alert alert-danger" style="text-align: center;">
+        @TempData["ErrorMessage"]
+    </div>
 }
 else if (isSuccess)
 {
-	<div class="alert alert-success" style="text-align: center;">
-		Event deleted successfully.
-	</div>
+    <div class="alert alert-success" style="text-align: center;">
+        @TempData["SuccessMessage"]
+        @if (deletedInstancesCount > 0)
+        {
+            <p>@deletedInstancesCount instance(s) of the recurring event were deleted.</p>
+        }
+    </div>
 }
 
 @if (!isSuccess)
 {
-	<ul style="text-align: center; list-style-type: none;">
-		<li style="text-align: center;">
-			<br />
-			<br />
-			<strong>@Model.Summary</strong><br/>
-			Start: @Model.Start.DateTime?.ToString("MMMM dd, yyyy h:mm")<br/>
-			End: @Model.End.DateTime?.ToString("MMMM dd, yyyy h:mm")<br/>
-			Location: @Model.Location<br/>
-		</li>
-	</ul>
-	<br />
-	<!-- Form to confirm deletion -->
-	<form asp-action="DeletePrimaryEvent" method="post" style="text-align: center;">
-		<input type="hidden" name="eventId" value="@Model.Id" />
-		<button type="submit" class="btn btn-danger btn-sm">Confirm Delete</button>
-		<a href="@Url.Action("ListCalendarsAndEvents")" class="btn btn-secondary btn-sm">Cancel</a>
-	</form>
+    <ul style="text-align: center; list-style-type: none;">
+        <li style="text-align: center;">
+            <br />
+            <br />
+            <strong>@Model.Summary</strong><br />
+            Start: @Model.Start?.ToString("MMMM dd, yyyy h:mm")<br />
+            End: @Model.End?.ToString("MMMM dd, yyyy h:mm")<br />
+            Location: @Model.Location<br />
+        </li>
+    </ul>
+    <br />
+    <!-- Form to confirm deletion -->
+    <form asp-action="DeletePrimaryEvent" method="post" style="text-align: center;">
+        <input type="hidden" name="eventId" value="@Model.EventId" />
+        <div class="form-group">
+            <input type="checkbox" id="deleteSeries" name="deleteSeries" value="true" />
+            <label for="deleteSeries">Delete entire event series?</label>
+        </div>
+        <button type="submit" class="btn btn-danger btn-sm">Confirm Delete</button>
+        <a href="@Url.Action("ListCalendarsAndEvents")" class="btn btn-secondary btn-sm">Cancel</a>
+    </form>
 }
 else
 {
-	<a href="@Url.Action("ListCalendarsAndEvents")" class="btn btn-primary btn-sm">Back to Events</a>
+    <a href="@Url.Action("ListCalendarsAndEvents")" class="btn btn-primary btn-sm">Back to Events</a>
 }

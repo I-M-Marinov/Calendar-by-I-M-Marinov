@@ -19,5 +19,7 @@ namespace Calendar_by_I_M_Marinov.Services.Contracts
          Task<Event> UpdateEventAsync(string calendarId, string eventId, Event updatedEvent);
          Task DeleteEventAsync(string calendarId, string eventId);
          Task DeleteEventAsync(string eventId);
+         Task DeleteEventAsync(string calendarId, string eventId, bool deleteSeries = false);
+
     }
 }

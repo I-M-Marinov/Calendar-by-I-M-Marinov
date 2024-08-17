@@ -94,7 +94,6 @@ public class GoogleCalendarService : IGoogleCalendarService
 		return events;
 	}
 
-
 	public async Task<IList<Event>> GetEventsAsync(string calendarId)
 	{
 		var request = _service.Events.List(calendarId);
@@ -168,16 +167,62 @@ public class GoogleCalendarService : IGoogleCalendarService
 		return await insertRequest.ExecuteAsync();
 	}
 
-	public async Task DeleteEventAsync(string calendarId, string eventId)
+    public async Task DeleteEventAsync(string eventId)
+
+	{
+		var request = _service.Events.Delete("primary", eventId);
+		await request.ExecuteAsync();
+	}
+    public async Task DeleteEventAsync(string calendarId, string eventId)
+    {
+        try
+        {
+            var request = _service.Events.Delete(calendarId, eventId);
+            await request.ExecuteAsync();
+        }
+        catch (Google.GoogleApiException ex) when (ex.HttpStatusCode == System.Net.HttpStatusCode.NotFound)
+        {
+            Console.WriteLine($"The event with ID '{eventId}' in calendar '{calendarId}' was not found.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred while trying to delete the event: {ex.Message}");
+        }
+    }
+	public async Task DeleteEventAsync(string calendarId, string eventId, bool deleteSeries = false)
 	{
 		try
 		{
-			var request = _service.Events.Delete(calendarId, eventId);
-			await request.ExecuteAsync();
-		}
-		catch (Google.GoogleApiException ex) when (ex.HttpStatusCode == System.Net.HttpStatusCode.NotFound)
-		{
-			Console.WriteLine($"The event with ID '{eventId}' in calendar '{calendarId}' was not found.");
+			var eventRequest = _service.Events.Get(calendarId, eventId);
+			var eventToDelete = await eventRequest.ExecuteAsync();
+
+			bool isRecurring = eventToDelete.Recurrence != null && eventToDelete.Recurrence.Any()
+			                   || !string.IsNullOrEmpty(eventToDelete.RecurringEventId);
+
+			if (isRecurring && deleteSeries)
+			{
+				var instancesRequest = _service.Events.Instances(calendarId, eventId);
+				var instances = await instancesRequest.ExecuteAsync();
+
+				if (instances.Items.Any())
+				{
+					// Delete each instance of the recurring event
+					foreach (var instance in instances.Items)
+					{
+						var instanceDeleteRequest = _service.Events.Delete(calendarId, instance.Id);
+						await instanceDeleteRequest.ExecuteAsync();
+					}
+				}
+                // Delete the "master" event as well
+                var masterDeleteRequest = _service.Events.Delete(calendarId, eventId);
+				await masterDeleteRequest.ExecuteAsync();
+			}
+			else
+			{
+				// If deleteSeries is false, or if the event is not recurring delete the single event
+				var deleteRequest = _service.Events.Delete(calendarId, eventId);
+				await deleteRequest.ExecuteAsync();
+			}
 		}
 		catch (Exception ex)
 		{
@@ -185,11 +230,7 @@ public class GoogleCalendarService : IGoogleCalendarService
 		}
 	}
 
-	public async Task DeleteEventAsync(string eventId)
-	{
-		var request = _service.Events.Delete("primary", eventId);
-		await request.ExecuteAsync();
-	}
+
 
 	public async Task<IList<Event>> GetEventByIdAcrossAllCalendarsAsync(string eventId)
 	{
