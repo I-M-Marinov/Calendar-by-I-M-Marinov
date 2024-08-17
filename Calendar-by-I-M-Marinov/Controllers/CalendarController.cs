@@ -207,78 +207,95 @@ public class CalendarController : Controller
 		}
 	}
 
-	[HttpPost]
-	public async Task<IActionResult> DeletePrimaryEvent(DeleteEventViewModel model)
-	{
-		if (string.IsNullOrEmpty(model.EventId))
-		{
-			TempData["ErrorMessage"] = "Event ID is missing.";
-			TempData["IsSuccess"] = false;
-			return RedirectToAction("ConfirmDelete", new { eventId = model.EventId });
-		}
-
-		try
-		{
-
-            int deletedInstancesCount = 0;
-
-            // Use the deleteSeries value from the view model
-            await _googleCalendarService.DeleteEventAsync("primary", model.EventId, model.DeleteSeries);
-            TempData["IsSuccess"] = true;
-            TempData["DeletedInstancesCount"] = deletedInstancesCount; // Set count if series is deleted
-            TempData["SuccessMessage"] = model.DeleteSeries
-                ? $"The recurring event series and {deletedInstancesCount} instance(s) were deleted successfully."
-                : "The event was deleted successfully.";
+    [HttpPost]
+    public async Task<IActionResult> DeletePrimaryEvent(DeleteEventViewModel model)
+    {
+        if (string.IsNullOrEmpty(model.EventId))
+        {
+            TempData["ErrorMessage"] = "Event ID is missing.";
+            TempData["IsSuccess"] = false;
+            return RedirectToAction("ConfirmDelete", new { calendarId = model.CalendarId, eventId = model.EventId });
         }
-		catch (Exception ex)
-		{
-			TempData["ErrorMessage"] = $"Failed to delete event. Error: {ex.Message}";
-			TempData["IsSuccess"] = false;
-		}
 
-		return RedirectToAction("ConfirmDelete", new { eventId = model.EventId });
-	}
+        try
+        {
+            int deletedInstancesCount = await _googleCalendarService.DeleteEventAsync("primary", model.EventId, model.DeleteSeries);
+
+            TempData["IsSuccess"] = true;
+            TempData["SuccessMessage"] = model.DeleteSeries ? "The recurring event series was deleted successfully." : "The event was deleted successfully.";
+            TempData["DeletedInstancesCount"] = deletedInstancesCount;
+            return RedirectToAction("DeletionConfirmed");
+        }
+        catch (Exception ex)
+        {
+            TempData["ErrorMessage"] = $"Failed to delete event. Error: {ex.Message}";
+            TempData["IsSuccess"] = false;
+            return RedirectToAction("ConfirmDelete", new { calendarId = model.CalendarId, eventId = model.EventId });
+        }
+    }
+
+    public IActionResult DeletionConfirmed(string eventId)
+    {
+        var successMessage = TempData["SuccessMessage"];
+        var deletedInstancesCount = TempData["DeletedInstancesCount"] != null ? (int)TempData["DeletedInstancesCount"] : 0;
+
+        if (successMessage != null)
+        {
+            ViewBag.SuccessMessage = successMessage;
+            ViewBag.DeletedInstancesCount = deletedInstancesCount;
+            return View();
+        }
+
+        return RedirectToAction("ListCalendarsAndEvents");
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> ConfirmDelete(string calendarId, string eventId)
+    {
+        if (string.IsNullOrEmpty(eventId))
+        {
+            TempData["ErrorMessage"] = "Event ID is missing.";
+            return RedirectToAction("ListCalendarsAndEvents");
+        }
+
+        try
+        {
+            var eventToDelete = await _googleCalendarService.GetEventByIdAsync(calendarId, eventId);
+
+            if (eventToDelete == null)
+            {
+                TempData["ErrorMessage"] = "Event not found.";
+                return RedirectToAction("ListCalendarsAndEvents");
+            }
+
+            // Store the necessary data in TempData
+            TempData["EventId"] = eventToDelete.Id;
+            TempData["Summary"] = eventToDelete.Summary;
+            TempData["Start"] = eventToDelete.Start.DateTime;
+            TempData["End"] = eventToDelete.End.DateTime;
+            TempData["Location"] = eventToDelete.Location;
+
+            // Redirect to ConfirmDelete view
+            return View(new DeleteEventViewModel
+            {
+                EventId = eventToDelete.Id,
+                Summary = eventToDelete.Summary,
+                Start = eventToDelete.Start.DateTime,
+                End = eventToDelete.End.DateTime,
+                Location = eventToDelete.Location,
+                DeleteSeries = false
+            });
+        }
+        catch (Exception ex)
+        {
+            TempData["ErrorMessage"] = $"An error occurred while retrieving the event details: {ex.Message}";
+            return RedirectToAction("ListCalendarsAndEvents");
+        }
+    }
 
 
-	[HttpGet]
-	public async Task<IActionResult> ConfirmDelete(string eventId)
-	{
-		if (string.IsNullOrEmpty(eventId))
-		{
-			TempData["ErrorMessage"] = "Event ID is missing.";
-			return RedirectToAction("ListCalendarsAndEvents");
-		}
 
-		try
-		{
-			var eventToDelete = await _googleCalendarService.GetEventByIdAsync("primary", eventId);
-
-			if (eventToDelete == null)
-			{
-				TempData["ErrorMessage"] = "Event not found.";
-				return RedirectToAction("ListCalendarsAndEvents");
-			}
-
-			var viewModel = new DeleteEventViewModel
-			{
-				EventId = eventToDelete.Id,
-				Summary = eventToDelete.Summary,
-				Start = eventToDelete.Start.DateTime,
-				End = eventToDelete.End.DateTime,
-				Location = eventToDelete.Location,
-				DeleteSeries = false 
-			};
-
-			return View(viewModel);
-		}
-		catch (Exception ex)
-		{
-			TempData["ErrorMessage"] = $"An error occurred while retrieving the event details: {ex.Message}";
-			return RedirectToAction("ListCalendarsAndEvents");
-		}
-	}
-
-	[HttpPost]
+    [HttpPost]
     public async Task<IActionResult> DuplicateEvent(string calendarId, string eventId)
     {
         try

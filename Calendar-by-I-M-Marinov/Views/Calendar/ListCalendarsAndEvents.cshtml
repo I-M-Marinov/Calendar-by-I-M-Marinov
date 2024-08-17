@@ -92,6 +92,14 @@
 
 		                <!-- Delete Button -->
 		                <form asp-action="ConfirmDelete" method="get" style="display:inline;">
+			                @if (Model.SelectedCalendarId == "all")
+			                {
+				                <input type="hidden" name="calendarId" value="@(Model.EventCalendarMap.TryGetValue(evt.Id, out var calendarId) ? calendarId : Model.SelectedCalendarId)" />
+			                }
+			                else
+			                {
+				                <input type="hidden" name="calendarId" value="@Model.SelectedCalendarId" />
+			                }
 			                <input type="hidden" name="eventId" value="@evt.Id" />
 			                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
 		                </form>

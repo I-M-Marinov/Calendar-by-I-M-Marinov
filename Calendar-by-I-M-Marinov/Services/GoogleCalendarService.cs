@@ -41,7 +41,6 @@ public class GoogleCalendarService : IGoogleCalendarService
 			ApplicationName = _applicationName,
 		});
 	}
-
 	public async Task<IList<CalendarListEntry>> GetAllCalendarsAsync()
 	{
 		var calendarListRequest = _service.CalendarList.List();
@@ -49,7 +48,6 @@ public class GoogleCalendarService : IGoogleCalendarService
 
 		return calendarList.Items;
 	}
-
 	public async Task<IList<CalendarListEntry>> GetEditableCalendarsAsync()
 	{
 		var calendarListRequest = _service.CalendarList.List();
@@ -62,7 +60,6 @@ public class GoogleCalendarService : IGoogleCalendarService
 
 		return filteredCalendars;
 	}
-
 	public async Task<List<Event>> GetEventsForCalendarAsync(string calendarId)
 	{
 		var events = new List<Event>();
@@ -93,7 +90,6 @@ public class GoogleCalendarService : IGoogleCalendarService
 
 		return events;
 	}
-
 	public async Task<IList<Event>> GetEventsAsync(string calendarId)
 	{
 		var request = _service.Events.List(calendarId);
@@ -120,21 +116,18 @@ public class GoogleCalendarService : IGoogleCalendarService
 		var response = await request.ExecuteAsync();
 		return response.Items;
 	}
-
 	// this method is only returning events by id from the Primary calendar !!!! 
 	public virtual async Task<Event> GetEventByIdAsync(string eventId)
 	{
 		var request = _service.Events.Get("primary", eventId);
 		return await request.ExecuteAsync();
 	}
-
 	// overload of the original method taking calendarId and eventId
 	public async Task<Event> GetEventByIdAsync(string calendarId, string eventId)
 	{
 		var request = _service.Events.Get(calendarId, eventId);
 		return await request.ExecuteAsync();
 	}
-
 	/* The three methods below are used for Adding and Editing events respectively */
 	public async Task<Event> AddEventAsync(Event newEvent)
 	{
@@ -142,14 +135,12 @@ public class GoogleCalendarService : IGoogleCalendarService
 		var createdEvent = await insertRequest.ExecuteAsync();
 		return createdEvent;
 	}
-
 	public async Task<Event> AddEventAsync(string calendarId, Event newEvent)
 	{
 		var insertRequest = _service.Events.Insert(newEvent, calendarId);
 		var createdEvent = await insertRequest.ExecuteAsync();
 		return createdEvent;
 	}
-
 	public async Task<Event> AddEventAsync(string calendarId, string eventId, Event newEvent)
 	{
 		if (newEvent == null)
@@ -166,7 +157,6 @@ public class GoogleCalendarService : IGoogleCalendarService
 		var insertRequest = _service.Events.Insert(newEvent, calendarId);
 		return await insertRequest.ExecuteAsync();
 	}
-
     public async Task DeleteEventAsync(string eventId)
 
 	{
@@ -189,50 +179,54 @@ public class GoogleCalendarService : IGoogleCalendarService
             Console.WriteLine($"An error occurred while trying to delete the event: {ex.Message}");
         }
     }
-	public async Task DeleteEventAsync(string calendarId, string eventId, bool deleteSeries = false)
-	{
-		try
-		{
-			var eventRequest = _service.Events.Get(calendarId, eventId);
-			var eventToDelete = await eventRequest.ExecuteAsync();
+    public async Task<int> DeleteEventAsync(string calendarId, string eventId, bool deleteSeries = false)
+    {
+        int deletedInstancesCount = 0;
 
-			bool isRecurring = eventToDelete.Recurrence != null && eventToDelete.Recurrence.Any()
-			                   || !string.IsNullOrEmpty(eventToDelete.RecurringEventId);
+        try
+        {
+            var eventRequest = _service.Events.Get(calendarId, eventId);
+            var eventToDelete = await eventRequest.ExecuteAsync();
 
-			if (isRecurring && deleteSeries)
-			{
-				var instancesRequest = _service.Events.Instances(calendarId, eventId);
-				var instances = await instancesRequest.ExecuteAsync();
+            bool isRecurring = eventToDelete.Recurrence != null && eventToDelete.Recurrence.Any()
+                               || !string.IsNullOrEmpty(eventToDelete.RecurringEventId);
 
-				if (instances.Items.Any())
-				{
-					// Delete each instance of the recurring event
-					foreach (var instance in instances.Items)
-					{
-						var instanceDeleteRequest = _service.Events.Delete(calendarId, instance.Id);
-						await instanceDeleteRequest.ExecuteAsync();
-					}
-				}
+            if (isRecurring && deleteSeries)
+            {
+                var instancesRequest = _service.Events.Instances(calendarId, eventId);
+                var instances = await instancesRequest.ExecuteAsync();
+
+                if (instances.Items.Any())
+                {
+                    // Delete each instance of the recurring event and increment the counter
+                    foreach (var instance in instances.Items)
+                    {
+                        var instanceDeleteRequest = _service.Events.Delete(calendarId, instance.Id);
+                        await instanceDeleteRequest.ExecuteAsync();
+                        deletedInstancesCount++;  
+                    }
+                }
                 // Delete the "master" event as well
                 var masterDeleteRequest = _service.Events.Delete(calendarId, eventId);
-				await masterDeleteRequest.ExecuteAsync();
-			}
-			else
-			{
-				// If deleteSeries is false, or if the event is not recurring delete the single event
-				var deleteRequest = _service.Events.Delete(calendarId, eventId);
-				await deleteRequest.ExecuteAsync();
-			}
-		}
-		catch (Exception ex)
-		{
-			Console.WriteLine($"An error occurred while trying to delete the event: {ex.Message}");
-		}
-	}
+                await masterDeleteRequest.ExecuteAsync();
+                deletedInstancesCount++; 
+            }
+            else
+            {
+                // If deleteSeries is false, or if the event is not recurring, delete the single event
+                var deleteRequest = _service.Events.Delete(calendarId, eventId);
+                await deleteRequest.ExecuteAsync();
+                deletedInstancesCount++; 
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred while trying to delete the event: {ex.Message}");
+        }
 
-
-
-	public async Task<IList<Event>> GetEventByIdAcrossAllCalendarsAsync(string eventId)
+        return deletedInstancesCount; // Return the number of deleted instances
+    }
+    public async Task<IList<Event>> GetEventByIdAcrossAllCalendarsAsync(string eventId)
 	{
 		var calendars = await GetEditableCalendarsAsync(); // get all calendars that you are the owner or writer of
 		var matchingEvents = new List<Event>();
@@ -261,7 +255,6 @@ public class GoogleCalendarService : IGoogleCalendarService
 
 		return matchingEvents;
 	}
-
 	public async Task<Event> UpdateEventAsync(string calendarId, string eventId, Event updatedEvent)
 	{
 		var updateRequest = _service.Events.Update(updatedEvent, calendarId, eventId);
