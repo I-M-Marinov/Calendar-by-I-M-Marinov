@@ -50,13 +50,6 @@ form-group{
     margin-bottom: 1em;
 }
 
-.event-item:first-child{
-    font-weight: 800;
-    font-size: 20px;
-
-
-}
-
 .event-info {
     flex: 1;
     text-align: center; 
@@ -210,6 +203,23 @@ h4{
 .create-event-group.visibility {
     max-width: 30%;
     margin: 0 auto;
+}
+
+/* CSS for the Dashboard View ( ViewTodaysEvents ) */
+
+.todays-event {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    max-width: 65%;
+    margin: 0 auto;
+    margin-bottom: 0.5em;
+}
+
+.todays-event li {
+    margin-top: 2em;
+    border-bottom: 1.5px solid #1a8ba9;
+
 }
 
 

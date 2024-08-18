@@ -3,8 +3,7 @@ using Google.Apis.Calendar.v3.Data;
 using Calendar_by_I_M_Marinov.Services.Contracts;
 using Calendar_by_I_M_Marinov.Models;
 using static Calendar_by_I_M_Marinov.Common.DateTimeExtensions;
-using Microsoft.Extensions.Logging;
-using System.Globalization;
+using Google.Apis.Calendar.v3;
 
 public class CalendarController : Controller
 {
@@ -15,7 +14,8 @@ public class CalendarController : Controller
         _googleCalendarService = googleCalendarService;
     }
 
-    public async Task<IActionResult> ListCalendars()
+
+	public async Task<IActionResult> ListCalendars()
     {
 	    var calendars = await _googleCalendarService.GetAllCalendarsAsync();
 
@@ -170,38 +170,50 @@ public class CalendarController : Controller
         ViewBag.PageTitle = "Create a new Event";
         ViewBag.FormAction = "CreateEvent";
         ViewBag.ButtonText = "Create Event";
-        return View(new EventViewModel());
+
+        var model = new EventViewModel
+        {
+            EventType = "single" // default value
+        };
+
+        return View(model);
     }
     [HttpPost]
 	public async Task<IActionResult> CreateEvent(EventViewModel model)
 	{
-		// Define the time zone
 		var timeZone = "Europe/Sofia";
+		EventDateTime startEventDateTime;
+		EventDateTime endEventDateTime;
 
-		// Determine the start and end times for the event
-		EventDateTime startEventDateTime = model.EventType == "allDay"
-			? new EventDateTime
+		if (model.EventType == "allDay")
+		{
+			startEventDateTime = new EventDateTime
 			{
-				Date = model.Start?.ToString("yyyy-MM-dd"), // All-day events use Date only
-				TimeZone = timeZone
-			}
-			: new EventDateTime
-			{
-				DateTime = model.Start.HasValue ? model.Start.Value.ToUniversalTime() : DateTime.UtcNow, // Use current time if start time is not provided
+				Date = model.Start?.ToString("yyyy-MM-dd"), 
 				TimeZone = timeZone
 			};
 
-		EventDateTime endEventDateTime = model.EventType == "allDay"
-			? new EventDateTime
+			endEventDateTime = new EventDateTime
 			{
-				Date = model.End?.ToString("yyyy-MM-dd"), // All-day events use Date only
-				TimeZone = timeZone
-			}
-			: new EventDateTime
-			{
-				DateTime = model.End.HasValue ? model.End.Value.ToUniversalTime() : startEventDateTime.DateTime, // Use start time if end time is not provided
+				Date = model.Start?.AddDays(1).ToString("yyyy-MM-dd"), // End date is one day after start date
 				TimeZone = timeZone
 			};
+		}
+		else
+		{
+			// If it's a timed event, use DateTime for Start and End
+			startEventDateTime = new EventDateTime
+			{
+				DateTime = model.Start.HasValue ? model.Start.Value.ToUniversalTime() : DateTime.UtcNow, 
+				TimeZone = timeZone
+			};
+
+			endEventDateTime = new EventDateTime
+			{
+				DateTime = model.End.HasValue ? model.End.Value.ToUniversalTime() : startEventDateTime.DateTime, 
+				TimeZone = timeZone
+			};
+		}
 
 		var newEvent = new Event
 		{
@@ -231,7 +243,7 @@ public class CalendarController : Controller
 		}
 	}
 
-    [HttpPost]
+	[HttpPost]
     public async Task<IActionResult> DeletePrimaryEvent(DeleteEventViewModel model)
     {
         if (string.IsNullOrEmpty(model.EventId))
@@ -678,6 +690,48 @@ public class CalendarController : Controller
 		ViewBag.ButtonText = "Save Changes";
 
 		return View("UpdateEvent", model);
+	}
+
+	public async Task<IList<Event>> GetTodaysEventsAsync()
+	{
+		var calendarList = await _googleCalendarService.GetAllCalendarsAsync();
+		var allEvents = new List<Event>();
+		var now = DateTime.UtcNow;
+		var startOfDay = new DateTime(now.Year, now.Month, now.Day, 0, 0, 0, DateTimeKind.Utc);
+		var endOfDay = startOfDay.AddDays(1).AddTicks(-1);
+
+		foreach (var calendar in calendarList)
+		{
+			var todayEvents = await _googleCalendarService.GetEventsForCalendarAsync(calendar.Id);
+
+			var filteredEvents = todayEvents.Where(e =>
+			{
+				if (e.Start.DateTime.HasValue)
+				{
+					// Filter events with specific start and end times
+					return e.Start.DateTime.Value >= startOfDay && e.Start.DateTime.Value <= endOfDay;
+				}
+				else if (!string.IsNullOrEmpty(e.Start.Date))
+				{
+					//  all-day events 
+					var eventDate = DateTime.Parse(e.Start.Date);
+					return eventDate.Date == now.Date;
+				}
+
+				return false;
+			});
+
+			allEvents.AddRange(filteredEvents);
+		}
+
+		return allEvents.OrderBy(e => e.Start.DateTime ?? DateTime.Parse(e.Start.Date)).ToList();
+	}
+
+
+	public async Task<IActionResult> ViewTodaysEvents()
+	{
+		var todayEvents = await GetTodaysEventsAsync();
+		return View(todayEvents);
 	}
 
 

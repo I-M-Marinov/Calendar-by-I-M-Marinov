@@ -1,0 +1,42 @@
+﻿@model IList<Google.Apis.Calendar.v3.Data.Event>
+
+@{
+	ViewBag.Title = $"{DateTime.Now.Date.ToString("D")} Events";
+}
+
+<h2>@ViewBag.Title</h2>
+
+@if (Model != null && Model.Count > 0)
+{
+	<ul class="todays-event" style="list-style-type: none; text-align:center;">
+		@foreach (var calendarEvent in Model)
+		{
+			<li>
+				<strong>@calendarEvent.Summary</strong><br />
+
+				@if (calendarEvent.Start.DateTime.HasValue && calendarEvent.End.DateTime.HasValue)
+				{
+					<!-- Timed Event -->
+					<p>Start: @calendarEvent.Start.DateTime.Value.ToLocalTime().ToString("MMMM dd, yyyy h:mm tt")</p>
+					<p>End: @calendarEvent.End.DateTime.Value.ToLocalTime().ToString("MMMM dd, yyyy h:mm tt")</p>
+				}
+				else if (!string.IsNullOrEmpty(calendarEvent.Start.Date) && !string.IsNullOrEmpty(calendarEvent.End.Date))
+				{
+					<!-- All-Day Event -->
+					<p>Date: @DateTime.Parse(calendarEvent.Start.Date).ToString("MMMM dd, yyyy")</p>
+				}
+
+				@if (!string.IsNullOrEmpty(calendarEvent.Description))
+				{
+					<p>Description: @calendarEvent.Description</p>
+				}
+
+				<br />
+			</li>
+		}
+	</ul>
+}
+else
+{
+	<p>No events found for today.</p>
+}
