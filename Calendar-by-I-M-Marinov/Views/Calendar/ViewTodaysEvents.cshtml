@@ -12,7 +12,7 @@
 		@foreach (var calendarEvent in Model)
 		{
 			<li>
-				<strong>@calendarEvent.Summary</strong><br />
+				<strong>@calendarEvent.Summary</strong>
 
 				@if (calendarEvent.Start.DateTime.HasValue && calendarEvent.End.DateTime.HasValue)
 				{
@@ -23,6 +23,7 @@
 				else if (!string.IsNullOrEmpty(calendarEvent.Start.Date) && !string.IsNullOrEmpty(calendarEvent.End.Date))
 				{
 					<!-- All-Day Event -->
+					<br />
 					<p>Date: @DateTime.Parse(calendarEvent.Start.Date).ToString("MMMM dd, yyyy")</p>
 				}
 
@@ -31,7 +32,6 @@
 					<p>Description: @calendarEvent.Description</p>
 				}
 
-				<br />
 			</li>
 		}
 	</ul>

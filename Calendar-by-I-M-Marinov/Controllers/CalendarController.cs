@@ -204,13 +204,13 @@ public class CalendarController : Controller
 			// If it's a timed event, use DateTime for Start and End
 			startEventDateTime = new EventDateTime
 			{
-				DateTime = model.Start.HasValue ? model.Start.Value.ToUniversalTime() : DateTime.UtcNow, 
+				DateTime = model.Start.Value.ToUniversalTime(), 
 				TimeZone = timeZone
 			};
 
 			endEventDateTime = new EventDateTime
 			{
-				DateTime = model.End.HasValue ? model.End.Value.ToUniversalTime() : startEventDateTime.DateTime, 
+				DateTime = model.End.Value.ToUniversalTime(), 
 				TimeZone = timeZone
 			};
 		}
@@ -726,7 +726,6 @@ public class CalendarController : Controller
 
 		return allEvents.OrderBy(e => e.Start.DateTime ?? DateTime.Parse(e.Start.Date)).ToList();
 	}
-
 
 	public async Task<IActionResult> ViewTodaysEvents()
 	{

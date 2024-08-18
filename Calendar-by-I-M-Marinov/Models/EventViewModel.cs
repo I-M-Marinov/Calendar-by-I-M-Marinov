@@ -12,14 +12,13 @@ namespace Calendar_by_I_M_Marinov.Models
         public string? Location { get; set; }
 
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-ddTHH:mm}", ApplyFormatInEditMode = true)]
-        public DateTime? Start { get; set; } = DateTime.Now;
+        public DateTime? Start { get; set; }
 
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-ddTHH:mm}", ApplyFormatInEditMode = true)]
-        public DateTime? End { get; set; } = DateTime.Now;
+        public DateTime? End { get; set; }
 
         public string Visibility { get; set; } = "public"; // Default to public
         public string EventType { get; set; } = "single"; // Options: single, annual, allDay // Default to single
-        public string? CalendarId { get; set; }
     }
 
 }
