@@ -6,7 +6,6 @@
 
 <form method="get" asp-action="ListCalendarsAndEvents">
     <div class="form-group">
-        <label for="calendarSelect">Select Calendar:</label>
         <select id="calendarSelect" name="selectedCalendarId" class="form-control">
             <option value="default">-- Select Calendar --</option>
             <option value="all">All Calendars</option>
@@ -25,7 +24,10 @@
     <br />
 </form>
 
-<h2>Events for @Model.SelectedCalendarName</h2>
+@if (!string.IsNullOrEmpty(Model.SelectedCalendarName))
+{
+	<h2>Events for @Model.SelectedCalendarName</h2>
+}
 
 @if (Model.Events != null && Model.Events.Any())
 {

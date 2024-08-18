@@ -61,7 +61,7 @@ public class CalendarController : Controller
             }).ToList();
 
             List<Event> events = new List<Event>();
-            string selectedCalendarName = "Unknown Calendar";
+            string selectedCalendarName = "";
             string accessRole = "";
             int eventsCount = 0;
             var eventCalendarMap = new Dictionary<string, string>();
@@ -345,7 +345,7 @@ public class CalendarController : Controller
             // Create a new event model based on the existing event
             var model = new EventViewModel
             {
-                Summary = existingEvent.Summary,
+                Summary = existingEvent.Summary + " " + "<duplicate>",
                 Description = existingEvent.Description,
                 Location = existingEvent.Location,
                 Visibility = existingEvent.Visibility,
@@ -517,8 +517,8 @@ public class CalendarController : Controller
 			CalendarId = calendarId,
 			Summary = eventToEdit.Summary,
 			Location = eventToEdit.Location,
-			Start = eventToEdit.Start.DateTimeDateTimeOffset?.ToDateTime().ToLocalTime(),
-			End = eventToEdit.End.DateTimeDateTimeOffset?.ToDateTime().ToLocalTime(),
+			Start = eventToEdit.Start.DateTimeDateTimeOffset?.ToDateTime(),
+			End = eventToEdit.End.DateTimeDateTimeOffset?.ToDateTime(),
 			IsCreator = eventToEdit.Creator?.Email == "your-email@example.com", // Example check
 			GuestsCanModify = eventToEdit.GuestsCanModify ?? false,
 			Status = eventToEdit.Status,
