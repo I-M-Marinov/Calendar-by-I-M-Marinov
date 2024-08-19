@@ -77,4 +77,3 @@ document.addEventListener('DOMContentLoaded', function () {
     // Initial check on page load
     updateEndDateVisibility();
 });
-

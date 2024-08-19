@@ -22,23 +22,59 @@
 	<!-- Start DateTime input field or Date field for all-day events -->
 	<div class="form-group">
 		<label for="Start">@((Model.EventType == "allDay") ? "Date" : "Start")</label>
-		<input type="@(Model.EventType == "allDay" ? "date" : "datetime-local")" 
-		       id="Start" 
-		       name="Start" 
-		       value="@Model.Start?.ToString(Model.EventType == "allDay" ? "yyyy-MM-dd" : "yyyy-MM-ddTHH:mm")" 
-		       class="form-control" 
+		<input type="@(Model.EventType == "allDay" ? "date" : "datetime-local")"
+		       id="Start"
+		       name="Start"
+		       value="@Model.Start?.ToString(Model.EventType == "allDay" ? "yyyy-MM-dd" : "yyyy-MM-ddTHH:mm")"
+		       class="form-control"
 		       required />
 	</div>
 
-	<!-- Conditionally show End DateTime input field only if the event is not all day -->
-	@if (Model.EventType != "allDay")
-	{
-		<div class="form-group">
-			<label for="End">End</label>
-			<input type="datetime-local" id="End" name="End" value="@Model.End?.ToString("yyyy-MM-ddTHH:mm")" class="form-control" />
-		</div>
-	}
+	<!-- End DateTime input field -->
+	<div class="form-group">
+		<label for="End">End</label>
+		<input type="@(Model.EventType == "allDay" ? "date" : "datetime-local")"
+		       id="End"
+		       name="End"
+		       value="@Model.End?.ToString(Model.EventType == "allDay" ? "yyyy-MM-dd" : "yyyy-MM-ddTHH:mm")"
+		       class="form-control" />
+	</div>
 
 	<!-- Submit button -->
 	<button type="submit" class="btn btn-primary">@ViewBag.ButtonText</button>
 </form>
+
+@section Scripts {
+	<script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var startInput = document.getElementById('Start');
+            var endInput = document.getElementById('End');
+
+            function updateEndDate() {
+                if (startInput && endInput) {
+                    var startDate = new Date(startInput.value);
+
+                    // Check if the date is valid
+                    if (!isNaN(startDate.getTime())) {
+                        // Add one day to the start date
+                        var endDate = new Date(startDate);
+                        endDate.setDate(startDate.getDate() + 1);
+
+                        // Format the date as YYYY-MM-DD
+                        var year = endDate.getFullYear();
+                        var month = ('0' + (endDate.getMonth() + 1)).slice(-2); // Months are zero-indexed
+                        var day = ('0' + endDate.getDate()).slice(-2);
+
+                        endInput.value = `${year}-${month}-${day}`;
+                    } else {
+                        // Handle invalid date if necessary
+                        endInput.value = '';
+                    }
+                }
+            }
+
+            // Add an event listener to the start input field
+            startInput.addEventListener('change', updateEndDate);
+        });
+    </script>
+}

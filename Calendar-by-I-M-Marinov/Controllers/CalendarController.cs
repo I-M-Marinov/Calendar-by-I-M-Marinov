@@ -4,6 +4,7 @@ using Calendar_by_I_M_Marinov.Services.Contracts;
 using Calendar_by_I_M_Marinov.Models;
 using static Calendar_by_I_M_Marinov.Common.DateTimeExtensions;
 using Google.Apis.Calendar.v3;
+using System.Reflection;
 
 public class CalendarController : Controller
 {
@@ -684,43 +685,68 @@ public class CalendarController : Controller
 	[HttpPost]
 	public async Task<IActionResult> UpdateEvent(EditEventViewModel model)
 	{
-		
+		// Initialize the Event object
 		var updatedEvent = new Event
 		{
 			Id = model.EventId,
 			Summary = model.Summary,
 			Description = model.Description,
 			Location = model.Location,
-			Start = new EventDateTime
+            EventType = model.EventType
+		};
+
+		// Check if the event is an all-day event
+		if (model.EventType == "allDay")
+		{
+			// For all-day events, set Start.Date and End.Date to the same date
+			updatedEvent.Start = new EventDateTime
+			{
+				Date = model.Start?.ToString("yyyy-MM-dd"),
+				TimeZone = "Europe/Sofia"
+			};
+			updatedEvent.End = new EventDateTime
+			{
+				Date = model.Start?.ToString("yyyy-MM-dd"), // Use Start date as End date for all-day events
+				TimeZone = "Europe/Sofia"
+			};
+		}
+		else
+		{
+			// For timed events, set Start.DateTime and End.DateTime
+			updatedEvent.Start = new EventDateTime
 			{
 				DateTime = model.Start.HasValue ? model.Start.Value.ToUniversalTime() : DateTime.UtcNow,
 				TimeZone = "Europe/Sofia"
-			},
-			End = new EventDateTime
+			};
+			updatedEvent.End = new EventDateTime
 			{
 				DateTime = model.End.HasValue ? model.End.Value.ToUniversalTime() : DateTime.UtcNow,
 				TimeZone = "Europe/Sofia"
-			}
-		};
+			};
+		}
 
 		try
 		{
+			// Update the event using the Google Calendar service
 			await _googleCalendarService.UpdateEventAsync(model.CalendarId, model.EventId, updatedEvent);
+
+			// Redirect to a confirmation page after successful update
 			return RedirectToAction("ViewNewEventUpdated", new { message = "Event updated successfully.", model.CalendarId, model.EventId });
 		}
 		catch (Exception ex)
 		{
+			// Handle errors during the update process
 			ModelState.AddModelError("", $"Error updating event: {ex.Message}");
 		}
-		
 
-		// Redisplay form with errors
+		// Redisplay the form with errors if the update fails
 		ViewBag.PageTitle = "Edit Event";
 		ViewBag.FormAction = "UpdateEvent";
 		ViewBag.ButtonText = "Save Changes";
 
 		return View("UpdateEvent", model);
 	}
+
 
 	public async Task<IList<Event>> GetTodaysEventsAsync()
 	{
