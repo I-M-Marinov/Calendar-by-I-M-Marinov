@@ -3,34 +3,42 @@
 <h2>@ViewBag.PageTitle</h2>
 
 <form asp-action="@ViewBag.FormAction" method="post">
-    <!-- Hidden fields to store EventId and CalendarId -->
-    <input type="hidden" name="EventId" value="@Model.EventId" />
-    <input type="hidden" name="CalendarId" value="@Model.CalendarId" />
+	<!-- Hidden fields to store EventId and CalendarId -->
+	<input type="hidden" name="EventId" value="@Model.EventId" />
+	<input type="hidden" name="CalendarId" value="@Model.CalendarId" />
 
-    <!-- Summary input field -->
-    <div class="form-group">
-        <label for="Summary">Summary</label>
-        <input type="text" id="Summary" name="Summary" value="@Model.Summary" class="form-control" required />
-    </div>
+	<!-- Summary input field -->
+	<div class="form-group">
+		<label for="Summary">Summary</label>
+		<input type="text" id="Summary" name="Summary" value="@Model.Summary" class="form-control" required />
+	</div>
 
-    <!-- Location input field -->
-    <div class="form-group">
-        <label for="Location">Location</label>
-        <input type="text" id="Location" name="Location" value="@Model.Location" class="form-control" />
-    </div>
+	<!-- Location input field -->
+	<div class="form-group">
+		<label for="Location">Location</label>
+		<input type="text" id="Location" name="Location" value="@Model.Location" class="form-control" />
+	</div>
 
-    <!-- Start DateTime input field -->
-    <div class="form-group">
-        <label for="Start">Start</label>
-        <input type="datetime-local" id="Start" name="Start" value="@Model.Start?.ToString("yyyy-MM-ddTHH:mm")" class="form-control" required />
-    </div>
+	<!-- Start DateTime input field or Date field for all-day events -->
+	<div class="form-group">
+		<label for="Start">@((Model.EventType == "allDay") ? "Date" : "Start")</label>
+		<input type="@(Model.EventType == "allDay" ? "date" : "datetime-local")" 
+		       id="Start" 
+		       name="Start" 
+		       value="@Model.Start?.ToString(Model.EventType == "allDay" ? "yyyy-MM-dd" : "yyyy-MM-ddTHH:mm")" 
+		       class="form-control" 
+		       required />
+	</div>
 
-    <!-- End DateTime input field -->
-    <div class="form-group">
-        <label for="End">End</label>
-        <input type="datetime-local" id="End" name="End" value="@Model.End?.ToString("yyyy-MM-ddTHH:mm")" class="form-control" required />
-    </div>
+	<!-- Conditionally show End DateTime input field only if the event is not all day -->
+	@if (Model.EventType != "allDay")
+	{
+		<div class="form-group">
+			<label for="End">End</label>
+			<input type="datetime-local" id="End" name="End" value="@Model.End?.ToString("yyyy-MM-ddTHH:mm")" class="form-control" />
+		</div>
+	}
 
-    <!-- Submit button -->
-    <button type="submit" class="btn btn-primary">@ViewBag.ButtonText</button>
+	<!-- Submit button -->
+	<button type="submit" class="btn btn-primary">@ViewBag.ButtonText</button>
 </form>

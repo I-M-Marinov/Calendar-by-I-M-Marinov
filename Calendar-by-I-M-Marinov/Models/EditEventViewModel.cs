@@ -22,10 +22,9 @@ namespace Calendar_by_I_M_Marinov.Models
         public bool? Locked { get; set; }   // Indicates if the event is locked
         public string? Transparency { get; set; } // Event transparency (e.g., "opaque", "transparent")
 
-        public string Visibility { get; set; } = "public"; // Default to public ( Options: public, private )
-        public string EventType { get; set; } = "single"; //  Default to single ( Options: single, annual, allDay )
+        public string Visibility { get; set; }  // Default to public ( Options: public, private )
+        public string EventType { get; set; } //  Default to single ( Options: single, annual, allDay )
         public Dictionary<string, string> EventCalendarMap { get; set; } = new Dictionary<string, string>(); // EventId to CalendarId map
-
 
 
         // Enhanced logic for determining if the event is editable

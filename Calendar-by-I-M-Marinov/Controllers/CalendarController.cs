@@ -510,6 +510,34 @@ public class CalendarController : Controller
 			return NotFound($"Event with ID {eventId} not found.");
 		}
 
+		// Initialize variables for Start and End
+		DateTime? startDateTime = eventToEdit.Start.DateTimeDateTimeOffset?.ToDateTime();
+		DateTime? endDateTime = eventToEdit.End.DateTimeDateTimeOffset?.ToDateTime();
+
+		DateTime? startDate = !string.IsNullOrEmpty(eventToEdit.Start.Date)
+							  ? DateTime.Parse(eventToEdit.Start.Date)
+							  : (DateTime?)null;
+
+		DateTime? endDate = !string.IsNullOrEmpty(eventToEdit.End.Date)
+							? DateTime.Parse(eventToEdit.End.Date)
+							: (DateTime?)null;
+
+		string eventType;
+		if (startDateTime.HasValue && endDateTime.HasValue)
+		{
+			eventType = eventToEdit.EventType;
+		}
+		else if (startDate.HasValue && endDate.HasValue)
+		{
+			eventType = "allDay";
+			startDateTime = startDate;
+			endDateTime = endDate;
+		}
+		else
+		{
+			eventType = "unknown"; 
+		}
+
 		// Map the retrieved event to the EditEventViewModel
 		var viewModel = new EditEventViewModel
 		{
@@ -517,16 +545,16 @@ public class CalendarController : Controller
 			CalendarId = calendarId,
 			Summary = eventToEdit.Summary,
 			Location = eventToEdit.Location,
-			Start = eventToEdit.Start.DateTimeDateTimeOffset?.ToDateTime(),
-			End = eventToEdit.End.DateTimeDateTimeOffset?.ToDateTime(),
-			IsCreator = eventToEdit.Creator?.Email == "your-email@example.com", // Example check
+			Start = startDateTime,
+			End = endDateTime,
+			IsCreator = eventToEdit.Creator?.Email == "lcfrrr@gmail.com", 
 			GuestsCanModify = eventToEdit.GuestsCanModify ?? false,
 			Status = eventToEdit.Status,
-			Source = eventToEdit.Source?.ToString(), // Example property
-			Locked = eventToEdit.Locked, // Example property
+			Source = eventToEdit.Source?.ToString(), 
+			Locked = eventToEdit.Locked, 
 			Transparency = eventToEdit.Transparency,
-			Visibility = "public", // Default value
-			EventType = "single" // Default value
+			Visibility = eventToEdit.Visibility,
+			EventType = eventType
 		};
 
 		// Set the ViewBag properties for the view
@@ -537,6 +565,8 @@ public class CalendarController : Controller
 		// Return the view for editing the event
 		return View("UpdateEvent", viewModel);
 	}
+
+
 
 	[HttpPost]
     public async Task<IActionResult> EditEvents(Dictionary<string, EditEventViewModel> events)
@@ -732,6 +762,5 @@ public class CalendarController : Controller
 		var todayEvents = await GetTodaysEventsAsync();
 		return View(todayEvents);
 	}
-
 
 }
