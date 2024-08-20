@@ -1,4 +1,4 @@
-# <span style="color: #4285F4;">G</span> <span style="color: #EA4335;">E</span><span style="color: #FBBC05;">a</span><span style="color: #34A853;">s</span><span style="color: #4285F4;">y</span> Calendar
+# $${\color{blue}G} - {\color{red}E}{\color{yellow}a}{\color{lightgreen}s}{\color{lightblue}y}$$ Calendar
 
 ## Description:
 
