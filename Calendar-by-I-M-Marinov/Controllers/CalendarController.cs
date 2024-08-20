@@ -6,7 +6,7 @@ using static Calendar_by_I_M_Marinov.Common.DateTimeExtensions;
 using Google.Apis.Calendar.v3;
 using System.Reflection;
 
-public class CalendarController : Controller
+public class CalendarController : Controller    
 {
     private readonly IGoogleCalendarService _googleCalendarService;
 
@@ -566,8 +566,6 @@ public class CalendarController : Controller
 		// Return the view for editing the event
 		return View("UpdateEvent", viewModel);
 	}
-
-
 
 	[HttpPost]
     public async Task<IActionResult> EditEvents(Dictionary<string, EditEventViewModel> events)

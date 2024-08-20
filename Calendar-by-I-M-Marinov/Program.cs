@@ -31,7 +31,14 @@ builder.Services.AddAuthentication(options =>
 		options.ClientId = googleAuthNSection["ClientId"];
 		options.ClientSecret = googleAuthNSection["ClientSecret"];
 		options.CallbackPath = "/signin-google"; // This is the default callback path used by Google
-	});
+
+        var clientId = googleAuthNSection["ClientId"] ?? Environment.GetEnvironmentVariable("GOOGLE__CLIENTID");
+        var clientSecret = googleAuthNSection["ClientSecret"] ?? Environment.GetEnvironmentVariable("GOOGLE__CLIENTSECRET");
+
+        Console.WriteLine($"ClientId: {clientId}");
+        Console.WriteLine($"ClientSecret: {clientSecret}");
+
+    });
 
 
 builder.Services.AddScoped<IGoogleCalendarService, GoogleCalendarService>();
