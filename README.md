@@ -1,5 +1,5 @@
 # $${\color{blue}G} - {\color{red}E}{\color{yellow}a}{\color{lightgreen}s}{\color{lightblue}y}$$ Calendar
-
+[![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2FI-M-Marinov%2FCalendar-by-I-M-Marinov&count_bg=%233DC8BF&title_bg=%23707070&icon=&icon_color=%23E7E7E7&title=views&edge_flat=false)](https://hits.seeyoufarm.com)
 ## Description:
 
 - Web application that works with Google API and helps the user control their Google Calendar
@@ -40,4 +40,49 @@
   ###### 📢:  Search Events actually opens for edit all events that match the search keyword ( case-insensitive ). 
 
 ## Screenshots
-#### $${\color{lightgreen}To \space Do}$$
+
+<p align="center">
+<img src="./scrn1.PNG">
+</p>
+
+<p align="center">
+<img src="./scrn2.PNG">
+</p>
+
+<p align="center">
+<img src="./scrn3.PNG">
+</p>
+
+<p align="center">
+<img src="./scrn4.png">
+</p>
+
+<p align="center">
+<img src="./scrn5.png">
+</p>
+
+<p align="center">
+<img src="./scrn6.png">
+</p>
+
+<p align="center">
+<img src="./scrn7.PNG">
+</p>
+
+<p align="center">
+<img src="./scrn8.png">
+</p>
+
+<p align="center">
+<img src="./scrn9.png">
+</p>
+
+
+<p align="center">
+<img src="./scrn10.png">
+</p>
+
+
+<p align="center">
+<img src="./scrn11.png">
+</p>
