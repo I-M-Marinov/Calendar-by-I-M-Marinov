@@ -42,47 +42,47 @@
 ## Screenshots
 
 <p align="center">
-<img src="./scrn1.PNG">
+<img src="./Screenshots/scrn1.PNG">
 </p>
 
 <p align="center">
-<img src="./scrn2.PNG">
+<img src="./Screenshots/scrn2.PNG">
 </p>
 
 <p align="center">
-<img src="./scrn3.PNG">
+<img src="./Screenshots/scrn3.PNG">
 </p>
 
 <p align="center">
-<img src="./scrn4.png">
+<img src="./Screenshots/scrn4.png">
 </p>
 
 <p align="center">
-<img src="./scrn5.png">
+<img src="./Screenshots/scrn5.png">
 </p>
 
 <p align="center">
-<img src="./scrn6.png">
+<img src="./Screenshots/scrn6.png">
 </p>
 
 <p align="center">
-<img src="./scrn7.PNG">
+<img src="./Screenshots/scrn7.PNG">
 </p>
 
 <p align="center">
-<img src="./scrn8.png">
+<img src="./Screenshots/scrn8.png">
 </p>
 
 <p align="center">
-<img src="./scrn9.png">
-</p>
-
-
-<p align="center">
-<img src="./scrn10.png">
+<img src="./Screenshots/scrn9.png">
 </p>
 
 
 <p align="center">
-<img src="./scrn11.png">
+<img src="./Screenshots/scrn10.png">
+</p>
+
+
+<p align="center">
+<img src="./Screenshots/scrn11.png">
 </p>
