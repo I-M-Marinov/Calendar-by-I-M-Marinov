@@ -1,6 +1,24 @@
 # $${\color{blue}G} - {\color{red}E}{\color{yellow}a}{\color{lightgreen}s}{\color{lightblue}y}$$ Calendar
 [![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2FI-M-Marinov%2FCalendar-by-I-M-Marinov&count_bg=%233DC8BF&title_bg=%23707070&icon=&icon_color=%23E7E7E7&title=views&edge_flat=false)](https://hits.seeyoufarm.com)
-## Description:
+
+## **Index**
+
+1. [Description](#description)
+2. [Technology Stack](#technology-stack)
+3. [Features](#features)
+   - [Dashboard](#dashboard)
+   - [Calendars --> Calendar List](#calendars--calendar-list)
+   - [Events --> Events per Calendar](#events--events-per-calendar)
+     - [Edit](#edit)
+     - [Delete](#delete)
+     - [Duplicate Event](#duplicate-event)
+   - [Events --> Add an Event](#events--add-an-event)
+   - [Events --> Search Events](#events--search-events)
+4. [Screenshots](#screenshots)
+5. [If You Would Like to Try This Web App Yourself](#if-you-would-like-to-try-this-web-app-yourself)
+
+
+## <p id="description">Description:<p/>
 
 - Web application that works with Google API and helps the user control their Google Calendar
 
