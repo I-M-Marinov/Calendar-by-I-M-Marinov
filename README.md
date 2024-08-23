@@ -5,7 +5,7 @@
 
 1. [Description](#description)
 2. [Technology Stack](#technology-stack)
-3. [Features](#features)
+3. [Features](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov?tab=readme-ov-file#features)
    - [Dashboard](#dashboard)
    - [Calendars --> Calendar List](#calendars--calendar-list)
    - [Events --> Events per Calendar](#events--events-per-calendar)
