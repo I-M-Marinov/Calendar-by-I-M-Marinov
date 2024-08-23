@@ -86,3 +86,54 @@
 <p align="center">
 <img src="./Screenshots/scrn11.png">
 </p>
+
+
+## If you would like to try this Web App yourself:
+
+- 🍴: Fork  the repo ! :) 
+- Go to https://console.cloud.google.com/, login with the google account you want to use and create a new web application, then activate the Google Calendar API for that application.
+- Once enabled navigate to the Credentials tab.
+- You would need to set the Authorized redirect URIs as well. Since you will be running the web server locally add either http://127.0.0.1/authorize/ or http://localhost/authorize/ ( or both to be sure ).
+- Get the Client Id and Client Secret. If you are planning on keeping this web app's repo open source on your account it would be great idea not to commit any sensitive data:
+  - You can use Git Bash ( or any other terminal where .NET Core command-line interface is available ) to add your Client Id and Client Secret to the .NET User Secrets:
+  
+                    $ dotnet user-secrets set "Google:ClientSecret" "YOUR_GOOGLE_CLIENT_SECRET"
+  
+                    $ dotnet user-secrets set "Google:ClientId" "YOUR_GOOGLE_CLIENT_ID"
+
+                        ** note that those commands are to be executed once you navigate to the the root of the project **
+  
+- ⚠️ You can of course also add the client_secret.json ( downloaded from the Credentials tab ) and put that somewhere in your project, but add it to the .gitignore file before your next commit ! Personally I prefer  .NET User Secrets Manager.
+
+- Going to the app and the Services folder, Open the GoogleCalendarService and ensure the clientId and clientSecret are present in the constructor:
+
+                         public GoogleCalendarService(IConfiguration configuration)
+                  {
+                  	var clientId = configuration["Google:ClientId"];
+                  	var clientSecret = configuration["Google:ClientSecret"];
+                  
+                  	var clientSecrets = new ClientSecrets
+                  	{
+                  		ClientId = clientId,
+                  		ClientSecret = clientSecret
+                  	};
+                  
+                  	UserCredential credential = GoogleWebAuthorizationBroker.AuthorizeAsync(
+                  		clientSecrets,
+                  		new[] { CalendarService.Scope.Calendar }, 
+                  		"user",
+                  		CancellationToken.None,
+                  		new FileDataStore("token.json", true)).Result;
+                  
+                  	_service = new CalendarService(new BaseClientService.Initializer()
+                  	{
+                  		HttpClientInitializer = credential,
+                  		ApplicationName = _applicationName,
+                  	});
+                  }
+
+ - Authorizing and giving permission to the app to work on your calendar would generate token.json folder, that would contain a file that has your access_token and refresh_token.
+         ⚠️ Please add the whole folder to the .gitignore file, so it is not uploaded on the next commit.
+ - First time you start the project without debugging should start the web server ( locally ) and redirect your to the authorization screen. If you would like to add an option for an extra user to access the app you can navigate to the OAuth Consent Screen tab in the APIs and Services on the Google Developer Console and add Test Users via email. ( To login with another user you would have to delete the "token.json" folder manually ).
+
+     
