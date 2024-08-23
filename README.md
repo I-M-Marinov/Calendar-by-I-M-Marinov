@@ -3,19 +3,19 @@
 
 ## **Index**
 
-1. [Description](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov/blob/master/README.md#description)
-2. [Technology Stack](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov/blob/master/README.md#technology-stack)
-3. [Features](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov/blob/master/README.md#features)
-   - [Dashboard](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov/blob/master/README.md#large_blue_diamond-dashboard)
-   - [Calendars --> Calendar List](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov/blob/master/README.md#large_blue_diamond-calendars----calendar-list)
-   - [Events --> Events per Calendar](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov/blob/master/README.md#large_blue_diamond-events----events-per-calendar)
-     - [Edit](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov/blob/master/README.md#%EF%B8%8F-edit-----edit-an-event-and-save-it-back-to-your-google-calendar)
-     - [Delete](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov/blob/master/README.md#%EF%B8%8F-delete-----delete-an-event-from-your-google-calendar)
-     - [Duplicate Event](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov/blob/master/README.md#%EF%B8%8F-duplicate-----creates-a-duplicate-of-the-event-saved-in-the-primary-calendar-of-the-user-adds-duplicate-to-the-name)
-   - [Events --> Add an Event](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov/blob/master/README.md#large_blue_diamond-events----add-an-event)
-   - [Events --> Search Events](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov/blob/master/README.md#large_blue_diamond-events----search-events)
+1. [Description](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov?tab=readme-ov-file#description)
+2. [Technology Stack](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov?tab=readme-ov-file#technology-stack)
+3. [Features](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov?tab=readme-ov-file#features)
+   - [Dashboard](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov?tab=readme-ov-file#large_blue_diamond-dashboard)
+   - [Calendars --> Calendar List](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov?tab=readme-ov-file#large_blue_diamond-calendars----calendar-list)
+   - [Events --> Events per Calendar](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov?tab=readme-ov-file#large_blue_diamond-events----events-per-calendar)
+     - [Edit](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov?tab=readme-ov-file#%EF%B8%8F-edit-----edit-an-event-and-save-it-back-to-your-google-calendar)
+     - [Delete](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov?tab=readme-ov-file#%EF%B8%8F-delete-----delete-an-event-from-your-google-calendar)
+     - [Duplicate Event](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov?tab=readme-ov-file#%EF%B8%8F-duplicate-----creates-a-duplicate-of-the-event-saved-in-the-primary-calendar-of-the-user-adds-duplicate-to-the-name)
+   - [Events --> Add an Event](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov?tab=readme-ov-file#large_blue_diamond-events----add-an-event)
+   - [Events --> Search Events](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov?tab=readme-ov-file#large_blue_diamond-events----search-events)
 4. [Screenshots](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov?tab=readme-ov-file#screenshots)
-5. [If You Would Like to Try This Web App Yourself](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov/blob/master/README.md#if-you-would-like-to-try-this-web-app-yourself)
+5. [If You Would Like to Try This Web App Yourself](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov?tab=readme-ov-file#if-you-would-like-to-try-this-web-app-yourself)
 
 
 ## <p id="description">Description:<p/>
