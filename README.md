@@ -5,7 +5,7 @@
 
 1. [Description](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov/blob/master/README.md#description)
 2. [Technology Stack](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov/blob/master/README.md#technology-stack)
-3. [Features](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov?tab=readme-ov-file#features)
+3. [Features](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov/blob/master/README.md#features)
    - [Dashboard](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov/blob/master/README.md#large_blue_diamond-dashboard)
    - [Calendars --> Calendar List](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov/blob/master/README.md#large_blue_diamond-calendars----calendar-list)
    - [Events --> Events per Calendar](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov/blob/master/README.md#large_blue_diamond-events----events-per-calendar)
