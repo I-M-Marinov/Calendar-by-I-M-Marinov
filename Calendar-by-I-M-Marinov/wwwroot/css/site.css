@@ -126,8 +126,15 @@ h4{
     align-content: center;
 }
 
-#calendarSelect{
-    max-width: 55%; 
+.form-group-search-description {
+    opacity: 60%;
+    font-size: 0.75em;
+    display: flex;
+    justify-content: center;
+}
+
+#calendarSelect {
+    max-width: 55%;
     margin: 0 auto;
 }
 
@@ -232,6 +239,10 @@ h4{
     margin-top: 2em;
     border-bottom: 1.5px solid #1a8ba9;
     padding: 0.5em;
+}
+
+.todays-event.warning{
+   color: red;
 }
 
 

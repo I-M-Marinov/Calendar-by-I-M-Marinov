@@ -1,10 +1,17 @@
-﻿@model IList<Google.Apis.Calendar.v3.Data.Event>
+﻿@using System.Text
+@model IList<Google.Apis.Calendar.v3.Data.Event>
 
 @{
-	ViewBag.Title = $"Events for today --> {DateTime.Now.Date.ToString("D")}";
+
+	StringBuilder sb = new();
+
+	sb.AppendLine($"Events for today:");
+	sb.AppendLine($"{DateTime.Now.Date.ToString("D")}");
+
+	ViewBag.Title = sb;
 }
 
-<h2>@ViewBag.Title</h2>
+<h2><pre>@ViewBag.Title</pre></h2>
 
 @if (Model != null && Model.Count > 0)
 {
@@ -14,11 +21,11 @@
 			<li>
 				<strong>@calendarEvent.Summary</strong>
 
-				@if (calendarEvent.Start.DateTime.HasValue && calendarEvent.End.DateTime.HasValue)
+				@if (calendarEvent.Start.DateTimeDateTimeOffset.HasValue && calendarEvent.End.DateTimeDateTimeOffset.HasValue)
 				{
 					<!-- Timed Event -->
-					<p>Start: @calendarEvent.Start.DateTime.Value.ToLocalTime().ToString("MMMM dd, yyyy h:mm tt")</p>
-					<p>End: @calendarEvent.End.DateTime.Value.ToLocalTime().ToString("MMMM dd, yyyy h:mm tt")</p>
+					<p>Start: @calendarEvent.Start.DateTimeDateTimeOffset.Value.ToLocalTime().ToString("MMMM dd, yyyy h:mm tt")</p>
+					<p>End: @calendarEvent.End.DateTimeDateTimeOffset.Value.ToLocalTime().ToString("MMMM dd, yyyy h:mm tt")</p>
 				}
 				else if (!string.IsNullOrEmpty(calendarEvent.Start.Date) && !string.IsNullOrEmpty(calendarEvent.End.Date))
 				{
@@ -38,5 +45,6 @@
 }
 else
 {
-	<p class="todays-event">No events found for today.</p>
+	<br />
+	<p class="todays-event warning">No events found for today.</p>
 }
