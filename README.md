@@ -18,11 +18,15 @@
 5. [If You Would Like to Try This Web App Yourself](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov?tab=readme-ov-file#if-you-would-like-to-try-this-web-app-yourself)
 
 
-## <p id="description">Description:<p/>
+<h2 align="center">
+   Description:
+</h2>
 
 - Web application that works with Google API and helps the user control their Google Calendar
 
-## Technology stack:
+<h2 align="center">
+  Technology stack:
+</h2>
 
 - C#
 - .NET Core
@@ -31,7 +35,10 @@
 - HTML & CSS
 - Google Calendar API (https://developers.google.com/calendar/api/guides/overview)
 
-## Features
+<h2 align="center">
+ Features:
+</h2>
+
 #### :large_blue_diamond: Dashboard 
 - Shows the user the events for the current date
 
@@ -57,7 +64,9 @@
 - Search Events lets the user search through all events that editable ( Access Role in the calendar the event is saved in must be "owner" ) and edit them all at the same time.
   ###### 📢:  Search Events actually opens for edit all events that match the search keyword ( case-insensitive ). 
 
-## Screenshots
+<h2 align="center">
+ Screenshots:
+</h2>
 
 <p align="center">
 <img src="./Screenshots/scrn1.PNG">
@@ -105,8 +114,9 @@
 <img src="./Screenshots/scrn11.png">
 </p>
 
-
-## If you would like to try this Web App yourself:
+<h2 align="center">
+ If you would like to try this Web App yourself:
+</h2>
 
 - 🍴: Fork  the repo ! :) 
 - Go to https://console.cloud.google.com/, login with the google account you want to use and create a new web application, then activate the Google Calendar API for that application.
