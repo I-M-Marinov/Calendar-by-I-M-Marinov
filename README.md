@@ -1,6 +1,5 @@
 # $${\color{blue}G} - {\color{red}E}{\color{yellow}a}{\color{lightgreen}s}{\color{lightblue}y}$$ Calendar
-[![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2FI-M-Marinov%2FCalendar-by-I-M-Marinov&count_bg=%233DC8BF&title_bg=%23707070&icon=&icon_color=%23E7E7E7&title=views&edge_flat=false)](https://hits.seeyoufarm.com)
-
+[![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2FI-M-Marinov%2FCalendar-by-I-M-Marinov&count_bg=%2328BFC6&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=Views&edge_flat=false)](https://hits.seeyoufarm.com)
 ## **Index**
 
 1. [Description](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov?tab=readme-ov-file#---description)
