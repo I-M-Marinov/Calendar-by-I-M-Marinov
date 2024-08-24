@@ -8,20 +8,26 @@
 	<input type="hidden" name="CalendarId" value="@Model.CalendarId" />
 
 	<!-- Summary input field -->
-	<div class="form-group">
-		<label for="Summary">Summary</label>
+	<div class="form-group" style="max-width: 55%; display:block; margin: 0 auto;">
+		<div style="text-align: center;">
+			<label for="Summary" style="margin-top: 0.6em;">Summary</label>
+		</div>
 		<input type="text" id="Summary" name="Summary" value="@Model.Summary" class="form-control" required />
 	</div>
 
 	<!-- Location input field -->
-	<div class="form-group">
-		<label for="Location">Location</label>
+	<div class="form-group" style="max-width: 55%; display:block; margin: 0 auto;">
+		<div style="text-align: center;">
+			<label for="Location" style="margin-top: 0.6em;">Location</label>
+		</div>
 		<input type="text" id="Location" name="Location" value="@Model.Location" class="form-control" />
 	</div>
 
 	<!-- Start DateTime input field or Date field for all-day events -->
-	<div class="form-group">
-		<label for="Start">@((Model.EventType == "allDay") ? "Date" : "Start")</label>
+	<div class="form-group" style="max-width: 25%; display:block; margin: 0 auto;">
+		<div style="text-align: center;">
+			<label for="Start" style="margin-top: 0.6em;">@((Model.EventType == "allDay") ? "Date" : "Start")</label>
+		</div>
 		<input type="@(Model.EventType == "allDay" ? "date" : "datetime-local")"
 		       id="Start"
 		       name="Start"
@@ -31,17 +37,23 @@
 	</div>
 
 	<!-- End DateTime input field -->
-	<div class="form-group">
-		<label for="End">End</label>
-		<input type="@(Model.EventType == "allDay" ? "date" : "datetime-local")"
-		       id="End"
-		       name="End"
-		       value="@Model.End?.ToString(Model.EventType == "allDay" ? "yyyy-MM-dd" : "yyyy-MM-ddTHH:mm")"
-		       class="form-control" />
-	</div>
-
+	@if (Model.EventType != "allDay")
+	{
+		<div class="form-group" style="max-width: 25%; display:block; margin: 0 auto;">
+			<div style="text-align: center;">
+				<label for="End" style="margin-top: 0.6em;">End</label>
+			</div>
+			<input type="@(Model.EventType == "allDay" ? "date" : "datetime-local")"
+			       id="End"
+			       name="End"
+			       value="@Model.End?.ToString(Model.EventType == "allDay" ? "yyyy-MM-dd" : "yyyy-MM-ddTHH:mm")"
+			       class="form-control" />
+		</div>
+	}
 	<!-- Submit button -->
-	<button type="submit" class="btn btn-primary">@ViewBag.ButtonText</button>
+	<div style="display: flex; justify-content: center; margin-top: 1em;">
+		<button type="submit" class="btn btn-primary">@ViewBag.ButtonText</button>
+	</div>
 </form>
 
 @section Scripts {

@@ -7,7 +7,6 @@
 <form method="get" asp-action="ListCalendarsAndEvents">
     <div class="form-group">
         <select id="calendarSelect" name="selectedCalendarId" class="form-control">
-            <option value="default">-- Select Calendar --</option>
             <option value="all">All Calendars</option>
 
             @foreach (var calendar in Model.Calendars)

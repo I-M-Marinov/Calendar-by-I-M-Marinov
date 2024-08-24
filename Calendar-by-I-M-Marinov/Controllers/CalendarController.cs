@@ -745,7 +745,6 @@ public class CalendarController : Controller
 		return View("UpdateEvent", model);
 	}
 
-
 	public async Task<IList<Event>> GetTodaysEventsAsync()
 	{
 		var calendarList = await _googleCalendarService.GetAllCalendarsAsync();
