@@ -1,11 +1,10 @@
 # $${\color{blue}G} - {\color{red}E}{\color{yellow}a}{\color{lightgreen}s}{\color{lightblue}y}$$ Calendar
-[![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2FI-M-Marinov%2FCalendar-by-I-M-Marinov&count_bg=%233DC8BF&title_bg=%23707070&icon=&icon_color=%23E7E7E7&title=views&edge_flat=false)](https://hits.seeyoufarm.com)
-
+[![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2FI-M-Marinov%2FCalendar-by-I-M-Marinov&count_bg=%2328BFC6&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=Views&edge_flat=false)](https://hits.seeyoufarm.com)
 ## **Index**
 
-1. [Description](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov?tab=readme-ov-file#description)
-2. [Technology Stack](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov?tab=readme-ov-file#technology-stack)
-3. [Features](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov?tab=readme-ov-file#features)
+1. [Description](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov?tab=readme-ov-file#---description)
+2. [Technology Stack](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov?tab=readme-ov-file#--technology-stack)
+3. [Features](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov?tab=readme-ov-file#-features)
    - [Dashboard](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov?tab=readme-ov-file#large_blue_diamond-dashboard)
    - [Calendars --> Calendar List](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov?tab=readme-ov-file#large_blue_diamond-calendars----calendar-list)
    - [Events --> Events per Calendar](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov?tab=readme-ov-file#large_blue_diamond-events----events-per-calendar)
@@ -14,15 +13,19 @@
      - [Duplicate Event](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov?tab=readme-ov-file#%EF%B8%8F-duplicate-----creates-a-duplicate-of-the-event-saved-in-the-primary-calendar-of-the-user-adds-duplicate-to-the-name)
    - [Events --> Add an Event](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov?tab=readme-ov-file#large_blue_diamond-events----add-an-event)
    - [Events --> Search Events](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov?tab=readme-ov-file#large_blue_diamond-events----search-events)
-4. [Screenshots](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov?tab=readme-ov-file#screenshots)
-5. [If You Would Like to Try This Web App Yourself](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov?tab=readme-ov-file#if-you-would-like-to-try-this-web-app-yourself)
+4. [Screenshots](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov?tab=readme-ov-file#-screenshots)
+5. [If You Would Like to Try This Web App Yourself](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov?tab=readme-ov-file#-if-you-would-like-to-try-this-web-app-yourself)
 
 
-## <p id="description">Description:<p/>
+<h2 align="center">
+   Description:
+</h2>
 
 - Web application that works with Google API and helps the user control their Google Calendar
 
-## Technology stack:
+<h2 align="center">
+  Technology stack:
+</h2>
 
 - C#
 - .NET Core
@@ -31,7 +34,10 @@
 - HTML & CSS
 - Google Calendar API (https://developers.google.com/calendar/api/guides/overview)
 
-## Features
+<h2 align="center">
+ Features:
+</h2>
+
 #### :large_blue_diamond: Dashboard 
 - Shows the user the events for the current date
 
@@ -57,7 +63,9 @@
 - Search Events lets the user search through all events that editable ( Access Role in the calendar the event is saved in must be "owner" ) and edit them all at the same time.
   ###### 📢:  Search Events actually opens for edit all events that match the search keyword ( case-insensitive ). 
 
-## Screenshots
+<h2 align="center">
+ Screenshots:
+</h2>
 
 <p align="center">
 <img src="./Screenshots/scrn1.PNG">
@@ -105,8 +113,9 @@
 <img src="./Screenshots/scrn11.png">
 </p>
 
-
-## If you would like to try this Web App yourself:
+<h2 align="center">
+ If you would like to try this Web App yourself:
+</h2>
 
 - 🍴: Fork  the repo ! :) 
 - Go to https://console.cloud.google.com/, login with the google account you want to use and create a new web application, then activate the Google Calendar API for that application.
