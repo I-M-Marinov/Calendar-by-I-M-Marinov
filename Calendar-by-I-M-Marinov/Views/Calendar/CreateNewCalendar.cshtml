@@ -4,28 +4,55 @@
 
 <h2>@ViewBag.Title</h2>
 
+<!-- Display error messages only -->
+@if (!string.IsNullOrEmpty(ViewBag.Message) && ViewBag.MessageClass == "alert-danger")
+{
+	<div id="message" class="alert @ViewBag.MessageClass">@ViewBag.Message</div>
+}
+
 <form asp-action="CreateNewCalendar" method="post">
 	<div class="form-group">
 		<label for="calendarName">Calendar Name</label>
-		<input type="text" id="calendarName" name="calendarName" class="form-control" />
+		<input type="text" id="calendarName" name="calendarName" class="form-control @ViewBag.CalendarNameClass" />
 	</div>
 
 	<div class="form-group">
 		<label for="timeZone">Time Zone</label>
-		<select id="timeZone" name="timeZone" class="form-control">
+		<select id="timeZone" name="timeZone" class="form-control @(ViewBag.TimeZoneClass ?? "")">
 			@if (ViewBag.TimeZones != null)
 			{
 				foreach (var timeZone in ViewBag.TimeZones as List<SelectListItem>)
 				{
-					<option value="@timeZone.Value">@timeZone.Text</option>
+					if (timeZone.Selected)
+					{
+						<option value="@timeZone.Value" selected="selected">@timeZone.Text</option>
+					}
+					else
+					{
+						<option value="@timeZone.Value">@timeZone.Text</option>
+					}
 				}
 			}
-			else
-			{
-				<option value="">No Time Zones Available</option>
-			}
 		</select>
+		<p class="form-group-search-description" style="user-select: none;">Automatically set to the local time zone for convenience</p>
+	</div>
+
+
+	<div class="form-group">
+		<label for="description">Description (Optional)</label>
+		<textarea id="description" name="description" class="form-control"></textarea>
 	</div>
 
 	<button type="submit" class="btn btn-primary">Create Calendar</button>
 </form>
+
+<!-- Hidden fields for validation and success messages -->
+@if (ViewBag.ShowSuccessMessage != null && ViewBag.ShowSuccessMessage)
+{
+	<div class="alert alert-success" role="alert">
+		New calendar created! <br />
+		Name: @ViewBag.NewCalendarName <br />
+		TimeZone: @ViewBag.NewCalendarTimeZone <br />
+		Description: @ViewBag.NewCalendarDescription
+	</div>
+}
