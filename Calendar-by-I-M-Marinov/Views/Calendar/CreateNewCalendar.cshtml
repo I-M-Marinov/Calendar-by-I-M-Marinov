@@ -9,42 +9,45 @@
 {
 	<div id="message" class="alert @ViewBag.MessageClass">@ViewBag.Message</div>
 }
+<div class="form-container">
+	<form asp-action="CreateNewCalendar" method="post">
+		<div class="new-calendar-container">
+			<div class="new-calendar name">
+				<label for="calendarName">Calendar Name</label>
+				<input type="text" id="calendarName" name="calendarName" class="form-control @ViewBag.CalendarNameClass" />
+			</div>
 
-<form asp-action="CreateNewCalendar" method="post">
-	<div class="form-group">
-		<label for="calendarName">Calendar Name</label>
-		<input type="text" id="calendarName" name="calendarName" class="form-control @ViewBag.CalendarNameClass" />
-	</div>
-
-	<div class="form-group">
-		<label for="timeZone">Time Zone</label>
-		<select id="timeZone" name="timeZone" class="form-control @(ViewBag.TimeZoneClass ?? "")">
-			@if (ViewBag.TimeZones != null)
-			{
-				foreach (var timeZone in ViewBag.TimeZones as List<SelectListItem>)
-				{
-					if (timeZone.Selected)
+			<div class="new-calendar zone">
+				<label for="timeZone">Time Zone</label>
+				<select id="timeZone" name="timeZone" class="form-control @(ViewBag.TimeZoneClass ?? "")">
+					@if (ViewBag.TimeZones != null)
 					{
-						<option value="@timeZone.Value" selected="selected">@timeZone.Text</option>
+						foreach (var timeZone in ViewBag.TimeZones as List<SelectListItem>)
+						{
+							if (timeZone.Selected)
+							{
+								<option value="@timeZone.Value" selected="selected">@timeZone.Text</option>
+							}
+							else
+							{
+								<option value="@timeZone.Value">@timeZone.Text</option>
+							}
+						}
 					}
-					else
-					{
-						<option value="@timeZone.Value">@timeZone.Text</option>
-					}
-				}
-			}
-		</select>
-		<p class="form-group-search-description" style="user-select: none;">Automatically set to the local time zone for convenience</p>
-	</div>
+				</select>
+				<p class="time-zone-description" style="user-select: none;">Automatically set to the local time zone for convenience</p>
+			</div>
 
 
-	<div class="form-group">
-		<label for="description">Description (Optional)</label>
-		<textarea id="description" name="description" class="form-control"></textarea>
-	</div>
+			<div class="new-calendar description">
+				<label for="description">Description (Optional)</label>
+				<textarea id="description" name="description" class="form-control"></textarea>
+			</div>
 
-	<button type="submit" class="btn btn-primary">Create Calendar</button>
-</form>
+			<button type="submit" class="btn btn-primary createCalendar">Create Calendar</button>
+		</div>
+	</form>
+</div>
 
 <!-- Hidden fields for validation and success messages -->
 @if (ViewBag.ShowSuccessMessage != null && ViewBag.ShowSuccessMessage)
