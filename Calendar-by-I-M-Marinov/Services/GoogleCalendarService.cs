@@ -261,16 +261,15 @@ public class GoogleCalendarService : IGoogleCalendarService
 		await request.ExecuteAsync();
 	}
 
-	public Calendar CreateCalendar(string summary, string timeZone)
-	{
-		var newCalendar = new Calendar
-		{
-			Summary = summary,
-			TimeZone = timeZone
-		};
+    public async Task<Calendar> CreateCalendar(string summary, string timeZone)
+    {
+        var newCalendar = new Calendar
+        {
+            Summary = summary,
+            TimeZone = timeZone
+        };
 
-		var createdCalendar = _service.Calendars.Insert(newCalendar).Execute();
-
+        var createdCalendar = await _service.Calendars.Insert(newCalendar).ExecuteAsync();
         return createdCalendar;
     }
 }
