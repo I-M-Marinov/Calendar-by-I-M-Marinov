@@ -5,8 +5,10 @@ using Calendar_by_I_M_Marinov.Models;
 using static Calendar_by_I_M_Marinov.Common.DateTimeExtensions;
 using Google.Apis.Calendar.v3;
 using System.Reflection;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Calendar_by_I_M_Marinov.Common;
 
-public class CalendarController : Controller    
+public class CalendarController : Controller
 {
     private readonly IGoogleCalendarService _googleCalendarService;
 
@@ -16,36 +18,36 @@ public class CalendarController : Controller
     }
 
 
-	public async Task<IActionResult> ListCalendars()
+    public async Task<IActionResult> ListCalendars()
     {
-	    var calendars = await _googleCalendarService.GetAllCalendarsAsync();
+        var calendars = await _googleCalendarService.GetAllCalendarsAsync();
 
-	    var calendarViewModels = new List<CalendarViewModel>();
+        var calendarViewModels = new List<CalendarViewModel>();
 
-	    foreach (var calendar in calendars)
-	    {
-		    var events = await _googleCalendarService.GetEventsForCalendarAsync(calendar.Id);
+        foreach (var calendar in calendars)
+        {
+            var events = await _googleCalendarService.GetEventsForCalendarAsync(calendar.Id);
 
-		    var calendarViewModel = new CalendarViewModel
-		    {
-			    CalendarName = calendar.Summary,
-			    CalendarId = calendar.Id,
-			    Description = calendar.Description,
-			    AccessRole = calendar.AccessRole,
-			    EventsCount = events.Count 
-		    };
+            var calendarViewModel = new CalendarViewModel
+            {
+                CalendarName = calendar.Summary,
+                CalendarId = calendar.Id,
+                Description = calendar.Description,
+                AccessRole = calendar.AccessRole,
+                EventsCount = events.Count
+            };
 
-		    calendarViewModels.Add(calendarViewModel);
-	    }
+            calendarViewModels.Add(calendarViewModel);
+        }
 
-	    calendarViewModels = calendarViewModels
-		    .OrderBy(c => c.AccessRole)
-		    .ToList();
+        calendarViewModels = calendarViewModels
+            .OrderBy(c => c.AccessRole)
+            .ToList();
 
-	    return View("ListAllCalendars", calendarViewModels);
+        return View("ListAllCalendars", calendarViewModels);
     }
 
-	[HttpGet]
+    [HttpGet]
     public async Task<IActionResult> ListCalendarsAndEvents(string selectedCalendarId)
     {
         try
@@ -136,36 +138,37 @@ public class CalendarController : Controller
         }
     }
 
-	public async Task<IActionResult> ViewNewEventAdded()
-	{
-		var events = await _googleCalendarService.GetEventsAsync("primary");
-		var lastAdded = events.OrderByDescending(e => e.CreatedDateTimeOffset ?? e.UpdatedDateTimeOffset).FirstOrDefault();
+    public async Task<IActionResult> ViewNewEventAdded()
+    {
+        var events = await _googleCalendarService.GetEventsAsync("primary");
+        var lastAdded = events.OrderByDescending(e => e.CreatedDateTimeOffset ?? e.UpdatedDateTimeOffset)
+            .FirstOrDefault();
 
-		if (lastAdded == null)
-		{
-			return NotFound("No events found.");
-		}
+        if (lastAdded == null)
+        {
+            return NotFound("No events found.");
+        }
 
-		return View(lastAdded);
-	}
+        return View(lastAdded);
+    }
 
-	public async Task<IActionResult> ViewNewEventUpdated(string calendarId, string eventId)
-	{
-		// Retrieve the specific event by its ID
-		var eventToView = await _googleCalendarService.GetEventByIdAsync(calendarId, eventId);
+    public async Task<IActionResult> ViewNewEventUpdated(string calendarId, string eventId)
+    {
+        // Retrieve the specific event by its ID
+        var eventToView = await _googleCalendarService.GetEventByIdAsync(calendarId, eventId);
 
-		if (eventToView == null)
-		{
-			return NotFound("Event not found.");
-		}
+        if (eventToView == null)
+        {
+            return NotFound("Event not found.");
+        }
 
-		// Pass the calendarId to the view via ViewBag if needed
-		ViewBag.CalendarId = calendarId;
+        // Pass the calendarId to the view via ViewBag if needed
+        ViewBag.CalendarId = calendarId;
 
-		return View(eventToView);
-	}
+        return View(eventToView);
+    }
 
-	[HttpGet]
+    [HttpGet]
     public IActionResult CreateEvent()
     {
         ViewBag.PageTitle = "Create a new Event";
@@ -179,72 +182,75 @@ public class CalendarController : Controller
 
         return View(model);
     }
+
     [HttpPost]
-	public async Task<IActionResult> CreateEvent(EventViewModel model)
-	{
-		var timeZone = "Europe/Sofia";
-		EventDateTime startEventDateTime;
-		EventDateTime endEventDateTime;
+    public async Task<IActionResult> CreateEvent(EventViewModel model)
+    {
+        var timeZone = "Europe/Sofia";
+        EventDateTime startEventDateTime;
+        EventDateTime endEventDateTime;
 
-		if (model.EventType == "allDay")
-		{
-			startEventDateTime = new EventDateTime
-			{
-				Date = model.Start?.ToString("yyyy-MM-dd"), 
-				TimeZone = timeZone
-			};
+        if (model.EventType == "allDay")
+        {
+            startEventDateTime = new EventDateTime
+            {
+                Date = model.Start?.ToString("yyyy-MM-dd"),
+                TimeZone = timeZone
+            };
 
-			endEventDateTime = new EventDateTime
-			{
-				Date = model.Start?.AddDays(1).ToString("yyyy-MM-dd"), // End date is one day after start date
-				TimeZone = timeZone
-			};
-		}
-		else
-		{
-			// If it's a timed event, use DateTime for Start and End
-			startEventDateTime = new EventDateTime
-			{
-				DateTime = model.Start.Value.ToUniversalTime(), 
-				TimeZone = timeZone
-			};
+            endEventDateTime = new EventDateTime
+            {
+                Date = model.Start?.AddDays(1).ToString("yyyy-MM-dd"), // End date is one day after start date
+                TimeZone = timeZone
+            };
+        }
+        else
+        {
+            // If it's a timed event, use DateTime for Start and End
+            startEventDateTime = new EventDateTime
+            {
+                DateTime = model.Start.Value.ToUniversalTime(),
+                TimeZone = timeZone
+            };
 
-			endEventDateTime = new EventDateTime
-			{
-				DateTime = model.End.Value.ToUniversalTime(), 
-				TimeZone = timeZone
-			};
-		}
+            endEventDateTime = new EventDateTime
+            {
+                DateTime = model.End.Value.ToUniversalTime(),
+                TimeZone = timeZone
+            };
+        }
 
-		var newEvent = new Event
-		{
-			Summary = model.Summary,
-			Description = model.Description,
-			Location = model.Location,
-			Visibility = model.Visibility,
-			Start = startEventDateTime,
-			End = endEventDateTime,
-			Recurrence = model.EventType == "annual" ? new List<string>
-		{
-			$"RRULE:FREQ=YEARLY;BYMONTH={model.Start?.Month};BYMONTHDAY={model.Start?.Day}"
-		} : null
-		};
+        var newEvent = new Event
+        {
+            Summary = model.Summary,
+            Description = model.Description,
+            Location = model.Location,
+            Visibility = model.Visibility,
+            Start = startEventDateTime,
+            End = endEventDateTime,
+            Recurrence = model.EventType == "annual"
+                ? new List<string>
+                {
+                    $"RRULE:FREQ=YEARLY;BYMONTH={model.Start?.Month};BYMONTHDAY={model.Start?.Day}"
+                }
+                : null
+        };
 
-		try
-		{
-			// Add the new event to the primary calendar
-			await _googleCalendarService.AddEventAsync("primary", newEvent); // Ensure the calendar ID is specified
-			return RedirectToAction("ViewNewEventAdded", new { message = "Event created successfully." });
-		}
-		catch (Exception ex)
-		{
-			// Handle any errors that occur during event creation
-			ModelState.AddModelError("", $"Error creating event: {ex.Message}");
-			return View(model); // Return the view with the model to display errors
-		}
-	}
+        try
+        {
+            // Add the new event to the primary calendar
+            await _googleCalendarService.AddEventAsync("primary", newEvent); // Ensure the calendar ID is specified
+            return RedirectToAction("ViewNewEventAdded", new { message = "Event created successfully." });
+        }
+        catch (Exception ex)
+        {
+            // Handle any errors that occur during event creation
+            ModelState.AddModelError("", $"Error creating event: {ex.Message}");
+            return View(model); // Return the view with the model to display errors
+        }
+    }
 
-	[HttpPost]
+    [HttpPost]
     public async Task<IActionResult> DeletePrimaryEvent(DeleteEventViewModel model)
     {
         if (string.IsNullOrEmpty(model.EventId))
@@ -256,10 +262,13 @@ public class CalendarController : Controller
 
         try
         {
-            int deletedInstancesCount = await _googleCalendarService.DeleteEventAsync("primary", model.EventId, model.DeleteSeries);
+            int deletedInstancesCount =
+                await _googleCalendarService.DeleteEventAsync("primary", model.EventId, model.DeleteSeries);
 
             TempData["IsSuccess"] = true;
-            TempData["SuccessMessage"] = model.DeleteSeries ? "The recurring event series was deleted successfully." : "The event was deleted successfully.";
+            TempData["SuccessMessage"] = model.DeleteSeries
+                ? "The recurring event series was deleted successfully."
+                : "The event was deleted successfully.";
             TempData["DeletedInstancesCount"] = deletedInstancesCount;
             return RedirectToAction("DeletionConfirmed");
         }
@@ -274,7 +283,8 @@ public class CalendarController : Controller
     public IActionResult DeletionConfirmed(string eventId)
     {
         var successMessage = TempData["SuccessMessage"];
-        var deletedInstancesCount = TempData["DeletedInstancesCount"] != null ? (int)TempData["DeletedInstancesCount"] : 0;
+        var deletedInstancesCount =
+            TempData["DeletedInstancesCount"] != null ? (int)TempData["DeletedInstancesCount"] : 0;
 
         if (successMessage != null)
         {
@@ -402,9 +412,9 @@ public class CalendarController : Controller
             Summary = e.Summary,
             Start = e.Start.DateTimeDateTimeOffset?.ToDateTime(),
             End = e.End.DateTimeDateTimeOffset?.ToDateTime(),
-			Location = e.Location,
+            Location = e.Location,
             CalendarId = e.Organizer?.Email!,
-            IsCreator = e.Creator?.Self ?? false, 
+            IsCreator = e.Creator?.Self ?? false,
             GuestsCanModify = e.GuestsCanModify ?? false,
             Status = e.Status,
             Source = e.Source?.ToString() ?? string.Empty,
@@ -430,6 +440,7 @@ public class CalendarController : Controller
 
         return View(eventToEdit);
     }
+
     [HttpGet]
     public async Task<IActionResult> EditPrimaryEvent(string eventId)
     {
@@ -446,8 +457,8 @@ public class CalendarController : Controller
             Description = eventToEdit.Description,
             Location = eventToEdit.Location,
             Start = eventToEdit.Start.DateTimeDateTimeOffset?.ToDateTime(),
-			End = eventToEdit.End.DateTimeDateTimeOffset?.ToDateTime()
-		};
+            End = eventToEdit.End.DateTimeDateTimeOffset?.ToDateTime()
+        };
 
         ViewBag.PageTitle = "Edit Event";
         ViewBag.FormAction = "EditPrimaryEvent";
@@ -464,7 +475,7 @@ public class CalendarController : Controller
         {
             var updatedEvent = new Event
             {
-                Id = eventId,  // Ensure the ID is set for updating
+                Id = eventId, // Ensure the ID is set for updating
                 Summary = model.Summary,
                 Description = model.Description,
                 Location = model.Location,
@@ -475,7 +486,7 @@ public class CalendarController : Controller
                 },
                 End = new EventDateTime
                 {
-	                DateTimeDateTimeOffset = model.End,
+                    DateTimeDateTimeOffset = model.End,
                     TimeZone = "Europe/Sofia"
                 }
             };
@@ -501,73 +512,73 @@ public class CalendarController : Controller
     }
 
     [HttpGet]
-	public async Task<IActionResult> EditEvent(string calendarId, string eventId)
-	{
-		// Retrieve the event from the Google Calendar
-		var eventToEdit = await _googleCalendarService.GetEventByIdAsync(calendarId, eventId);
+    public async Task<IActionResult> EditEvent(string calendarId, string eventId)
+    {
+        // Retrieve the event from the Google Calendar
+        var eventToEdit = await _googleCalendarService.GetEventByIdAsync(calendarId, eventId);
 
-		if (eventToEdit == null)
-		{
-			return NotFound($"Event with ID {eventId} not found.");
-		}
+        if (eventToEdit == null)
+        {
+            return NotFound($"Event with ID {eventId} not found.");
+        }
 
-		// Initialize variables for Start and End
-		DateTime? startDateTime = eventToEdit.Start.DateTimeDateTimeOffset?.ToDateTime();
-		DateTime? endDateTime = eventToEdit.End.DateTimeDateTimeOffset?.ToDateTime();
+        // Initialize variables for Start and End
+        DateTime? startDateTime = eventToEdit.Start.DateTimeDateTimeOffset?.ToDateTime();
+        DateTime? endDateTime = eventToEdit.End.DateTimeDateTimeOffset?.ToDateTime();
 
-		DateTime? startDate = !string.IsNullOrEmpty(eventToEdit.Start.Date)
-							  ? DateTime.Parse(eventToEdit.Start.Date)
-							  : (DateTime?)null;
+        DateTime? startDate = !string.IsNullOrEmpty(eventToEdit.Start.Date)
+            ? DateTime.Parse(eventToEdit.Start.Date)
+            : (DateTime?)null;
 
-		DateTime? endDate = !string.IsNullOrEmpty(eventToEdit.End.Date)
-							? DateTime.Parse(eventToEdit.End.Date)
-							: (DateTime?)null;
+        DateTime? endDate = !string.IsNullOrEmpty(eventToEdit.End.Date)
+            ? DateTime.Parse(eventToEdit.End.Date)
+            : (DateTime?)null;
 
-		string eventType;
-		if (startDateTime.HasValue && endDateTime.HasValue)
-		{
-			eventType = eventToEdit.EventType;
-		}
-		else if (startDate.HasValue && endDate.HasValue)
-		{
-			eventType = "allDay";
-			startDateTime = startDate;
-			endDateTime = endDate;
-		}
-		else
-		{
-			eventType = "unknown"; 
-		}
+        string eventType;
+        if (startDateTime.HasValue && endDateTime.HasValue)
+        {
+            eventType = eventToEdit.EventType;
+        }
+        else if (startDate.HasValue && endDate.HasValue)
+        {
+            eventType = "allDay";
+            startDateTime = startDate;
+            endDateTime = endDate;
+        }
+        else
+        {
+            eventType = "unknown";
+        }
 
-		// Map the retrieved event to the EditEventViewModel
-		var viewModel = new EditEventViewModel
-		{
-			EventId = eventToEdit.Id,
-			CalendarId = calendarId,
-			Summary = eventToEdit.Summary,
-			Location = eventToEdit.Location,
-			Start = startDateTime,
-			End = endDateTime,
-			IsCreator = eventToEdit.Creator?.Email == "lcfrrr@gmail.com", 
-			GuestsCanModify = eventToEdit.GuestsCanModify ?? false,
-			Status = eventToEdit.Status,
-			Source = eventToEdit.Source?.ToString(), 
-			Locked = eventToEdit.Locked, 
-			Transparency = eventToEdit.Transparency,
-			Visibility = eventToEdit.Visibility,
-			EventType = eventType
-		};
+        // Map the retrieved event to the EditEventViewModel
+        var viewModel = new EditEventViewModel
+        {
+            EventId = eventToEdit.Id,
+            CalendarId = calendarId,
+            Summary = eventToEdit.Summary,
+            Location = eventToEdit.Location,
+            Start = startDateTime,
+            End = endDateTime,
+            IsCreator = eventToEdit.Creator?.Email == "lcfrrr@gmail.com",
+            GuestsCanModify = eventToEdit.GuestsCanModify ?? false,
+            Status = eventToEdit.Status,
+            Source = eventToEdit.Source?.ToString(),
+            Locked = eventToEdit.Locked,
+            Transparency = eventToEdit.Transparency,
+            Visibility = eventToEdit.Visibility,
+            EventType = eventType
+        };
 
-		// Set the ViewBag properties for the view
-		ViewBag.PageTitle = "Edit Event";
-		ViewBag.FormAction = "UpdateEvent";
-		ViewBag.ButtonText = "Save Changes";
+        // Set the ViewBag properties for the view
+        ViewBag.PageTitle = "Edit Event";
+        ViewBag.FormAction = "UpdateEvent";
+        ViewBag.ButtonText = "Save Changes";
 
-		// Return the view for editing the event
-		return View("UpdateEvent", viewModel);
-	}
+        // Return the view for editing the event
+        return View("UpdateEvent", viewModel);
+    }
 
-	[HttpPost]
+    [HttpPost]
     public async Task<IActionResult> EditEvents(Dictionary<string, EditEventViewModel> events)
     {
         // Validate and process each event
@@ -588,7 +599,8 @@ public class CalendarController : Controller
                     };
 
                     // Update event in the correct calendar
-                    await _googleCalendarService.UpdateEventAsync(eventModel.CalendarId, eventModel.EventId, eventToUpdate);
+                    await _googleCalendarService.UpdateEventAsync(eventModel.CalendarId, eventModel.EventId,
+                        eventToUpdate);
                 }
                 catch (Exception ex)
                 {
@@ -619,7 +631,7 @@ public class CalendarController : Controller
             Start = e.Start.DateTime,
             End = e.End.DateTime,
             Location = e.Location,
-            CalendarId = e.Organizer?.Email  // Adjust this based on how you determine CalendarId
+            CalendarId = e.Organizer?.Email // Adjust this based on how you determine CalendarId
         }).ToList();
 
         return View("EditEvents", viewModel);
@@ -668,7 +680,8 @@ public class CalendarController : Controller
             catch (Exception ex)
             {
                 // Handle exceptions for each individual event
-                Console.WriteLine($"Error updating event with ID {eventId}: {ex.Message}"); // input in the console just in case 
+                Console.WriteLine(
+                    $"Error updating event with ID {eventId}: {ex.Message}"); // input in the console just in case 
                 updatedEventViewModel.IsUpdated = false;
                 updatedEventViewModel.ErrorMessage = $"Error updating event with ID {eventId}: {ex.Message}";
             }
@@ -680,110 +693,173 @@ public class CalendarController : Controller
         return View("UpdateEvents", updatedEvents);
     }
 
-	[HttpPost]
-	public async Task<IActionResult> UpdateEvent(EditEventViewModel model)
-	{
-		// Initialize the Event object
-		var updatedEvent = new Event
-		{
-			Id = model.EventId,
-			Summary = model.Summary,
-			Description = model.Description,
-			Location = model.Location,
+    [HttpPost]
+    public async Task<IActionResult> UpdateEvent(EditEventViewModel model)
+    {
+        // Initialize the Event object
+        var updatedEvent = new Event
+        {
+            Id = model.EventId,
+            Summary = model.Summary,
+            Description = model.Description,
+            Location = model.Location,
             EventType = model.EventType
-		};
+        };
 
-		// Check if the event is an all-day event
-		if (model.EventType == "allDay")
-		{
-			// For all-day events, set Start.Date and End.Date to the same date
-			updatedEvent.Start = new EventDateTime
-			{
-				Date = model.Start?.ToString("yyyy-MM-dd"),
-				TimeZone = "Europe/Sofia"
-			};
-			updatedEvent.End = new EventDateTime
-			{
-				Date = model.Start?.ToString("yyyy-MM-dd"), // Use Start date as End date for all-day events
-				TimeZone = "Europe/Sofia"
-			};
-		}
-		else
-		{
-			// For timed events, set Start.DateTime and End.DateTime
-			updatedEvent.Start = new EventDateTime
-			{
-				DateTime = model.Start.HasValue ? model.Start.Value.ToUniversalTime() : DateTime.UtcNow,
-				TimeZone = "Europe/Sofia"
-			};
-			updatedEvent.End = new EventDateTime
-			{
-				DateTime = model.End.HasValue ? model.End.Value.ToUniversalTime() : DateTime.UtcNow,
-				TimeZone = "Europe/Sofia"
-			};
-		}
+        // Check if the event is an all-day event
+        if (model.EventType == "allDay")
+        {
+            // For all-day events, set Start.Date and End.Date to the same date
+            updatedEvent.Start = new EventDateTime
+            {
+                Date = model.Start?.ToString("yyyy-MM-dd"),
+                TimeZone = "Europe/Sofia"
+            };
+            updatedEvent.End = new EventDateTime
+            {
+                Date = model.Start?.ToString("yyyy-MM-dd"), // Use Start date as End date for all-day events
+                TimeZone = "Europe/Sofia"
+            };
+        }
+        else
+        {
+            // For timed events, set Start.DateTime and End.DateTime
+            updatedEvent.Start = new EventDateTime
+            {
+                DateTime = model.Start.HasValue ? model.Start.Value.ToUniversalTime() : DateTime.UtcNow,
+                TimeZone = "Europe/Sofia"
+            };
+            updatedEvent.End = new EventDateTime
+            {
+                DateTime = model.End.HasValue ? model.End.Value.ToUniversalTime() : DateTime.UtcNow,
+                TimeZone = "Europe/Sofia"
+            };
+        }
 
-		try
-		{
-			// Update the event using the Google Calendar service
-			await _googleCalendarService.UpdateEventAsync(model.CalendarId, model.EventId, updatedEvent);
+        try
+        {
+            // Update the event using the Google Calendar service
+            await _googleCalendarService.UpdateEventAsync(model.CalendarId, model.EventId, updatedEvent);
 
-			// Redirect to a confirmation page after successful update
-			return RedirectToAction("ViewNewEventUpdated", new { message = "Event updated successfully.", model.CalendarId, model.EventId });
-		}
-		catch (Exception ex)
-		{
-			// Handle errors during the update process
-			ModelState.AddModelError("", $"Error updating event: {ex.Message}");
-		}
+            // Redirect to a confirmation page after successful update
+            return RedirectToAction("ViewNewEventUpdated",
+                new { message = "Event updated successfully.", model.CalendarId, model.EventId });
+        }
+        catch (Exception ex)
+        {
+            // Handle errors during the update process
+            ModelState.AddModelError("", $"Error updating event: {ex.Message}");
+        }
 
-		// Redisplay the form with errors if the update fails
-		ViewBag.PageTitle = "Edit Event";
-		ViewBag.FormAction = "UpdateEvent";
-		ViewBag.ButtonText = "Save Changes";
+        // Redisplay the form with errors if the update fails
+        ViewBag.PageTitle = "Edit Event";
+        ViewBag.FormAction = "UpdateEvent";
+        ViewBag.ButtonText = "Save Changes";
 
-		return View("UpdateEvent", model);
-	}
+        return View("UpdateEvent", model);
+    }
 
-	public async Task<IList<Event>> GetTodaysEventsAsync()
-	{
-		var calendarList = await _googleCalendarService.GetAllCalendarsAsync();
-		var allEvents = new List<Event>();
-		var now = DateTime.UtcNow;
-		var startOfDay = new DateTime(now.Year, now.Month, now.Day, 0, 0, 0, DateTimeKind.Utc);
-		var endOfDay = startOfDay.AddDays(1).AddTicks(-1);
+    public async Task<IList<Event>> GetTodaysEventsAsync()
+    {
+        var calendarList = await _googleCalendarService.GetAllCalendarsAsync();
+        var allEvents = new List<Event>();
+        var now = DateTime.UtcNow;
+        var startOfDay = new DateTime(now.Year, now.Month, now.Day, 0, 0, 0, DateTimeKind.Utc);
+        var endOfDay = startOfDay.AddDays(1).AddTicks(-1);
 
-		foreach (var calendar in calendarList)
-		{
-			var todayEvents = await _googleCalendarService.GetEventsForCalendarAsync(calendar.Id);
+        foreach (var calendar in calendarList)
+        {
+            var todayEvents = await _googleCalendarService.GetEventsForCalendarAsync(calendar.Id);
 
-			var filteredEvents = todayEvents.Where(e =>
-			{
-				if (e.Start.DateTime.HasValue)
-				{
-					// Filter events with specific start and end times
-					return e.Start.DateTime.Value >= startOfDay && e.Start.DateTime.Value <= endOfDay;
-				}
-				else if (!string.IsNullOrEmpty(e.Start.Date))
-				{
-					//  all-day events 
-					var eventDate = DateTime.Parse(e.Start.Date);
-					return eventDate.Date == now.Date;
-				}
+            var filteredEvents = todayEvents.Where(e =>
+            {
+                if (e.Start.DateTime.HasValue)
+                {
+                    // Filter events with specific start and end times
+                    return e.Start.DateTime.Value >= startOfDay && e.Start.DateTime.Value <= endOfDay;
+                }
+                else if (!string.IsNullOrEmpty(e.Start.Date))
+                {
+                    //  all-day events 
+                    var eventDate = DateTime.Parse(e.Start.Date);
+                    return eventDate.Date == now.Date;
+                }
 
-				return false;
-			});
+                return false;
+            });
 
-			allEvents.AddRange(filteredEvents);
-		}
+            allEvents.AddRange(filteredEvents);
+        }
 
-		return allEvents.OrderBy(e => e.Start.DateTime ?? DateTime.Parse(e.Start.Date)).ToList();
-	}
+        return allEvents.OrderBy(e => e.Start.DateTime ?? DateTime.Parse(e.Start.Date)).ToList();
+    }
 
-	public async Task<IActionResult> ViewTodaysEvents()
-	{
-		var todayEvents = await GetTodaysEventsAsync();
-		return View(todayEvents);
-	}
+    public async Task<IActionResult> ViewTodaysEvents()
+    {
+        var todayEvents = await GetTodaysEventsAsync();
+        return View(todayEvents);
+    }
+    [HttpGet]
+    public IActionResult CreateNewCalendar()
+    {
+        var timeZones = TimeZoneInfo.GetSystemTimeZones()
+            .Select(tz => new SelectListItem
+            {
+                Value = tz.Id,
+                Text = tz.DisplayName
+            })
+            .ToList();
+
+        ViewBag.TimeZones = timeZones;
+
+        return View();
+    }
+
+    [HttpPost]
+    public IActionResult CreateNewCalendar(string calendarName, string timeZone)
+    {
+        if (string.IsNullOrWhiteSpace(calendarName) || string.IsNullOrWhiteSpace(timeZone))
+        {
+            ViewBag.Message = "Both fields are required.";
+
+            // Populate time zones
+            ViewBag.TimeZones = TimeZoneInfo.GetSystemTimeZones()
+                .Select(tz => new SelectListItem
+                {
+                    Value = tz.Id,
+                    Text = tz.DisplayName
+                })
+                .ToList();
+            return View();
+        }
+
+        try
+        {
+            // Convert Windows time zone to IANA time zone
+            var ianaTimeZone = TimeZoneConverter.ConvertToIanaTimeZone(timeZone);
+
+            var newCalendar = _googleCalendarService.CreateCalendar(calendarName, ianaTimeZone);
+            ViewBag.Message = $"New Calendar '{newCalendar}' Created Successfully!";
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            ViewBag.Message = "Error creating calendar: " + ex.Message;
+        }
+
+        // Re-populate time zones
+        ViewBag.TimeZones = TimeZoneInfo.GetSystemTimeZones()
+            .Select(tz => new SelectListItem
+            {
+                Value = tz.Id,
+                Text = tz.DisplayName
+            })
+            .ToList();
+
+        return View();
+    }
+
+
+
 
 }
