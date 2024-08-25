@@ -802,62 +802,90 @@ public class CalendarController : Controller
     [HttpGet]
     public IActionResult CreateNewCalendar()
     {
+        var localTimeZoneId = TimeZoneInfo.Local.Id;
+
+        // Populate the time zones
         var timeZones = TimeZoneInfo.GetSystemTimeZones()
             .Select(tz => new SelectListItem
             {
                 Value = tz.Id,
-                Text = tz.DisplayName
+                Text = tz.DisplayName,
+                Selected = tz.Id == localTimeZoneId // Pre-select the local time zone
             })
             .ToList();
 
         ViewBag.TimeZones = timeZones;
+        ViewBag.SelectedTimeZone = localTimeZoneId; 
 
         return View();
     }
 
+
     [HttpPost]
-    public IActionResult CreateNewCalendar(string calendarName, string timeZone)
+    public async Task<IActionResult> CreateNewCalendar(string calendarName, string timeZone, string? description = null)
     {
+        var localTimeZoneId = TimeZoneInfo.Local.Id;
+
+
         if (string.IsNullOrWhiteSpace(calendarName) || string.IsNullOrWhiteSpace(timeZone))
         {
-            ViewBag.Message = "Both fields are required.";
+            ViewBag.Message = "Calendar Name and Time Zone are required.";
+            ViewBag.MessageClass = "alert-danger"; // Set the error message style
+            ViewBag.CalendarNameClass = string.IsNullOrWhiteSpace(calendarName) ? "is-invalid" : "";
+            ViewBag.TimeZoneClass = string.IsNullOrWhiteSpace(timeZone) ? "is-invalid" : "";
 
-            // Populate time zones
+            // Re-populate time zones
             ViewBag.TimeZones = TimeZoneInfo.GetSystemTimeZones()
                 .Select(tz => new SelectListItem
                 {
                     Value = tz.Id,
-                    Text = tz.DisplayName
+                    Text = tz.DisplayName,
+                    Selected = tz.Id == localTimeZoneId
                 })
                 .ToList();
+
             return View();
         }
 
         try
         {
-            // Convert Windows time zone to IANA time zone
-            var ianaTimeZone = TimeZoneConverter.ConvertToIanaTimeZone(timeZone);
+            
+            string ianaTimeZone = TimeZoneConverter.ConvertToIanaTimeZone(timeZone);
 
-            var newCalendar = _googleCalendarService.CreateCalendar(calendarName, ianaTimeZone);
-            ViewBag.Message = $"New Calendar '{newCalendar}' Created Successfully!";
+            
+            var newCalendar = await _googleCalendarService.CreateCalendarAsync(calendarName, ianaTimeZone, description);
+
+            // Set success message and calendar details
+            ViewBag.Message = $"New Calendar '{newCalendar.Summary}' Created Successfully!";
+            ViewBag.MessageClass = "alert-success"; // Success message style
+            ViewBag.ShowSuccessMessage = true; // Show success message
+
+            // Set the newly created calendar details
+            ViewBag.NewCalendarName = newCalendar.Summary;
+            ViewBag.NewCalendarTimeZone = newCalendar.TimeZone;
+            ViewBag.NewCalendarDescription = string.IsNullOrWhiteSpace(newCalendar.Description) ? "N/A" : newCalendar.Description;
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
             ViewBag.Message = "Error creating calendar: " + ex.Message;
+            ViewBag.MessageClass = "alert-danger"; // Error message style
         }
 
+
         // Re-populate time zones
-        ViewBag.TimeZones = TimeZoneInfo.GetSystemTimeZones()
+        var timeZones = TimeZoneInfo.GetSystemTimeZones()
             .Select(tz => new SelectListItem
             {
                 Value = tz.Id,
-                Text = tz.DisplayName
+                Text = tz.DisplayName,
+                Selected = tz.Id == localTimeZoneId // Pre-select the local time zone
             })
             .ToList();
 
         return View();
     }
+
+
 
 
 
