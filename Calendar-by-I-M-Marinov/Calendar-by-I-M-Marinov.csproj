@@ -9,10 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="Views\Calendar\EditNewEvent.cshtml" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Google.Apis" Version="1.68.0" />
     <PackageReference Include="Google.Apis.Auth" Version="1.68.0" />
     <PackageReference Include="Google.Apis.Calendar.v3" Version="1.68.0.3473" />
@@ -31,12 +27,6 @@
     <UpToDateCheckInput Remove="Views\Calendar\EditNewEvent.cshtml" />
   </ItemGroup>
 
-  <ItemGroup>
-    <_ContentIncludedByDefault Remove="Views\Calendar\EditNewEvent.cshtml" />
-  </ItemGroup>
 
-  <ItemGroup>
-    <None Include="Views\Calendar\EditNewEvent.cshtml" />
-  </ItemGroup>
 
 </Project>
