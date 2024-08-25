@@ -7,6 +7,7 @@
 3. [Features](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov?tab=readme-ov-file#-features)
    - [Dashboard](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov?tab=readme-ov-file#large_blue_diamond-dashboard)
    - [Calendars --> Calendar List](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov?tab=readme-ov-file#large_blue_diamond-calendars----calendar-list)
+   - [Calendars --> Create a Calendar](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov?tab=readme-ov-file#large_blue_diamond-calendars----create-a-calendar)
    - [Events --> Events per Calendar](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov?tab=readme-ov-file#large_blue_diamond-events----events-per-calendar)
      - [Edit](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov?tab=readme-ov-file#%EF%B8%8F-edit-----edit-an-event-and-save-it-back-to-your-google-calendar)
      - [Delete](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov?tab=readme-ov-file#%EF%B8%8F-delete-----delete-an-event-from-your-google-calendar)
@@ -46,6 +47,10 @@
 - See the name of the calendar (user's primary calendar would be visualized as user's gmail address), the access role that the user have for each calendar and the events added for each one.
 ###### 📢: The events shown would be until the end of the calendar year, starting from the beginning of the current day.
 
+#### :large_blue_diamond: Calendars --> Create a Calendar
+- Adds a new (secondary) calendar to the user's Google Calendar.
+- New calendars added with this functions are all with Access Role: "owner".
+  ###### 📢: Every calendar except the primary one is a secondary calendar, but with different Access Role and Options as per Google.
 #### :large_blue_diamond: Events --> Events per calendar
 - User can choose from the dropdown menu a calendar and use the "Load Events" button to visualize all events for that calendar.
 - "All calendars" option visualizes all the events in all calendars, order by calendar and then by time of occurance.
