@@ -9,9 +9,9 @@ namespace Calendar_by_I_M_Marinov.Models
 		public string Description { get; set; } = null!;
 		public string AccessRole { get; set; } = null!;
 		public int EventsCount { get; set; }
-		public string EventType { get; set; } = null!;
+		public bool? Primary { get; set; }
 
-        // List of events associated with this calendar
-        public List<Event> Events { get; set; } = new List<Event>();
+		// List of events associated with this calendar
+		public List<Event> Events { get; set; } = new List<Event>();
     }
 }
