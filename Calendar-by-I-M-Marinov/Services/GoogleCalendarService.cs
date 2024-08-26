@@ -8,6 +8,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Google.Apis.Calendar.v3.Data;
 using System.Collections.Generic;
+using System.Diagnostics;
+using Calendar_by_I_M_Marinov.Models;
 using Calendar_by_I_M_Marinov.Services.Contracts;
 using Google;
 
@@ -278,6 +280,26 @@ public class GoogleCalendarService : IGoogleCalendarService
 	    var calendarId = "primary"; // ID for the primary calendar
 	    var calendar = await _service.Calendars.Get(calendarId).ExecuteAsync();
 	    return calendar.TimeZone; // This will return the time zone of the primary calendar
+    }
+    public async Task<bool> DeleteCalendarAsync(string calendarId)
+    {
+	    try
+	    {
+		    await _service.CalendarList.Delete(calendarId).ExecuteAsync();
+		    return true;
+	    }
+	    catch (GoogleApiException ex)
+	    {
+		    Console.WriteLine($"An error occurred: {ex.Message}"); // for debugging purposes
+		    return false;
+	    }
+    }
+
+    public Task<Calendar> GetCalendarByIdAsync(string calendarId)
+    {
+	    var calendar = _service.Calendars.Get(calendarId).ExecuteAsync(); 
+
+	    return calendar;
     }
 
 }
