@@ -34,7 +34,8 @@ public class CalendarController : Controller
                 CalendarId = calendar.Id,
                 Description = calendar.Description,
                 AccessRole = calendar.AccessRole,
-                EventsCount = events.Count
+                EventsCount = events.Count,
+                Primary = calendar.Primary
             };
 
             calendarViewModels.Add(calendarViewModel);
@@ -812,18 +813,14 @@ public class CalendarController : Controller
 			allEvents.AddRange(filteredEvents);
 		}
 
-		return allEvents.OrderBy(e => e.Start.DateTime ?? DateTime.Parse(e.Start.Date)).ToList();
+		return allEvents.OrderBy(e => e.Start.DateTimeDateTimeOffset ?? DateTime.Parse(e.Start.Date)).ToList();
 	}
-
-
-
 
 	public async Task<IActionResult> ViewTodaysEvents()
     {
         var todayEvents = await GetTodaysEventsAsync();
         return View(todayEvents);
     }
-
 
 	[HttpGet]
     public IActionResult CreateNewCalendar()
@@ -910,4 +907,42 @@ public class CalendarController : Controller
         return View();
     }
 
+    [HttpPost]
+    public async Task<IActionResult> DeleteCalendar(string calendarId)
+    {
+	    try
+	    {
+		    if (string.IsNullOrEmpty(calendarId))
+		    {
+				TempData["DeleteSuccessMessage"] = "Invalid calendar ID.";
+				TempData["MessageClass"] = "alert-danger";
+
+				return RedirectToAction("ListCalendars");
+		    }
+
+		    var calendar = await _googleCalendarService.GetCalendarByIdAsync(calendarId);
+		    var isDeleted = await _googleCalendarService.DeleteCalendarAsync(calendarId);
+
+			if (isDeleted)
+			{
+				TempData["MessageClass"] = "alert-success";
+				TempData["DeleteSuccessMessage"] = $"{calendar.Summary} deleted successfully!";
+			}
+			else
+			{
+				TempData["MessageClass"] = "alert-danger";
+				TempData["DeleteSuccessMessage"] = $"Failed to delete calendar {calendar.Summary}.";
+			}
+
+		}
+	    catch (Exception ex)
+	    {
+		    Console.WriteLine(ex.Message); // for debugging purposes 
+			TempData["MessageClass"] = "alert-danger";
+			TempData["DeleteSuccessMessage"] = $"Error deleting calendar: {ex.Message}";
+	    }
+
+	    return RedirectToAction("ListCalendars");
+
+    }
 }
