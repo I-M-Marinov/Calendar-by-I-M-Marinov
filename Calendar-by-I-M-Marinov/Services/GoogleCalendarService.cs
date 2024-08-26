@@ -260,7 +260,6 @@ public class GoogleCalendarService : IGoogleCalendarService
 		var request = _service.Events.Update(updatedEvent, calendarId, eventId);
 		await request.ExecuteAsync();
 	}
-
     public async Task<Calendar> CreateCalendarAsync(string summary, string timeZone, string? description = null)
     {
         var newCalendar = new Calendar
@@ -274,4 +273,11 @@ public class GoogleCalendarService : IGoogleCalendarService
 
         return createdCalendar;
     }
+    public async Task<string> GetPrimaryCalendarTimeZoneAsync()
+    {
+	    var calendarId = "primary"; // ID for the primary calendar
+	    var calendar = await _service.Calendars.Get(calendarId).ExecuteAsync();
+	    return calendar.TimeZone; // This will return the time zone of the primary calendar
+    }
+
 }

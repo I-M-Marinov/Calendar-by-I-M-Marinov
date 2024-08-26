@@ -759,47 +759,73 @@ public class CalendarController : Controller
         return View("UpdateEvent", model);
     }
 
-    public async Task<IList<Event>> GetTodaysEventsAsync()
-    {
-        var calendarList = await _googleCalendarService.GetAllCalendarsAsync();
-        var allEvents = new List<Event>();
-        var now = DateTime.UtcNow;
-        var startOfDay = new DateTime(now.Year, now.Month, now.Day, 0, 0, 0, DateTimeKind.Utc);
-        var endOfDay = startOfDay.AddDays(1).AddTicks(-1);
+	public async Task<IList<Event>> GetTodaysEventsAsync()
+	{
+		var calendarList = await _googleCalendarService.GetAllCalendarsAsync();
+		var allEvents = new List<Event>();
+		var now = DateTime.UtcNow;
+		var startOfDay = new DateTime(now.Year, now.Month, now.Day, 0, 0, 0, DateTimeKind.Utc);
+		var endOfDay = startOfDay.AddDays(1).AddTicks(-1);
 
-        foreach (var calendar in calendarList)
-        {
-            var todayEvents = await _googleCalendarService.GetEventsForCalendarAsync(calendar.Id);
+		// Retrieve the primary calendar's time zone
+		var primaryCalendarTimeZone = await _googleCalendarService.GetPrimaryCalendarTimeZoneAsync();
+		var timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(primaryCalendarTimeZone);
 
-            var filteredEvents = todayEvents.Where(e =>
-            {
-                if (e.Start.DateTime.HasValue)
-                {
-                    // Filter events with specific start and end times
-                    return e.Start.DateTime.Value >= startOfDay && e.Start.DateTime.Value <= endOfDay;
-                }
-                else if (!string.IsNullOrEmpty(e.Start.Date))
-                {
-                    //  all-day events 
-                    var eventDate = DateTime.Parse(e.Start.Date);
-                    return eventDate.Date == now.Date;
-                }
+		foreach (var calendar in calendarList)
+		{
+			var todayEvents = await _googleCalendarService.GetEventsForCalendarAsync(calendar.Id);
 
-                return false;
-            });
+			var filteredEvents = todayEvents.Where(e =>
+			{
+				if (e.Start.DateTime.HasValue)
+				{
+					// Filter events with specific start and end times
+					var eventStart = e.Start.DateTime.Value;
+					var eventEnd = e.End.DateTime.HasValue ? e.End.DateTime.Value : eventStart;
+					return eventStart < endOfDay && eventEnd >= startOfDay;
+				}
+				else if (!string.IsNullOrEmpty(e.Start.Date))
+				{
+					// Handle all-day events
+					var eventStartDate = DateTime.Parse(e.Start.Date).Date;
+					var eventEndDate = e.End.Date != null ? DateTime.Parse(e.End.Date).Date : eventStartDate.AddDays(1);
 
-            allEvents.AddRange(filteredEvents);
-        }
+					return eventStartDate <= endOfDay && eventEndDate > startOfDay;
+				}
 
-        return allEvents.OrderBy(e => e.Start.DateTime ?? DateTime.Parse(e.Start.Date)).ToList();
-    }
+				return false;
+			});
 
-    public async Task<IActionResult> ViewTodaysEvents()
+			// Convert event times to local time zone if needed
+			foreach (var e in filteredEvents)
+			{
+				if (e.Start.DateTime.HasValue)
+				{
+					e.Start.DateTime = TimeZoneInfo.ConvertTimeFromUtc(e.Start.DateTime.Value, timeZoneInfo);
+					if (e.End.DateTime.HasValue)
+					{
+						e.End.DateTime = TimeZoneInfo.ConvertTimeFromUtc(e.End.DateTime.Value, timeZoneInfo);
+					}
+				}
+			}
+
+			allEvents.AddRange(filteredEvents);
+		}
+
+		return allEvents.OrderBy(e => e.Start.DateTime ?? DateTime.Parse(e.Start.Date)).ToList();
+	}
+
+
+
+
+	public async Task<IActionResult> ViewTodaysEvents()
     {
         var todayEvents = await GetTodaysEventsAsync();
         return View(todayEvents);
     }
-    [HttpGet]
+
+
+	[HttpGet]
     public IActionResult CreateNewCalendar()
     {
         var localTimeZoneId = TimeZoneInfo.Local.Id;
@@ -819,7 +845,6 @@ public class CalendarController : Controller
 
         return View();
     }
-
 
     [HttpPost]
     public async Task<IActionResult> CreateNewCalendar(string calendarName, string timeZone, string? description = null)
@@ -884,10 +909,5 @@ public class CalendarController : Controller
 
         return View();
     }
-
-
-
-
-
 
 }
