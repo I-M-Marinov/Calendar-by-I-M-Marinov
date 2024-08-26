@@ -7,6 +7,7 @@
 3. [Features](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov?tab=readme-ov-file#-features)
    - [Dashboard](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov?tab=readme-ov-file#large_blue_diamond-dashboard)
    - [Calendars --> Calendar List](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov?tab=readme-ov-file#large_blue_diamond-calendars----calendar-list)
+     - [Delete](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov?tab=readme-ov-file#%EF%B8%8F-delete-----delete-a-secondary-calendar)
    - [Calendars --> Create a Calendar](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov?tab=readme-ov-file#large_blue_diamond-calendars----create-a-calendar)
    - [Events --> Events per Calendar](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov?tab=readme-ov-file#large_blue_diamond-events----events-per-calendar)
      - [Edit](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov?tab=readme-ov-file#%EF%B8%8F-edit-----edit-an-event-and-save-it-back-to-your-google-calendar)
@@ -44,7 +45,8 @@
 
 #### :large_blue_diamond: Calendars --> Calendar List 
 - Shows the user all the calendars showing in his/her Google Calendar (Family, Phases of the Moon or any imported calendar).
-- See the name of the calendar (user's primary calendar would be visualized as user's gmail address), the access role that the user have for each calendar and the events added for each one.
+- See the name of the calendar (user's primary calendar marked with a star and the word "primary"), the access role that the user have for each calendar and the events added for each one.
+    ###### ➡️ Delete ---> Delete a secondary calendar.
 ###### 📢: The events shown would be until the end of the calendar year, starting from the beginning of the current day.
 
 #### :large_blue_diamond: Calendars --> Create a Calendar
