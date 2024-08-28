@@ -150,6 +150,7 @@ public class CalendarController : Controller
             return NotFound("No events found.");
         }
 
+
         return View(lastAdded);
     }
 

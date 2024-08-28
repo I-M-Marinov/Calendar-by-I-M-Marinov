@@ -40,7 +40,8 @@
 		        <p>Location: @Model.Location</p><br/>
 
 		        <!-- Edit Button -->
-		        <a asp-action="EditPrimaryEvent" asp-route-calendarId="@calendarId" asp-route-eventId="@Model.Id" class="btn btn-primary btn-sm">Edit</a>
+		        <a asp-action="EditEvent" asp-route-calendarId="primary" asp-route-eventId="@Model.Id" class="btn btn-primary btn-sm">Edit</a>
+
 
 		        <!-- Delete Button -->
 		        <form asp-action="ConfirmDelete" method="get" style="display:inline;">
