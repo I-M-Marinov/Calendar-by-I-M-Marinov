@@ -24,8 +24,8 @@
 				@if (calendarEvent.Start.DateTimeDateTimeOffset.HasValue && calendarEvent.End.DateTimeDateTimeOffset.HasValue)
 				{
 					<!-- Timed Event -->
-					<p>Start: @calendarEvent.Start.DateTimeDateTimeOffset.Value.ToLocalTime().ToString("MMMM dd, yyyy h:mm tt")</p>
-					<p>End: @calendarEvent.End.DateTimeDateTimeOffset.Value.ToLocalTime().ToString("MMMM dd, yyyy h:mm tt")</p>
+					<p>Start: @calendarEvent.Start.DateTime.Value.ToLocalTime().ToString("MMMM dd, yyyy h:mm tt")</p>
+					<p>End: @calendarEvent.End.DateTime.Value.ToLocalTime().ToString("MMMM dd, yyyy h:mm tt")</p>
 				}
 				else if (!string.IsNullOrEmpty(calendarEvent.Start.Date) && !string.IsNullOrEmpty(calendarEvent.End.Date))
 				{

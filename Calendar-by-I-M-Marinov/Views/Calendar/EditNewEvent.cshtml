@@ -19,7 +19,7 @@
     <!-- Handling All-Day Events -->
     <div class="form-group">
         <label asp-for="Start"></label>
-        @if (Model.Start.HasValue && Model.End.HasValue && Model.Start.Value.Date == Model.End.Value.Date)
+        @if (Model.EventType == "allDay")
         {
             // <!-- For all-day events -->
             <input asp-for="Start" type="date" class="form-control" />
@@ -32,8 +32,9 @@
     </div>
 
     <div class="form-group">
-        <label asp-for="End"></label>
-        @if (Model.Start.HasValue && Model.End.HasValue && Model.Start.Value.Date == Model.End.Value.Date)
+	    <label asp-for="End"></label>
+
+        @if (Model.EventType != "allDay")
         {
             // <!-- For all-day events -->
             <input asp-for="End" type="date" class="form-control" />

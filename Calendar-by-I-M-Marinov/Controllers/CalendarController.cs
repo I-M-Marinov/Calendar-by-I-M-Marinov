@@ -761,63 +761,81 @@ public class CalendarController : Controller
         return View("UpdateEvent", model);
     }
 
-	public async Task<IList<Event>> GetTodaysEventsAsync()
-	{
-		var calendarList = await _googleCalendarService.GetAllCalendarsAsync();
-		var allEvents = new List<Event>();
-		var now = DateTime.UtcNow;
-		var startOfDay = new DateTime(now.Year, now.Month, now.Day, 0, 0, 0, DateTimeKind.Utc);
-		var endOfDay = startOfDay.AddDays(1).AddTicks(-1);
+    public async Task<IList<Event>> GetTodaysEventsAsync()
+    {
+        var calendarList = await _googleCalendarService.GetAllCalendarsAsync();
+        var allEvents = new List<Event>();
+        var now = DateTime.UtcNow;
+        var startOfDay = new DateTime(now.Year, now.Month, now.Day, 0, 0, 0, DateTimeKind.Utc);
+        var endOfDay = startOfDay.AddDays(1).AddTicks(-1);
 
-		// Retrieve the primary calendar's time zone
-		var primaryCalendarTimeZone = await _googleCalendarService.GetPrimaryCalendarTimeZoneAsync();
-		var timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(primaryCalendarTimeZone);
+        // Retrieve the primary calendar's time zone
+        var primaryCalendarTimeZone = await _googleCalendarService.GetPrimaryCalendarTimeZoneAsync();
+        var timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(primaryCalendarTimeZone);
 
-		foreach (var calendar in calendarList)
-		{
-			var todayEvents = await _googleCalendarService.GetEventsForCalendarAsync(calendar.Id);
+        foreach (var calendar in calendarList)
+        {
+            var todayEvents = await _googleCalendarService.GetEventsForCalendarAsync(calendar.Id);
 
-			var filteredEvents = todayEvents.Where(e =>
-			{
-				if (e.Start.DateTime.HasValue)
-				{
-					// Filter events with specific start and end times
-					var eventStart = e.Start.DateTime.Value;
-					var eventEnd = e.End.DateTime.HasValue ? e.End.DateTime.Value : eventStart;
-					return eventStart < endOfDay && eventEnd >= startOfDay;
-				}
-				else if (!string.IsNullOrEmpty(e.Start.Date))
-				{
-					// Handle all-day events
-					var eventStartDate = DateTime.Parse(e.Start.Date).Date;
-					var eventEndDate = e.End.Date != null ? DateTime.Parse(e.End.Date).Date : eventStartDate.AddDays(1);
+            var filteredEvents = todayEvents.Where(e =>
+            {
+                if (e.Start.DateTime.HasValue)
+                {
+                    // Filter events with specific start and end times
+                    var eventStart = e.Start.DateTime.Value;
+                    var eventEnd = e.End.DateTime.HasValue ? e.End.DateTime.Value : eventStart;
 
-					return eventStartDate <= endOfDay && eventEndDate > startOfDay;
-				}
+                    // Ensure DateTime is in UTC only if necessary
+                    if (eventStart.Kind != DateTimeKind.Utc)
+                    {
+                        eventStart = DateTime.SpecifyKind(eventStart, DateTimeKind.Utc);
+                    }
+                    if (eventEnd.Kind != DateTimeKind.Utc)
+                    {
+                        eventEnd = DateTime.SpecifyKind(eventEnd, DateTimeKind.Utc);
+                    }
 
-				return false;
-			});
+                    return eventStart < endOfDay && eventEnd >= startOfDay;
+                }
+                else if (!string.IsNullOrEmpty(e.Start.Date))
+                {
+                    // Handle all-day events
+                    var eventStartDate = DateTime.Parse(e.Start.Date).Date;
+                    var eventEndDate = e.End.Date != null ? DateTime.Parse(e.End.Date).Date : eventStartDate.AddDays(1);
 
-			// Convert event times to local time zone if needed
-			foreach (var e in filteredEvents)
-			{
-				if (e.Start.DateTime.HasValue)
-				{
-					e.Start.DateTime = TimeZoneInfo.ConvertTimeFromUtc(e.Start.DateTime.Value, timeZoneInfo);
-					if (e.End.DateTime.HasValue)
-					{
-						e.End.DateTime = TimeZoneInfo.ConvertTimeFromUtc(e.End.DateTime.Value, timeZoneInfo);
-					}
-				}
-			}
+                    return eventStartDate <= endOfDay && eventEndDate > startOfDay;
+                }
 
-			allEvents.AddRange(filteredEvents);
-		}
+                return false;
+            });
 
-		return allEvents.OrderBy(e => e.Start.DateTimeDateTimeOffset ?? DateTime.Parse(e.Start.Date)).ToList();
-	}
+            // Convert event times to local time zone if needed
+            foreach (var e in filteredEvents)
+            {
+                if (e.Start.DateTimeDateTimeOffset.HasValue)
+                {
+                    
+                    if (e.Start.DateTime.Value.Kind == DateTimeKind.Utc) // if the returned from the API times are UTC convert them to local time 
+                    {
+                        e.Start.DateTimeDateTimeOffset = TimeZoneInfo.ConvertTimeFromUtc(e.Start.DateTime.Value, timeZoneInfo);
+                    }
 
-	public async Task<IActionResult> ViewTodaysEvents()
+                    if (e.End.DateTimeDateTimeOffset.HasValue && e.End.DateTime.Value.Kind == DateTimeKind.Utc) // if the returned from the API times are UTC convert them to local time 
+                    {
+                        e.End.DateTimeDateTimeOffset = TimeZoneInfo.ConvertTimeFromUtc(e.End.DateTime.Value, timeZoneInfo);
+                    }
+                }
+            }
+
+            allEvents.AddRange(filteredEvents);
+        }
+
+        return allEvents.OrderBy(e => e.Start.DateTimeDateTimeOffset ?? DateTime.Parse(e.Start.Date)).ToList();
+    }
+
+
+
+    public async Task<IActionResult> ViewTodaysEvents()
     {
         var todayEvents = await GetTodaysEventsAsync();
         return View(todayEvents);
