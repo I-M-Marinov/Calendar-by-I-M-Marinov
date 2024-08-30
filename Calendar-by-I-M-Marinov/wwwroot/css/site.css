@@ -175,22 +175,23 @@ h4{
     color: greenyellow;
 }
 
-.create-event-group{
+.create-event-group {
     margin: 0 auto;
 }
 
-.create-event-group.summary,
-.create-event-group.location,
-.create-event-group.description {
-    max-width: 50%;
-}
+    .create-event-group.summary,
+    .create-event-group.location,
+    .create-event-group.description {
+        max-width: 50%;
+    }
 
 /* Flex container for the columns */
 .create-event-container {
     display: flex;
-    justify-content: space-between; 
-    width: 100%; 
-    gap: 20px; 
+    justify-content: space-between;
+    flex-wrap: wrap;
+    width: 100%;
+    gap: 20px;
 }
 
 /* Flex container for the first column */
@@ -200,15 +201,16 @@ h4{
     gap: 15px;
     flex: 1;
     margin-left: 20em;
+    margin-bottom: 1em; /* Consistent margin at the bottom */
     flex-shrink: 1;
 }
 
 /* Flex container for the second column */
 .create-event-group3 {
     display: flex;
-    flex-direction: column; 
-    gap: 15px; 
-    flex: 1; 
+    flex-direction: column;
+    gap: 15px;
+    flex: 1;
     margin-right: 20em;
     margin-bottom: 1em;
     flex-shrink: 1;
@@ -220,6 +222,19 @@ h4{
     flex-direction: column; /* Stack label and input vertically */
     align-items: center; /* Center label and input horizontally */
 }
+
+.create-event-group.attendees {
+    max-width: 55%;
+}
+
+.create-event-group.attendees input {
+    width: 100%; 
+    max-width: none; 
+    margin-bottom:1em;
+}
+
+
+
 
 
 /* CSS for the Dashboard View ( ViewTodaysEvents ) */
