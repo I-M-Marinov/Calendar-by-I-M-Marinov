@@ -12,11 +12,15 @@ using System.Diagnostics;
 using Calendar_by_I_M_Marinov.Models;
 using Calendar_by_I_M_Marinov.Services.Contracts;
 using Google;
+using Calendar_by_I_M_Marinov.Services;
 
 public class GoogleCalendarService : IGoogleCalendarService
 {
-	private readonly CalendarService _service;
-	private readonly string _applicationName = "Calendar-by-I-M-Marinov";
+	private readonly CalendarService _calendarService;
+    private readonly GooglePeopleService _peopleService;
+
+
+    private readonly string _applicationName = "Calendar-by-I-M-Marinov";
 
 	public GoogleCalendarService(IConfiguration configuration)
 	{
@@ -37,22 +41,25 @@ public class GoogleCalendarService : IGoogleCalendarService
 			CancellationToken.None,
 			new FileDataStore("token.json", true)).Result;
 
-		_service = new CalendarService(new BaseClientService.Initializer()
+		_calendarService = new CalendarService(new BaseClientService.Initializer()
 		{
 			HttpClientInitializer = credential,
 			ApplicationName = _applicationName,
 		});
-	}
-	public async Task<IList<CalendarListEntry>> GetAllCalendarsAsync()
+
+        _peopleService = new GooglePeopleService(configuration);
+
+    }
+    public async Task<IList<CalendarListEntry>> GetAllCalendarsAsync()
 	{
-		var calendarListRequest = _service.CalendarList.List();
+		var calendarListRequest = _calendarService.CalendarList.List();
 		var calendarList = await calendarListRequest.ExecuteAsync();
 
 		return calendarList.Items;
 	}
 	public async Task<IList<CalendarListEntry>> GetEditableCalendarsAsync()
 	{
-		var calendarListRequest = _service.CalendarList.List();
+		var calendarListRequest = _calendarService.CalendarList.List();
 		var calendarList = await calendarListRequest.ExecuteAsync();
 
 		// Filter the calendars to include only those where the access role is 'owner' or 'writer'
@@ -73,7 +80,7 @@ public class GoogleCalendarService : IGoogleCalendarService
 		// Set the end of the year in UTC
 		DateTime endOfYearUtc = new DateTime(nowUtc.Year, 12, 31, 23, 59, 59, DateTimeKind.Utc);
 
-		var request = _service.Events.List(calendarId);
+		var request = _calendarService.Events.List(calendarId);
 		request.TimeMin = startOfDayUtc;
 		request.TimeMax = endOfYearUtc;
 		request.ShowDeleted = false; // Exclude deleted events
@@ -94,15 +101,13 @@ public class GoogleCalendarService : IGoogleCalendarService
 	}
 	public async Task<IList<Event>> GetEventsAsync(string calendarId)
 	{
-		var request = _service.Events.List(calendarId);
+		var request = _calendarService.Events.List(calendarId);
 
 
-		request.Fields =
-			"items(id,summary,start,end,location,creator,guestsCanModify,status,transparency,extendedProperties)";
+        request.Fields = "items(id,summary,start,end,location,attendees,creator,guestsCanModify,status,transparency,extendedProperties)";
 
-
-		// Get the current date in UTC
-		DateTime nowUtc = DateTime.UtcNow;
+        // Get the current date in UTC
+        DateTime nowUtc = DateTime.UtcNow;
 		DateTime startOfDayUtc = new DateTime(nowUtc.Year, nowUtc.Month, nowUtc.Day, 0, 0, 0, DateTimeKind.Utc);
 
 		// Set the end of the year in UTC
@@ -112,34 +117,47 @@ public class GoogleCalendarService : IGoogleCalendarService
 		request.TimeMax = endOfYearUtc;
 		request.ShowDeleted = false; // Exclude deleted events
 		request.SingleEvents = true; // Expand recurring events
-		request.MaxResults = 100; // Limit to 100 events per page
+		request.MaxResults = 200; // Limit to 200 events per page
 		request.OrderBy = EventsResource.ListRequest.OrderByEnum.StartTime; // Order by start time
 
 		var response = await request.ExecuteAsync();
-		return response.Items;
+
+        foreach (var evt in response.Items)
+        {
+            if (evt.Attendees != null)
+            {
+                foreach (var attendee in evt.Attendees)
+                {
+                    // Fetch and set display names if needed
+                    attendee.DisplayName = await _peopleService.FetchDisplayNameByEmailAsync(attendee.Email);
+                }
+            }
+        }
+
+        return response.Items;
 	}
-	// this method is only returning events by id from the Primary calendar !!!! 
-	public virtual async Task<Event> GetEventByIdAsync(string eventId)
+    // this method is only returning events by id from the Primary calendar !!!! 
+    public virtual async Task<Event> GetEventByIdAsync(string eventId)
 	{
-		var request = _service.Events.Get("primary", eventId);
+		var request = _calendarService.Events.Get("primary", eventId);
 		return await request.ExecuteAsync();
 	}
 	// overload of the original method taking calendarId and eventId
 	public async Task<Event> GetEventByIdAsync(string calendarId, string eventId)
 	{
-		var request = _service.Events.Get(calendarId, eventId);
+		var request = _calendarService.Events.Get(calendarId, eventId);
 		return await request.ExecuteAsync();
 	}
 	/* The three methods below are used for Adding and Editing events respectively */
 	public async Task<Event> AddEventAsync(Event newEvent)
 	{
-		var insertRequest = _service.Events.Insert(newEvent, "primary");
+		var insertRequest = _calendarService.Events.Insert(newEvent, "primary");
 		var createdEvent = await insertRequest.ExecuteAsync();
 		return createdEvent;
 	}
 	public async Task<Event> AddEventAsync(string calendarId, Event newEvent)
 	{
-		var insertRequest = _service.Events.Insert(newEvent, calendarId);
+		var insertRequest = _calendarService.Events.Insert(newEvent, calendarId);
 		var createdEvent = await insertRequest.ExecuteAsync();
 		return createdEvent;
 	}
@@ -151,25 +169,25 @@ public class GoogleCalendarService : IGoogleCalendarService
 		// If you want to update an existing event, use the Update method
 		if (!string.IsNullOrEmpty(eventId))
 		{
-			var updateRequest = _service.Events.Update(newEvent, calendarId, eventId);
+			var updateRequest = _calendarService.Events.Update(newEvent, calendarId, eventId);
 			return await updateRequest.ExecuteAsync();
 		}
 
 		// Otherwise, create a new event
-		var insertRequest = _service.Events.Insert(newEvent, calendarId);
+		var insertRequest = _calendarService.Events.Insert(newEvent, calendarId);
 		return await insertRequest.ExecuteAsync();
 	}
     public async Task DeleteEventAsync(string eventId)
 
 	{
-		var request = _service.Events.Delete("primary", eventId);
+		var request = _calendarService.Events.Delete("primary", eventId);
 		await request.ExecuteAsync();
 	}
     public async Task DeleteEventAsync(string calendarId, string eventId)
     {
         try
         {
-            var request = _service.Events.Delete(calendarId, eventId);
+            var request = _calendarService.Events.Delete(calendarId, eventId);
             await request.ExecuteAsync();
         }
         catch (Google.GoogleApiException ex) when (ex.HttpStatusCode == System.Net.HttpStatusCode.NotFound)
@@ -187,7 +205,7 @@ public class GoogleCalendarService : IGoogleCalendarService
 
         try
         {
-            var eventRequest = _service.Events.Get(calendarId, eventId);
+            var eventRequest = _calendarService.Events.Get(calendarId, eventId);
             var eventToDelete = await eventRequest.ExecuteAsync();
 
             bool isRecurring = eventToDelete.Recurrence != null && eventToDelete.Recurrence.Any()
@@ -195,7 +213,7 @@ public class GoogleCalendarService : IGoogleCalendarService
 
             if (isRecurring && deleteSeries)
             {
-                var instancesRequest = _service.Events.Instances(calendarId, eventId);
+                var instancesRequest = _calendarService.Events.Instances(calendarId, eventId);
                 var instances = await instancesRequest.ExecuteAsync();
 
                 if (instances.Items.Any())
@@ -203,20 +221,20 @@ public class GoogleCalendarService : IGoogleCalendarService
                     // Delete each instance of the recurring event and increment the counter
                     foreach (var instance in instances.Items)
                     {
-                        var instanceDeleteRequest = _service.Events.Delete(calendarId, instance.Id);
+                        var instanceDeleteRequest = _calendarService.Events.Delete(calendarId, instance.Id);
                         await instanceDeleteRequest.ExecuteAsync();
                         deletedInstancesCount++;  
                     }
                 }
                 // Delete the "master" event as well
-                var masterDeleteRequest = _service.Events.Delete(calendarId, eventId);
+                var masterDeleteRequest = _calendarService.Events.Delete(calendarId, eventId);
                 await masterDeleteRequest.ExecuteAsync();
                 deletedInstancesCount++; 
             }
             else
             {
                 // If deleteSeries is false, or if the event is not recurring, delete the single event
-                var deleteRequest = _service.Events.Delete(calendarId, eventId);
+                var deleteRequest = _calendarService.Events.Delete(calendarId, eventId);
                 await deleteRequest.ExecuteAsync();
                 deletedInstancesCount++; 
             }
@@ -259,7 +277,7 @@ public class GoogleCalendarService : IGoogleCalendarService
 	}
 	public async Task UpdateEventAsync(string calendarId, string eventId, Event updatedEvent)
 	{
-		var request = _service.Events.Update(updatedEvent, calendarId, eventId);
+		var request = _calendarService.Events.Update(updatedEvent, calendarId, eventId);
 		await request.ExecuteAsync();
 	}
     public async Task<Calendar> CreateCalendarAsync(string summary, string timeZone, string? description = null)
@@ -271,21 +289,21 @@ public class GoogleCalendarService : IGoogleCalendarService
             Description = description
         };
 
-        var createdCalendar = await _service.Calendars.Insert(newCalendar).ExecuteAsync();
+        var createdCalendar = await _calendarService.Calendars.Insert(newCalendar).ExecuteAsync();
 
         return createdCalendar;
     }
     public async Task<string> GetPrimaryCalendarTimeZoneAsync()
     {
 	    var calendarId = "primary"; // ID for the primary calendar
-	    var calendar = await _service.Calendars.Get(calendarId).ExecuteAsync();
+	    var calendar = await _calendarService.Calendars.Get(calendarId).ExecuteAsync();
 	    return calendar.TimeZone; // This will return the time zone of the primary calendar
     }
     public async Task<bool> DeleteCalendarAsync(string calendarId)
     {
 	    try
 	    {
-		    await _service.CalendarList.Delete(calendarId).ExecuteAsync();
+		    await _calendarService.CalendarList.Delete(calendarId).ExecuteAsync();
 		    return true;
 	    }
 	    catch (GoogleApiException ex)
@@ -294,10 +312,9 @@ public class GoogleCalendarService : IGoogleCalendarService
 		    return false;
 	    }
     }
-
     public Task<Calendar> GetCalendarByIdAsync(string calendarId)
     {
-	    var calendar = _service.Calendars.Get(calendarId).ExecuteAsync(); 
+	    var calendar = _calendarService.Calendars.Get(calendarId).ExecuteAsync(); 
 
 	    return calendar;
     }
