@@ -81,6 +81,52 @@
                     }
                 </div>
                 <br />
+                
+                <!-- Display Attendees -->
+                
+                @if (evt.Attendees != null && evt.Attendees.Any())
+                {
+	                <h6>Attendees:</h6>
+	                <ul>
+		                @foreach (var attendee in evt.Attendees)
+		                {
+			                <li>
+				                <!-- Show display name or email -->
+				                @if (attendee.DisplayName == null)
+				                {
+					                @attendee.Email
+				                }
+				                else
+				                {
+					                @attendee.DisplayName
+				                }
+
+				                <!-- Show response status -->
+				                @{
+					                if (attendee.ResponseStatus == "accepted")
+					                {
+						                <span style="color:green;">(Accepted)</span>
+					                }
+					                else if (attendee.ResponseStatus == "declined")
+					                {
+						                <span style="color:red;">(Declined)</span>
+					                }
+					                else if (attendee.ResponseStatus == "tentative")
+					                {
+						                <span style="color:orange;">(Tentative)</span>
+					                }
+					                else if (attendee.ResponseStatus == "needsAction")
+					                {
+						                <span style="color: purple;">(Pending)</span>
+					                }
+				                }
+			                </li>
+		                }
+	                </ul>
+                }
+
+                <br />
+
 
                 @if (isOwnedEvent)
                 {
