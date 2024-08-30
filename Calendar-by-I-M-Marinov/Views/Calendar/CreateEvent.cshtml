@@ -18,33 +18,41 @@
     </div>
 
     <div class="create-event-container">
-        <div class="create-event-group2">
-            <div class="create-event-group start">
-                <label asp-for="Start" id="startDateLabel"></label>
-                <input asp-for="Start" type="datetime-local" class="form-control" id="startDateInput" />
-            </div>
-            <div class="create-event-group end">
-                <label asp-for="End"></label>
-                <input asp-for="End" type="datetime-local" class="form-control" id="endDateInput" />
-            </div>
-        </div>
-        <div class="create-event-group3">
-            <div class="create-event-group visibility">
-                <label asp-for="Visibility">Visibility</label>
-                <select asp-for="Visibility" class="form-control">
-                    <option value="public">Public</option>
-                    <option value="private">Private</option>
-                </select>
-            </div>
-            <div class="create-event-group eventtype">
-                <label asp-for="EventType">Event Type</label>
-                <select asp-for="EventType" class="form-control" id="eventTypeSelect">
-                    <option value="single">Single</option>
-                    <option value="annual">Annual</option>
-                    <option value="allDay">All Day</option>
-                </select>
-            </div>
-        </div>
+	    <div class="create-event-group2">
+		    <div class="create-event-group start">
+			    <label asp-for="Start" id="startDateLabel"></label>
+			    <input asp-for="Start" type="datetime-local" class="form-control" id="startDateInput" />
+		    </div>
+		    <div class="create-event-group end">
+			    <label asp-for="End"></label>
+			    <input asp-for="End" type="datetime-local" class="form-control" id="endDateInput" />
+		    </div>
+	    </div>
+
+	    <div class="create-event-group3">
+		    <div class="create-event-group visibility">
+			    <label asp-for="Visibility">Visibility</label>
+			    <select asp-for="Visibility" class="form-control">
+				    <option value="public">Public</option>
+				    <option value="private">Private</option>
+			    </select>
+		    </div>
+
+		    <div class="create-event-group eventtype">
+			    <label asp-for="EventType">Event Type</label>
+			    <select asp-for="EventType" class="form-control" id="eventTypeSelect">
+				    <option value="single">Single</option>
+				    <option value="annual">Annual</option>
+				    <option value="allDay">All Day</option>
+			    </select>
+		    </div>
+	    </div>
+	    
+    </div>
+    <div class="create-event-group attendees">
+	    <label asp-for="Attendants"></label>
+	    <input asp-for="Attendants" class="form-control" placeholder="Enter email addresses, separated by commas" />
+	    <span asp-validation-for="Attendants" class="text-danger"></span>
     </div>
     <button type="submit" class="btn btn-create-event">Create Event</button>
 </form>

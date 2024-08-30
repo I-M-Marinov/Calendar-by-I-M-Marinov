@@ -222,6 +222,9 @@ public class CalendarController : Controller
             };
         }
 
+        var attendees = model.Attendants?.Select(email => new EventAttendee { Email = email }).ToList();
+
+
         var newEvent = new Event
         {
             Summary = model.Summary,
@@ -235,7 +238,8 @@ public class CalendarController : Controller
                 {
                     $"RRULE:FREQ=YEARLY;BYMONTH={model.Start?.Month};BYMONTHDAY={model.Start?.Day}"
                 }
-                : null
+                : null,
+            Attendees = attendees
         };
 
         try
