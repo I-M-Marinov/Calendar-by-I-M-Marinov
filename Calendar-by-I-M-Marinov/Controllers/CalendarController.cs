@@ -53,10 +53,8 @@ public class CalendarController : Controller
     {
         try
         {
-            // Get all calendars
             var calendars = await _googleCalendarService.GetAllCalendarsAsync();
 
-            // Map calendar data to view models
             var calendarViewModels = calendars.Select(c => new CalendarViewModel
             {
                 CalendarName = c.Summary,
@@ -70,33 +68,26 @@ public class CalendarController : Controller
             int eventsCount = 0;
             var eventCalendarMap = new Dictionary<string, string>();
 
-            // Check if the "all" calendars option is selected
             if (selectedCalendarId == "all")
             {
                 var allEvents = new List<Event>();
 
-                // Load events from all calendars
                 foreach (var calendar in calendars)
                 {
                     var calendarEvents = await _googleCalendarService.GetEventsAsync(calendar.Id);
                     allEvents.AddRange(calendarEvents);
 
-                    // Map events to their calendar IDs
                     foreach (var evt in calendarEvents)
                     {
                         eventCalendarMap[evt.Id] = calendar.Id;
                     }
                 }
 
-                events = allEvents
-                    .OrderBy(e => e.Start.DateTimeDateTimeOffset)
-                    .ToList();
-
+                events = allEvents.OrderBy(e => e.Start.DateTimeDateTimeOffset).ToList();
                 selectedCalendarName = "All Calendars";
             }
             else if (!string.IsNullOrEmpty(selectedCalendarId))
             {
-                // Load events for the specific calendar
                 events = (await _googleCalendarService.GetEventsAsync(selectedCalendarId)).ToList();
                 eventsCount = events.Count;
 
@@ -107,7 +98,6 @@ public class CalendarController : Controller
                     accessRole = selectedCalendar.AccessRole;
                 }
 
-                // Map events to their calendar IDs
                 foreach (var evt in events)
                 {
                     eventCalendarMap[evt.Id] = selectedCalendarId;
@@ -120,7 +110,7 @@ public class CalendarController : Controller
                 SelectedCalendarId = selectedCalendarId,
                 SelectedCalendarName = selectedCalendarName,
                 AccessRole = accessRole,
-                Events = events,
+                Events = events, 
                 EventsCount = eventsCount,
                 EventCalendarMap = eventCalendarMap
             };
@@ -128,16 +118,15 @@ public class CalendarController : Controller
             ViewBag.SuccessMessage = TempData["SuccessMessage"];
             ViewBag.SuccessEventId = TempData["SuccessEventId"];
 
-            // Return the view with the view model
             return View(viewModel);
         }
         catch (Exception ex)
         {
-            // Handle exceptions
             ModelState.AddModelError("", $"An error occurred while loading events: {ex.Message}");
-            return View("Error"); // Return an error view or handle it as appropriate
+            return View("Error");
         }
     }
+
 
     public async Task<IActionResult> ViewNewEventAdded()
     {
@@ -223,7 +212,6 @@ public class CalendarController : Controller
         }
 
         var attendees = model.Attendants?.Select(email => new EventAttendee { Email = email }).ToList();
-
 
         var newEvent = new Event
         {
@@ -836,8 +824,6 @@ public class CalendarController : Controller
 
         return allEvents.OrderBy(e => e.Start.DateTimeDateTimeOffset ?? DateTime.Parse(e.Start.Date)).ToList();
     }
-
-
 
     public async Task<IActionResult> ViewTodaysEvents()
     {
