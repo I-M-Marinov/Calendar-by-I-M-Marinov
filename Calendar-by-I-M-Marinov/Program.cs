@@ -1,8 +1,8 @@
+using Calendar_by_I_M_Marinov.Services;
 using Calendar_by_I_M_Marinov.Services.Contracts;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -40,8 +40,9 @@ builder.Services.AddAuthentication(options =>
 
     });
 
+builder.Services.AddTransient<IGooglePeopleService, GooglePeopleService>(); // Add the Google People API Service 
+builder.Services.AddSingleton<IGoogleCalendarService, GoogleCalendarService>(); // Add the Google Calendar API Service 
 
-builder.Services.AddScoped<IGoogleCalendarService, GoogleCalendarService>();
 
 
 var app = builder.Build();

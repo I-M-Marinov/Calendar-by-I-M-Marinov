@@ -366,3 +366,5 @@ FodyWeavers.xsd
 /Calendar-by-I-M-Marinov/token.json/Google.Apis.Auth.OAuth2.Responses.TokenResponse-user
 /Calendar-by-I-M-Marinov/appsettings.json
 Calendar-by-I-M-Marinov/appsettings.json
+/Calendar-by-I-M-Marinov/people_token.json/Google.Apis.Auth.OAuth2.Responses.TokenResponse-user
+/Calendar-by-I-M-Marinov/people_token.json
