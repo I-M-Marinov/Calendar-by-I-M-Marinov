@@ -179,11 +179,11 @@ h4{
     margin: 0 auto;
 }
 
-    .create-event-group.summary,
-    .create-event-group.location,
-    .create-event-group.description {
-        max-width: 50%;
-    }
+.create-event-group.summary,
+.create-event-group.location,
+.create-event-group.description {
+    max-width: 50%;
+}
 
 /* Flex container for the columns */
 .create-event-container {
@@ -224,7 +224,7 @@ h4{
 }
 
 .create-event-group.attendees {
-    max-width: 55%;
+   width: 65%;
 }
 
 .create-event-group.attendees input {
@@ -232,6 +232,7 @@ h4{
     max-width: none; 
     margin-bottom:1em;
 }
+
 
 
 
@@ -299,5 +300,4 @@ h4{
     display: block;
     margin-top: 1em;
 }
-
 

@@ -77,3 +77,33 @@ document.addEventListener('DOMContentLoaded', function () {
     // Initial check on page load
     updateEndDateVisibility();
 });
+
+// FUNCTION TO ADD or REMOVE ATTENDANT'S INPUT FIELDS IN THE CreateEvent View 
+document.addEventListener("DOMContentLoaded", function () {
+    const addButton = document.getElementById("addAttendee");
+    const container = document.getElementById("attendeesContainer");
+
+    if (!addButton || !container) {
+        console.error("Add button or container not found in the DOM");
+        return;
+    }
+
+    addButton.addEventListener("click", function () {
+        // Create a new attendee row
+        const row = document.createElement("div");
+        row.className = "attendee-row";
+        row.innerHTML = `
+                    <input type="email" name="Attendants" class="form-control" placeholder="Enter email address" />
+                    <button type="button" class="btn btn-remove-attendee">Remove</button>
+                `;
+        // Insert the new row before the "Add" button
+        container.appendChild(row);
+    });
+
+    container.addEventListener("click", function (event) {
+        if (event.target.classList.contains("btn-remove-attendee")) {
+            const row = event.target.parentElement;
+            container.removeChild(row);
+        }
+    });
+});

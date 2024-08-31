@@ -175,6 +175,7 @@ public class CalendarController : Controller
     }
 
     [HttpPost]
+    [HttpPost]
     public async Task<IActionResult> CreateEvent(EventViewModel model)
     {
         var timeZone = "Europe/Sofia";
@@ -197,7 +198,6 @@ public class CalendarController : Controller
         }
         else
         {
-            // If it's a timed event, use DateTime for Start and End
             startEventDateTime = new EventDateTime
             {
                 DateTime = model.Start.Value.ToUniversalTime(),
@@ -211,7 +211,9 @@ public class CalendarController : Controller
             };
         }
 
-        var attendees = model.Attendants?.Select(email => new EventAttendee { Email = email }).ToList();
+        var attendees = model.Attendants?
+            .Select(email => new EventAttendee { Email = email.Trim() }) // Create new EventAttendee for each email
+            .ToList();
 
         var newEvent = new Event
         {
@@ -224,7 +226,7 @@ public class CalendarController : Controller
             Recurrence = model.EventType == "annual"
                 ? new List<string>
                 {
-                    $"RRULE:FREQ=YEARLY;BYMONTH={model.Start?.Month};BYMONTHDAY={model.Start?.Day}"
+                $"RRULE:FREQ=YEARLY;BYMONTH={model.Start?.Month};BYMONTHDAY={model.Start?.Day}"
                 }
                 : null,
             Attendees = attendees
@@ -243,6 +245,7 @@ public class CalendarController : Controller
             return View(model); // Return the view with the model to display errors
         }
     }
+
 
     [HttpPost]
     public async Task<IActionResult> DeletePrimaryEvent(DeleteEventViewModel model)
