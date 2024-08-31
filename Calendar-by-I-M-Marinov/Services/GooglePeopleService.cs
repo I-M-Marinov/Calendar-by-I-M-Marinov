@@ -45,54 +45,56 @@ namespace Calendar_by_I_M_Marinov.Services
         {
             try
             {
-                // Fetch the user profile information
-                var request = _peopleService.People.Connections.List("people/me");
-                request.PersonFields = "names,emailAddresses";
-
-                var response = await request.ExecuteAsync();
-
-                // Log the number of connections and their details
-                Console.WriteLine($"Response contains {response.Connections.Count} connections.");
-
-                if (response.Connections == null || !response.Connections.Any())
+                string nextPageToken = null;
+                do
                 {
-                    Console.WriteLine("No connections found.");
-                    return null;
-                }
+                    var request = _peopleService.People.Connections.List("people/me");
+                    request.PersonFields = "names,emailAddresses,metadata";
+                    request.PageSize = 100; // Maximum allowed per request from the Google People API 
+                    request.PageToken = nextPageToken;
 
-                foreach (var connection in response.Connections)
-                {
-                    Console.WriteLine($"Connection email addresses: {string.Join(", ", connection.EmailAddresses.Select(e => e.Value))}");
-                }
+                    var response = await request.ExecuteAsync();
 
-                // Look for the person by email
-                var person = response.Connections
-                    .FirstOrDefault(c => c.EmailAddresses != null &&
-                                         c.EmailAddresses.Any(e => e.Value == email));
+                    if (response.Connections == null || !response.Connections.Any())
+                    {
+                        Console.WriteLine("No connections found.");
+                        return null;
+                    }
 
-                if (person == null)
-                {
-                    Console.WriteLine($"No person found with email: {email}");
-                    return null;
-                }
+                    // Search for the person by email in the current page
+                    var person = response.Connections
+                        .FirstOrDefault(c => c.EmailAddresses != null &&
+                                             c.EmailAddresses.Any(e => string.Equals(e.Value, email, StringComparison.OrdinalIgnoreCase)));
 
-                // Check if Names is null before accessing
-                var displayName = person.Names?.FirstOrDefault()?.DisplayName;
+                    if (person != null)
+                    {
+                        // If found, return the display name
+                        var displayName = person.Names?.FirstOrDefault()?.DisplayName;
 
-                if (displayName == null)
-                {
-                    Console.WriteLine($"No display name found for email: {email}");
-                }
+                        if (string.IsNullOrEmpty(displayName))
+                        {
+                            Console.WriteLine($"No display name found for email: {email}");
+                        }
 
-                return displayName;
+                        return displayName;
+                    }
+
+                    // Get the next page token
+                    nextPageToken = response.NextPageToken;
+
+                } 
+                while (!string.IsNullOrEmpty(nextPageToken)); // Loop until there are no more pages
+
+                Console.WriteLine($"No person found with email: {email}");
+                return null;
             }
             catch (Exception ex)
             {
-                // Handle exceptions
                 Console.WriteLine($"Error fetching display name: {ex.Message}");
                 return null;
             }
         }
+
 
 
     }
