@@ -182,5 +182,7 @@
  - Authorizing and giving permission to the app to work on your calendar would generate token.json folder, that would contain a file that has your access_token and refresh_token.
          ⚠️ Please add the whole folder to the .gitignore file, so it is not uploaded on the next commit.
  - First time you start the project without debugging should start the web server ( locally ) and redirect your to the authorization screen. If you would like to add an option for an extra user to access the app you can navigate to the OAuth Consent Screen tab in the APIs and Services on the Google Developer Console and add Test Users via email. ( To login with another user you would have to delete the "token.json" folder manually ).
+   
+   ⚠️ ⚠️ ⚠️ Please not that once you set up the .NET User Secrets, they should be working just fine with the Google People API as well, but do not forget to add to the .gitignore the newly created folder "people_token.json", so you do not include your access and refresh tokens on Github ( especially if the repo is PUBLIC !!!! ); 
 
      
