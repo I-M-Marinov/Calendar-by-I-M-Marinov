@@ -35,6 +35,7 @@
 - JavaScript
 - HTML & CSS
 - Google Calendar API (https://developers.google.com/calendar/api/guides/overview)
+- Google People API (https://developers.google.com/people)
 
 <h2 align="center">
  Features:
@@ -65,7 +66,7 @@
 #### :large_blue_diamond: Events --> Add an Event
 - Add an Event adds a new Event to the primary calendar of the user.
   ###### 📢:  User can add a title, location and a description for their new event. It can be saved as public or a private event (visibility).  Event type can be single, annual or all day event. 
-
+  ###### 📢:  New Events can now add atendees to the event using the email input field available. If more than one attendee needs to be added, user uses the "Add" button to add a field ( and use "Remove" button to remove any fields that are not needed )
 #### :large_blue_diamond: Events --> Search Events
 - Search Events lets the user search through all events that editable ( Access Role in the calendar the event is saved in must be "owner" ) and edit them all at the same time.
   ###### 📢:  Search Events actually opens for edit all events that match the search keyword ( case-insensitive ). 
@@ -76,6 +77,10 @@
 
 <p align="center">
 <img src="./Screenshots/scrn1.PNG">
+</p>
+
+<p align="center">
+<img src="./Screenshots/scrn2-1.PNG">
 </p>
 
 <p align="center">
@@ -118,6 +123,14 @@
 
 <p align="center">
 <img src="./Screenshots/scrn11.png">
+</p>
+
+<p align="center">
+<img src="./Screenshots/scrn12.PNG">
+</p>
+
+<p align="center">
+<img src="./Screenshots/scrn13.PNG">
 </p>
 
 <h2 align="center">
