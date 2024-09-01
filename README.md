@@ -126,10 +126,6 @@
 </p>
 
 <p align="center">
-<img src="./Screenshots/scrn12.PNG">
-</p>
-
-<p align="center">
 <img src="./Screenshots/scrn13.PNG">
 </p>
 
