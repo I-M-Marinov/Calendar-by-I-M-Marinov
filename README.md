@@ -134,7 +134,8 @@
 </h2>
 
 - 🍴: Fork  the repo ! :) 
-- Go to https://console.cloud.google.com/, login with the google account you want to use and create a new web application, then activate the Google Calendar API for that application.
+- Go to https://console.cloud.google.com/, login with the google account you want to use and create a new web application, then activate the Google Calendar API and the Google People API for that application.
+###### 📢: Below is the explanation on how to setup the Google Calendar API, but process is pretty much the same for the People API as well. ( If you set them up separetly you would need to give permission from your account to both APIs for the App to function of course )
 - Once enabled navigate to the Credentials tab.
 - You would need to set the Authorized redirect URIs as well. Since you will be running the web server locally add either http://127.0.0.1/authorize/ or http://localhost/authorize/ ( or both to be sure ).
 - Get the Client Id and Client Secret. If you are planning on keeping this web app's repo open source on your account it would be great idea not to commit any sensitive data:
