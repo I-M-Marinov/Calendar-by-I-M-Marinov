@@ -232,10 +232,28 @@ public class CalendarController : Controller
             Attendees = attendees
         };
 
+
+
         try
         {
+
+            EventsResource.InsertRequest.SendUpdatesEnum sendUpdates;
+            switch (model.SendUpdates)
+            {
+                case "All":
+                    sendUpdates = EventsResource.InsertRequest.SendUpdatesEnum.All;
+                    break;
+                case "ExternalOnly":
+                    sendUpdates = EventsResource.InsertRequest.SendUpdatesEnum.ExternalOnly;
+                    break;
+                case "None":
+                default:
+                    sendUpdates = EventsResource.InsertRequest.SendUpdatesEnum.None;
+                    break;
+            }
+
             // Add the new event to the primary calendar
-            await _googleCalendarService.AddEventAsync("primary", newEvent); // Ensure the calendar ID is specified
+            await _googleCalendarService.AddEventAsync("primary", newEvent, sendUpdates); // Ensure the calendar ID is specified
             return RedirectToAction("ViewNewEventAdded", new { message = "Event created successfully." });
         }
         catch (Exception ex)
