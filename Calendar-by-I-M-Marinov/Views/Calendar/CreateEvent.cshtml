@@ -18,35 +18,50 @@
     </div>
 
     <div class="create-event-container">
-        <div class="create-event-group2">
-            <div class="create-event-group start">
-                <label asp-for="Start" id="startDateLabel"></label>
-                <input asp-for="Start" type="datetime-local" class="form-control" id="startDateInput" />
-            </div>
-            <div class="create-event-group end">
-                <label asp-for="End"></label>
-                <input asp-for="End" type="datetime-local" class="form-control" id="endDateInput" />
-            </div>
-        </div>
+	    <div class="create-event-group2">
+		    <div class="create-event-group start">
+			    <label asp-for="Start" id="startDateLabel"></label>
+			    <input asp-for="Start" type="datetime-local" class="form-control" id="startDateInput" />
+		    </div>
+		    <div class="create-event-group end">
+			    <label asp-for="End"></label>
+			    <input asp-for="End" type="datetime-local" class="form-control" id="endDateInput" />
+		    </div>
+	    </div>
 
-        <div class="create-event-group3">
-            <div class="create-event-group visibility">
-                <label asp-for="Visibility">Visibility</label>
-                <select asp-for="Visibility" class="form-control">
-                    <option value="public">Public</option>
-                    <option value="private">Private</option>
-                </select>
-            </div>
+	    <div class="create-event-group3">
+		    <div class="create-event-group visibility">
+			    <label asp-for="Visibility">Visibility</label>
+			    <select asp-for="Visibility" class="form-control">
+				    <option value="public">Public</option>
+				    <option value="private">Private</option>
+			    </select>
+		    </div>
 
-            <div class="create-event-group eventtype">
-                <label asp-for="EventType">Event Type</label>
-                <select asp-for="EventType" class="form-control" id="eventTypeSelect">
-                    <option value="single">Single</option>
-                    <option value="annual">Annual</option>
-                    <option value="allDay">All Day</option>
-                </select>
-            </div>
-        </div>
+		    <div class="create-event-group eventtype">
+			    <label asp-for="EventType">Event Type</label>
+			    <select asp-for="EventType" class="form-control" id="eventTypeSelect">
+				    <option value="single">Single</option>
+				    <option value="annual">Annual</option>
+				    <option value="allDay">All Day</option>
+			    </select>
+		    </div>
+	    </div>
+    </div>
+    <br/>
+    <div class="attendees-notification">
+		<label>Notify attendees?</label><br />
+		<br />
+	    <div class="attendees-notification-options">
+		    <input type="radio" id="all" name="SendUpdates" value="All" title="Notify all attendees">
+		    <label for="all">Yes</label>
+
+		    <input type="radio" id="externalOnly" name="SendUpdates" value="ExternalOnly" title="Notify attendees that have a non Gmail email only">
+		    <label for="externalOnly">Non-Gmail Only</label>
+
+		    <input type="radio" id="none" name="SendUpdates" value="None" checked title="Do not notify anyone">
+		    <label for="none">No</label>
+	    </div>
     </div>
 
     <div id="attendeesContainer" class="create-event-group attendees">
@@ -104,4 +119,20 @@
         margin: 0 auto;
         display: block;
     }
+
+	.attendees-notification{
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+		align-items: baseline;
+	}
+
+	#all,
+	#externalOnly,
+	#none{
+		margin: 0.35em;
+	}
+
+
+
 </style>
