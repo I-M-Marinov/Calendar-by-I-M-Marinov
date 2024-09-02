@@ -152,16 +152,17 @@ public class GoogleCalendarService : IGoogleCalendarService
 	public async Task<Event> AddEventAsync(Event newEvent)
 	{
 		var insertRequest = _calendarService.Events.Insert(newEvent, "primary");
-		var createdEvent = await insertRequest.ExecuteAsync();
+        var createdEvent = await insertRequest.ExecuteAsync();
 		return createdEvent;
 	}
-	public async Task<Event> AddEventAsync(string calendarId, Event newEvent)
-	{
-		var insertRequest = _calendarService.Events.Insert(newEvent, calendarId);
-		var createdEvent = await insertRequest.ExecuteAsync();
-		return createdEvent;
-	}
-	public async Task<Event> AddEventAsync(string calendarId, string eventId, Event newEvent)
+    public async Task<Event> AddEventAsync(string calendarId, Event newEvent, EventsResource.InsertRequest.SendUpdatesEnum sendUpdates)
+    {
+        var insertRequest = _calendarService.Events.Insert(newEvent, calendarId);
+        insertRequest.SendUpdates = sendUpdates; 
+        var createdEvent = await insertRequest.ExecuteAsync();
+        return createdEvent;
+    }
+    public async Task<Event> AddEventAsync(string calendarId, string eventId, Event newEvent)
 	{
 		if (newEvent == null)
 			throw new ArgumentNullException(nameof(newEvent), "Event cannot be null.");
