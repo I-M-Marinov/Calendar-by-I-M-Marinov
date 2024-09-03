@@ -82,68 +82,68 @@
 
                     <!-- Display Attendees -->
                 
-                @if (evt.Attendees != null && evt.Attendees.Any())
-{
-    <br/>
-	<h6 style="margin-top: 0.5em;">Attendees:</h6>
-    <ul>
-        @foreach (var attendee in evt.Attendees)
-        {
-            <li style="list-style-type: square">
-                <!-- Determine color based on response status -->
-                @{
-                    string color = "black"; // Default color
-                    if (attendee.ResponseStatus == "accepted")
-                    {
-                        color = "green";
-                    }
-                    else if (attendee.ResponseStatus == "declined")
-                    {
-                        color = "darkred";
-                    }
-                    else if (attendee.ResponseStatus == "tentative")
-                    {
-                        color = "orange";
-                    }
-                    else if (attendee.ResponseStatus == "needsAction")
-                    {
-                        color = "blue";
-                    }
-                }
+					@if (evt.Attendees != null && evt.Attendees.Any())
+					{
+					    <br/>
+						<h6 style="margin-top: 0.5em;">Attendees:</h6>
+					    <ul>
+					        @foreach (var attendee in evt.Attendees)
+					        {
+					            <li style="list-style-type: square">
+					                <!-- Determine color based on response status -->
+					                @{
+					                    string color = "black"; // Default color
+					                    if (attendee.ResponseStatus == "accepted")
+					                    {
+					                        color = "green";
+					                    }
+					                    else if (attendee.ResponseStatus == "declined")
+					                    {
+					                        color = "darkred";
+					                    }
+					                    else if (attendee.ResponseStatus == "tentative")
+					                    {
+					                        color = "orange";
+					                    }
+					                    else if (attendee.ResponseStatus == "needsAction")
+					                    {
+					                        color = "blue";
+					                    }
+					                }
 
-                <!-- Show display name or email with color -->
-                <span style="color:@color; font-weight: 600;">
-                    @if (attendee.DisplayName == null)
-                    {
-	                    @attendee.Email
-                    }
-                    else
-                    {
-                        @attendee.DisplayName
-                    }
+					                <!-- Show display name or email with color -->
+					                <span style="color:@color; font-weight: 600;">
+					                    @if (attendee.DisplayName == null)
+					                    {
+						                    @attendee.Email
+					                    }
+					                    else
+					                    {
+					                        @attendee.DisplayName
+					                    }
 
-                    <!-- Show response status -->
-                    @if (attendee.ResponseStatus == "accepted")
-                    {
-	                    @("(Accepted)")
-                    }
-                    else if (attendee.ResponseStatus == "declined")
-                    {
-	                    @("(Declined)")
-                    }
-                    else if (attendee.ResponseStatus == "tentative")
-                    {
-	                    @("(Maybe)")
-                    }
-                    else if (attendee.ResponseStatus == "needsAction")
-                    {
-	                    @("(Pending)")
-                    }
-                </span>
-            </li>
-        }
-    </ul>
-}
+					                    <!-- Show response status -->
+					                    @if (attendee.ResponseStatus == "accepted")
+					                    {
+						                    @("(Accepted)")
+					                    }
+					                    else if (attendee.ResponseStatus == "declined")
+					                    {
+						                    @("(Declined)")
+					                    }
+					                    else if (attendee.ResponseStatus == "tentative")
+					                    {
+						                    @("(Maybe)")
+					                    }
+					                    else if (attendee.ResponseStatus == "needsAction")
+					                    {
+						                    @("(Pending)")
+					                    }
+					                </span>
+					            </li>
+					        }
+					    </ul>
+					}
 
                 </div>
                 <br />
