@@ -13,7 +13,8 @@ namespace Calendar_by_I_M_Marinov.Services
     public class GooglePeopleService: IGooglePeopleService
     {
         private readonly PeopleServiceService _peopleService;
-        private readonly string _applicationName = "Calendar-by-I-M-Marinov";
+        private readonly Dictionary<string, string> _emailDisplayNameMap = new();
+		private readonly string _applicationName = "Calendar-by-I-M-Marinov";
 
 
         public GooglePeopleService(IConfiguration configuration)
@@ -41,62 +42,67 @@ namespace Calendar_by_I_M_Marinov.Services
             });
         }
 
-        public async Task<string> FetchDisplayNameByEmailAsync(string email)
-        {
-            try
-            {
-                string nextPageToken = null;
-                do
-                {
-                    var request = _peopleService.People.Connections.List("people/me");
-                    request.PersonFields = "names,emailAddresses,metadata";
-                    request.PageSize = 100; // Maximum allowed per request from the Google People API 
-                    request.PageToken = nextPageToken;
+		public async Task<string> FetchDisplayNameByEmailAsync(string email)
+		{
+			if (_emailDisplayNameMap.TryGetValue(email, out var cachedDisplayName))
+			{
+				return cachedDisplayName; // return the DisplayName if it is found in the map 
+			}
 
-                    var response = await request.ExecuteAsync();
+			try
+			{
+				string nextPageToken = null;
+				do
+				{
+					var request = _peopleService.People.Connections.List("people/me");
+					request.PersonFields = "names,emailAddresses,metadata";
+					request.PageSize = 100; // Maximum allowed per request from the Google People API 
+					request.PageToken = nextPageToken;
 
-                    if (response.Connections == null || !response.Connections.Any())
-                    {
-                        Console.WriteLine("No connections found.");
-                        return null;
-                    }
+					var response = await request.ExecuteAsync();
 
-                    // Search for the person by email in the current page
-                    var person = response.Connections
-                        .FirstOrDefault(c => c.EmailAddresses != null &&
-                                             c.EmailAddresses.Any(e => string.Equals(e.Value, email, StringComparison.OrdinalIgnoreCase)));
+					if (response.Connections == null || !response.Connections.Any())
+					{
+						Console.WriteLine("No connections found.");
+						return null;
+					}
 
-                    if (person != null)
-                    {
-                        // If found, return the display name
-                        var displayName = person.Names?.FirstOrDefault()?.DisplayName;
+					// Search for the person by email in the current page
+					var person = response.Connections
+						.FirstOrDefault(c => c.EmailAddresses != null &&
+											 c.EmailAddresses.Any(e => string.Equals(e.Value, email, StringComparison.OrdinalIgnoreCase)));
 
-                        if (string.IsNullOrEmpty(displayName))
-                        {
-                            Console.WriteLine($"No display name found for email: {email}");
-                        }
+					if (person != null)
+					{
+						var displayName = person.Names?.FirstOrDefault()?.DisplayName;
 
-                        return displayName;
-                    }
+						if (!string.IsNullOrEmpty(displayName))
+						{
+							_emailDisplayNameMap[email] = displayName; // Add the name in the dictionary map 
+						}
+						else
+						{
+							Console.WriteLine($"No display name found for email: {email}");
+						}
 
-                    // Get the next page token
-                    nextPageToken = response.NextPageToken;
+						return displayName;
+					}
 
-                } 
-                while (!string.IsNullOrEmpty(nextPageToken)); // Loop until there are no more pages
+					// Get the next page token
+					nextPageToken = response.NextPageToken;
 
-                Console.WriteLine($"No person found with email: {email}");
-                return null;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error fetching display name: {ex.Message}");
-                return null;
-            }
-        }
+				} while (!string.IsNullOrEmpty(nextPageToken)); // Loop until there are no more pages
 
+				Console.WriteLine($"No person found with email: {email}");
+				return null;
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine($"Error fetching display name: {ex.Message}");
+				return null;
+			}
+		}
 
-
-    }
+	}
 
 }
