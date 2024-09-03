@@ -1,23 +1,17 @@
-﻿using Google.Apis.Auth.OAuth2;
+﻿using Google;
+using Google.Apis.Auth.OAuth2;
 using Google.Apis.Calendar.v3;
 using Google.Apis.Services;
 using Google.Apis.Util.Store;
-using Microsoft.Extensions.Configuration;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
 using Google.Apis.Calendar.v3.Data;
-using System.Collections.Generic;
-using System.Diagnostics;
-using Calendar_by_I_M_Marinov.Models;
-using Calendar_by_I_M_Marinov.Services.Contracts;
-using Google;
 using Calendar_by_I_M_Marinov.Services;
+using Calendar_by_I_M_Marinov.Services.Contracts;
 
 public class GoogleCalendarService : IGoogleCalendarService
 {
 	private readonly CalendarService _calendarService;
     private readonly GooglePeopleService _peopleService;
+
 
 
     private readonly string _applicationName = "Calendar-by-I-M-Marinov";
@@ -95,7 +89,8 @@ public class GoogleCalendarService : IGoogleCalendarService
 
 			// Check if there are more pages of events
 			request.PageToken = response.NextPageToken;
-		} while (!string.IsNullOrEmpty(request.PageToken));
+		} 
+		while (!string.IsNullOrEmpty(request.PageToken));
 
 		return events;
 	}
