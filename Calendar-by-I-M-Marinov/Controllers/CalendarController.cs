@@ -12,10 +12,10 @@ public class CalendarController : Controller
 {
     private readonly IGoogleCalendarService _googleCalendarService;
 
-    public CalendarController(IGoogleCalendarService googleCalendarService)
+	public CalendarController(IGoogleCalendarService googleCalendarService)
     {
         _googleCalendarService = googleCalendarService;
-    }
+	}
 
 
     public async Task<IActionResult> ListCalendars()
@@ -263,7 +263,6 @@ public class CalendarController : Controller
             return View(model); // Return the view with the model to display errors
         }
     }
-
 
     [HttpPost]
     public async Task<IActionResult> DeletePrimaryEvent(DeleteEventViewModel model)
@@ -788,7 +787,7 @@ public class CalendarController : Controller
 
         foreach (var calendar in calendarList)
         {
-            var todayEvents = await _googleCalendarService.GetEventsForCalendarAsync(calendar.Id);
+            var todayEvents = await _googleCalendarService.GetEventsAsync(calendar.Id);
 
             var filteredEvents = todayEvents.Where(e =>
             {
@@ -846,11 +845,103 @@ public class CalendarController : Controller
         return allEvents.OrderBy(e => e.Start.DateTimeDateTimeOffset ?? DateTime.Parse(e.Start.Date)).ToList();
     }
 
-    public async Task<IActionResult> ViewTodaysEvents()
+    public async Task<IList<Event>> GetNextWeeksEventsAsync()
     {
-        var todayEvents = await GetTodaysEventsAsync();
-        return View(todayEvents);
+        var calendarList = await _googleCalendarService.GetAllCalendarsAsync();
+        var allEvents = new List<Event>();
+        var now = DateTime.UtcNow;
+
+        // Calculate the start of next week (assumed to be Monday) and the end of the week (Sunday)
+        var daysUntilNextMonday = ((int)DayOfWeek.Monday - (int)now.DayOfWeek + 7) % 7; // Find how many days from today until next Monday
+        DateTime startOfNextWeek = now.AddDays(daysUntilNextMonday).Date; // Next Monday (start of next week)
+        DateTime endOfNextWeek = startOfNextWeek.AddDays(7).AddTicks(-1); // End of next week (Sunday 23:59:59)
+
+        // Retrieve the primary calendar's time zone
+        var primaryCalendarTimeZone = await _googleCalendarService.GetPrimaryCalendarTimeZoneAsync();
+        var timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(primaryCalendarTimeZone);
+
+        foreach (var calendar in calendarList)
+        {
+            var nextWeekEvents = await _googleCalendarService.GetEventsAsync(calendar.Id);
+
+            var filteredEvents = nextWeekEvents.Where(e =>
+            {
+                if (e.Start.DateTime.HasValue)
+                {
+                    // Filter events with specific start and end times
+                    var eventStart = e.Start.DateTime.Value;
+                    var eventEnd = e.End.DateTime.HasValue ? e.End.DateTime.Value : eventStart;
+
+                    // Ensure DateTime is in UTC only if necessary
+                    if (eventStart.Kind != DateTimeKind.Utc)
+                    {
+                        eventStart = DateTime.SpecifyKind(eventStart, DateTimeKind.Utc);
+                    }
+                    if (eventEnd.Kind != DateTimeKind.Utc)
+                    {
+                        eventEnd = DateTime.SpecifyKind(eventEnd, DateTimeKind.Utc);
+                    }
+
+                    return eventStart < endOfNextWeek && eventEnd >= startOfNextWeek;
+                }
+                else if (!string.IsNullOrEmpty(e.Start.Date))
+                {
+                    // Handle all-day events
+                    var eventStartDate = DateTime.Parse(e.Start.Date).Date;
+                    var eventEndDate = e.End.Date != null ? DateTime.Parse(e.End.Date).Date : eventStartDate.AddDays(1);
+
+                    return eventStartDate <= endOfNextWeek && eventEndDate > startOfNextWeek;
+                }
+
+                return false;
+            });
+
+            // Convert event times to local time zone if needed
+            foreach (var e in filteredEvents)
+            {
+                if (e.Start.DateTime.HasValue)
+                {
+                    if (e.Start.DateTime.Value.Kind == DateTimeKind.Utc) // Convert to local time if needed
+                    {
+                        e.Start.DateTimeDateTimeOffset = TimeZoneInfo.ConvertTimeFromUtc(e.Start.DateTime.Value, timeZoneInfo);
+                    }
+
+                    if (e.End.DateTime.HasValue && e.End.DateTime.Value.Kind == DateTimeKind.Utc) // Convert to local time if needed
+                    {
+                        e.End.DateTimeDateTimeOffset = TimeZoneInfo.ConvertTimeFromUtc(e.End.DateTime.Value, timeZoneInfo);
+                    }
+                }
+            }
+
+            allEvents.AddRange(filteredEvents);
+        }
+
+        return allEvents.OrderBy(e => e.Start.DateTimeDateTimeOffset ?? DateTime.Parse(e.Start.Date)).ToList();
     }
+
+	public async Task<IActionResult> ViewTodaysAndNextWeeksEvents()
+	{
+		var todaysEvents = await GetTodaysEventsAsync();
+		var nextWeekEvents = await GetNextWeeksEventsAsync();
+		var nextWeeksEvents = nextWeekEvents.ToList();
+		var nextWeeksAttendees = new List<EventAttendee>();
+
+		foreach (var ev in nextWeeksEvents)
+		{
+			if (ev.Attendees != null)
+			{
+				nextWeeksAttendees.AddRange(ev.Attendees);
+			}
+
+		}
+
+		ViewBag.NextWeekEvents = nextWeeksEvents;
+		ViewBag.Attendees = nextWeeksAttendees;
+
+		return View(todaysEvents);
+	}
+
+
 
 	[HttpGet]
     public IActionResult CreateNewCalendar()
