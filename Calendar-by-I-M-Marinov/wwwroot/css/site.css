@@ -240,7 +240,25 @@ h4{
 
 /* CSS for the Dashboard View ( ViewTodaysEvents ) */
 
+#todays-container {
+    border: 2.5px solid #1a8ba9;
+    width: 65%;
+    display: block;
+    margin: 0 auto;
+}
+
 .todays-event {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    max-width: 100%;
+    margin: 0 auto;
+    margin-bottom: 0.5em;
+    gap: 0.5em;
+}
+
+.next-week-event {
     display: flex;
     flex-direction: column;
     justify-content: space-around;
@@ -253,15 +271,40 @@ h4{
 
 .todays-event li {
     margin-top: 2em;
-    border-bottom: 1.5px solid #1a8ba9;
+    border-bottom: 2.5px solid #1a8ba9;
     padding: 0.5em;
+    padding-bottom: 0;
 }
 
-.todays-event.warning{
-   color: red;
+.todays-event li p,
+.next-week-event li p{
+    padding-bottom: 0;
+    margin-bottom: 0.5em;
 }
+
+.next-week-event li {
+    margin-top: 1.5em;
+    border-bottom: 2.5px solid #d1610d;
+    padding: 0.1em;
+}
+
+
+#next-week-events-title {
+    margin-top: 2em;
+    text-align: center;
+}
+
+.todays-event.warning,
+.next-week-event.warning {
+    color: red;
+}
+
+
+
 
 /* Create New Calendar View */
+
+
 
 .time-zone-description {
     opacity: 60%;
