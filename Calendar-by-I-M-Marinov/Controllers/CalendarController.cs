@@ -941,8 +941,6 @@ public class CalendarController : Controller
 		return View(todaysEvents);
 	}
 
-
-
 	[HttpGet]
     public IActionResult CreateNewCalendar()
     {
