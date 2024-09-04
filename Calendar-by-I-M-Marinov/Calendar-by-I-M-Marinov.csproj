@@ -28,5 +28,9 @@
     <UpToDateCheckInput Remove="Views\Calendar\EditNewEvent.cshtml" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="wwwroot\Icons\all-day.png" />
+  </ItemGroup>
+
 
 </Project>

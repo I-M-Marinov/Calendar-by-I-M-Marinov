@@ -18,19 +18,23 @@
 			@foreach (var calendarEvent in Model)
 			{
 				<li>
+					@if (!string.IsNullOrEmpty(calendarEvent.Start.Date) && !string.IsNullOrEmpty(calendarEvent.End.Date)) // if it is an all day event add the icon
+					{
+						<img class="allDay-icon" src="/Icons/all-day.png" alt="allDay-icon">
+					}
 					<strong>@calendarEvent.Summary</strong>
 
 					@if (calendarEvent.Start.DateTimeDateTimeOffset.HasValue && calendarEvent.End.DateTimeDateTimeOffset.HasValue)
 					{
 						<!-- Timed Event -->
-						<p>Start: @calendarEvent.Start.DateTime.Value.ToLocalTime().ToString("MMMM dd, yyyy h:mm tt")</p>
-						<p>End: @calendarEvent.End.DateTime.Value.ToLocalTime().ToString("MMMM dd, yyyy h:mm tt")</p>
+						<p><span style="color: green;">Start:</span> @calendarEvent.Start.DateTime.Value.ToLocalTime().ToString("MMMM dd, yyyy h:mm tt")</p>
+						<p><span style="color: red;">End:</span> @calendarEvent.End.DateTime.Value.ToLocalTime().ToString("MMMM dd, yyyy h:mm tt")</p>
 					}
 					else if (!string.IsNullOrEmpty(calendarEvent.Start.Date) && !string.IsNullOrEmpty(calendarEvent.End.Date))
 					{
 						<!-- All-Day Event -->
-						<br />
-						<p>Date: @DateTime.Parse(calendarEvent.Start.Date).ToString("MMMM dd, yyyy")</p>
+						<br/>
+						<p><span style="color: royalblue; font-weight:500;">Date: @DateTime.Parse(calendarEvent.Start.Date).ToString("ddd dd MMM yyyy")</span></p>
 					}
 
 					@if (!string.IsNullOrEmpty(calendarEvent.Description))
@@ -43,7 +47,7 @@
 						<ul style="margin-top: -2em;">
 							@foreach (var attendee in calendarEvent.Attendees)
 							{
-								<li style="list-style-type: square">
+								<li style="list-style-type: disc; border:none;">
 									<!-- Determine color based on response status -->
 									@{
 										string color = "black"; // Default color
@@ -117,90 +121,97 @@
     <ul class="next-week-event" style="list-style-type: none; text-align:center;">
         @foreach (var nextEvent in (IList<Google.Apis.Calendar.v3.Data.Event>)ViewBag.NextWeekEvents)
         {
-            <li>
-                <strong>@nextEvent.Summary</strong>
+	        <li>
 
-                @if (nextEvent.Start.DateTimeDateTimeOffset.HasValue && nextEvent.End.DateTimeDateTimeOffset.HasValue)
-                {
-                    <!-- Timed Event -->
-                    <p>Start: @nextEvent.Start.DateTime.Value.ToLocalTime().ToString("MMMM dd, yyyy h:mm tt")</p>
-                    <p>End: @nextEvent.End.DateTime.Value.ToLocalTime().ToString("MMMM dd, yyyy h:mm tt")</p>
-                }
-                else if (!string.IsNullOrEmpty(nextEvent.Start.Date) && !string.IsNullOrEmpty(nextEvent.End.Date))
-                {
-                    <!-- All-Day Event -->
-                    <br />
-                    <p>Date: @DateTime.Parse(nextEvent.Start.Date).ToString("MMMM dd, yyyy")</p>
-                }
+				@if (!string.IsNullOrEmpty(nextEvent.Start.Date) && !string.IsNullOrEmpty(nextEvent.End.Date)) // if it is an all day event add the icon
+		        {
+			        <img class="allDay-icon" src="/Icons/all-day.png" alt="allDay-icon">
+		        }
+		        <strong>@nextEvent.Summary</strong>
 
-                @if (!string.IsNullOrEmpty(nextEvent.Description))
-                {
-                    <p>Description: @nextEvent.Description</p>
-                }
+		        @if (nextEvent.Start.DateTimeDateTimeOffset.HasValue && nextEvent.End.DateTimeDateTimeOffset.HasValue)
+		        {
+			        <!-- Timed Event -->
+			        <p><span style="color: green;font-weight:500;">Start:</span> @nextEvent.Start.DateTime.Value.ToLocalTime().ToString("MMMM dd, yyyy h:mm tt")</p>
+			        <p><span style="color: red; font-weight:500;">End:</span> @nextEvent.End.DateTime.Value.ToLocalTime().ToString("MMMM dd, yyyy h:mm tt")</p>
+		        }
+		        else if (!string.IsNullOrEmpty(nextEvent.Start.Date) && !string.IsNullOrEmpty(nextEvent.End.Date))
+		        {
+			        <!-- All-Day Event -->
+			        <br/>
+			        <p><span style="color: royalblue; font-weight:500;">Date: @DateTime.Parse(nextEvent.Start.Date).ToString("ddd dd MMM yyyy")</span></p>
+		        }
 
-				@if (nextEvent.Attendees != null && nextEvent.Attendees.Any())
-                {
+		        @if (!string.IsNullOrEmpty(nextEvent.Description))
+		        {
+			        <p>Description: @nextEvent.Description</p>
+		        }
 
-	                <h6>Attendees:</h6>
-					<ul style="margin-top: -2em;">
-						@foreach (var attendee in nextEvent.Attendees)
-		                {
-			                <li style="list-style-type: square">
-				                <!-- Determine color based on response status -->
-				                @{
-					                string color = "black"; // Default color
-					                if (attendee.ResponseStatus == "accepted")
-					                {
-						                color = "green";
-					                }
-					                else if (attendee.ResponseStatus == "declined")
-					                {
-						                color = "darkred";
-					                }
-					                else if (attendee.ResponseStatus == "tentative")
-					                {
-						                color = "orange";
-					                }
-					                else if (attendee.ResponseStatus == "needsAction")
-					                {
-						                color = "blue";
-					                }
-				                }
+		        @if (nextEvent.Attendees != null && nextEvent.Attendees.Any())
+		        {
 
-				                <!-- Show display name or email with color -->
-				                <span style="color:@color; font-weight: 600;">
-					                @if (attendee.DisplayName == null)
-					                {
-						                @attendee.Email
-					                }
-					                else
-					                {
-						                @attendee.DisplayName
-					                }
+			        <p id="attendees-container">
+				        <h6>Attendees:</h6>
+				        <ul style="margin-top: -1.8em;">
+					        @foreach (var attendee in nextEvent.Attendees)
+					        {
+						        <li style="list-style-type: square; border:none;">
+							        <!-- Determine color based on response status -->
+							        @{
+								        string color = "black"; // Default color
+								        if (attendee.ResponseStatus == "accepted")
+								        {
+									        color = "green";
+								        }
+								        else if (attendee.ResponseStatus == "declined")
+								        {
+									        color = "darkred";
+								        }
+								        else if (attendee.ResponseStatus == "tentative")
+								        {
+									        color = "orange";
+								        }
+								        else if (attendee.ResponseStatus == "needsAction")
+								        {
+									        color = "blue";
+								        }
+							        }
 
-					                <!-- Show response status -->
-					                @if (attendee.ResponseStatus == "accepted")
-					                {
-						                @("(Accepted)")
-					                }
-					                else if (attendee.ResponseStatus == "declined")
-					                {
-						                @("(Declined)")
-					                }
-					                else if (attendee.ResponseStatus == "tentative")
-					                {
-						                @("(Maybe)")
-					                }
-					                else if (attendee.ResponseStatus == "needsAction")
-					                {
-						                @("(Pending)")
-					                }
-				                </span>
-			                </li>
-		                }
-	                </ul>
-                }
-            </li>
+							        <!-- Show display name or email with color -->
+							        <span style="color:@color; font-weight: 600;">
+								        @if (attendee.DisplayName == null)
+								        {
+									        @attendee.Email
+								        }
+								        else
+								        {
+									        @attendee.DisplayName
+								        }
+
+								        <!-- Show response status -->
+								        @if (attendee.ResponseStatus == "accepted")
+								        {
+									        @("(Accepted)")
+								        }
+								        else if (attendee.ResponseStatus == "declined")
+								        {
+									        @("(Declined)")
+								        }
+								        else if (attendee.ResponseStatus == "tentative")
+								        {
+									        @("(Maybe)")
+								        }
+								        else if (attendee.ResponseStatus == "needsAction")
+								        {
+									        @("(Pending)")
+								        }
+							        </span>
+						        </li>
+					        }
+				        </ul>
+			        </p>
+		        }
+	        </li>
         }
     </ul>
 }
