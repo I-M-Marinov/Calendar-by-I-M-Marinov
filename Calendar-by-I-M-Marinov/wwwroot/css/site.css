@@ -279,13 +279,26 @@ h4{
 .todays-event li p,
 .next-week-event li p{
     padding-bottom: 0;
-    margin-bottom: 0.5em;
+    margin-bottom: 0.2em;
+    padding-left: 1em;
 }
 
 .next-week-event li {
+    display:flex;
+    flex-direction: row;
     margin-top: 1.5em;
     border-bottom: 2.5px solid #d1610d;
     padding: 0.1em;
+}
+
+#attendees-container{
+    margin-left: 5em;
+}
+
+.allDay-icon {
+    width: 30px;
+    margin-right: 0.5em;
+    pointer-events: none;
 }
 
 
