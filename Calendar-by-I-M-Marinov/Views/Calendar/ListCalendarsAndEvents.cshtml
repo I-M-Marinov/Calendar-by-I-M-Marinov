@@ -50,102 +50,106 @@
             }
 
             <li class="event-item">
-                <div class="event-info">
-                    <strong>@evt.Summary</strong><br />
+	            <div class="event-info">
 
-                    @if (!string.IsNullOrEmpty(evt.Start?.Date))
-                    {
-                        <span>Start: @DateTime.Parse(evt.Start.Date).ToLocalTime().ToString("MMMM dd, yyyy")</span>
-                        <br />
-                        <span>End: @DateTime.Parse(evt.End?.Date).ToLocalTime().ToString("MMMM dd, yyyy")</span>
-                        <br />
-                    }
-                    else if (evt.Start?.DateTimeDateTimeOffset != null && evt.End?.DateTimeDateTimeOffset != null)
-                    {
-                        <span>Start: @evt.Start.DateTimeDateTimeOffset.Value.ConvertToLocalTime("Europe/Sofia").ToString("MMMM dd, yyyy h:mm tt")</span>
-                        <br />
-                        <span>End: @evt.End.DateTimeDateTimeOffset.Value.ConvertToLocalTime("Europe/Sofia").ToString("MMMM dd, yyyy h:mm tt")</span>
-                        <br />
-                    }
-                    else
-                    {
-                        <span>Start: Not Available</span>
-                        <br />
-                        <span>End: Not Available</span>
-                        <br />
-                    }
+					@if (!string.IsNullOrEmpty(evt.Start?.Date) && !string.IsNullOrEmpty(evt.End?.Date)) // if it is an all day event add the icon
+		            {
+			            <img class="allDay-icon" src="/Icons/all-day.png" alt="allDay-icon">
+		            }
+		            <strong>@evt.Summary</strong><br/>
 
-                    @if (!string.IsNullOrEmpty(evt.Location))
-                    {
-                        <span>Location: @evt.Location</span>
-                    }
+		            @if (!string.IsNullOrEmpty(evt.Start?.Date))
+		            {
+			            <span><span style="color: green;font-weight:500;">Start:</span> @DateTime.Parse(evt.Start.Date).ToLocalTime().ToString("MMMM dd, yyyy")</span>
+			            <br/>
+			            <span><span style="color: red; font-weight:500;">End:</span> @DateTime.Parse(evt.End?.Date).ToLocalTime().ToString("MMMM dd, yyyy")</span>
+			            <br/>
+		            }
+		            else if (evt.Start?.DateTimeDateTimeOffset != null && evt.End?.DateTimeDateTimeOffset != null)
+		            {
+			            <span><span style="color: green;font-weight:500;">Start:</span> @evt.Start.DateTimeDateTimeOffset.Value.ConvertToLocalTime("Europe/Sofia").ToString("MMMM dd, yyyy h:mm tt")</span>
+			            <br/>
+			            <span><span style="color: red; font-weight:500;">End:</span> @evt.End.DateTimeDateTimeOffset.Value.ConvertToLocalTime("Europe/Sofia").ToString("MMMM dd, yyyy h:mm tt")</span>
+			            <br/>
+		            }
+		            else if (!string.IsNullOrEmpty(evt.Start?.Date) && !string.IsNullOrEmpty(evt.End?.Date))
+		            {
+			            <!-- All-Day Event -->
+			            <br/>
+			            <p><span style="color: royalblue; font-weight:500;">Date: @DateTime.Parse(evt.Start.Date).ToString("ddd dd MMM yyyy")</span></p>
+		            }
 
-                    <!-- Display Attendees -->
-                
-					@if (evt.Attendees != null && evt.Attendees.Any())
-					{
-					    <br/>
-						<h6 style="margin-top: 0.5em;">Attendees:</h6>
-					    <ul>
-					        @foreach (var attendee in evt.Attendees)
-					        {
+		            @if (!string.IsNullOrEmpty(evt.Location))
+		            {
+			            <span>Location: @evt.Location</span>
+		            }
+
+		            <!-- Display Attendees -->
+
+		            @if (evt.Attendees != null && evt.Attendees.Any())
+		            {
+			            <br/>
+			            <h6 style="margin-top: 0.5em;">Attendees:</h6>
+			            <ul>
+				            @foreach (var attendee in evt.Attendees)
+				            {
 					            <li style="list-style-type: square">
-					                <!-- Determine color based on response status -->
-					                @{
-					                    string color = "black"; // Default color
-					                    if (attendee.ResponseStatus == "accepted")
-					                    {
-					                        color = "green";
-					                    }
-					                    else if (attendee.ResponseStatus == "declined")
-					                    {
-					                        color = "darkred";
-					                    }
-					                    else if (attendee.ResponseStatus == "tentative")
-					                    {
-					                        color = "orange";
-					                    }
-					                    else if (attendee.ResponseStatus == "needsAction")
-					                    {
-					                        color = "blue";
-					                    }
-					                }
+						            <!-- Determine color based on response status -->
+						            @{
+							            string color = "black"; // Default color
+							            if (attendee.ResponseStatus == "accepted")
+							            {
+								            color = "green";
+							            }
+							            else if (attendee.ResponseStatus == "declined")
+							            {
+								            color = "darkred";
+							            }
+							            else if (attendee.ResponseStatus == "tentative")
+							            {
+								            color = "orange";
+							            }
+							            else if (attendee.ResponseStatus == "needsAction")
+							            {
+								            color = "blue";
+							            }
+						            }
 
-					                <!-- Show display name or email with color -->
-					                <span style="color:@color; font-weight: 600;">
-					                    @if (attendee.DisplayName == null)
-					                    {
-						                    @attendee.Email
-					                    }
-					                    else
-					                    {
-					                        @attendee.DisplayName
-					                    }
+						            <!-- Show display name or email with color -->
+						            <span style="color:@color; font-weight: 600;">
+							            @if (attendee.DisplayName == null)
+							            {
+								            @attendee.Email
+							            }
+							            else
+							            {
+								            @attendee.DisplayName
+							            }
 
-					                    <!-- Show response status -->
-					                    @if (attendee.ResponseStatus == "accepted")
-					                    {
-						                    @("(Accepted)")
-					                    }
-					                    else if (attendee.ResponseStatus == "declined")
-					                    {
-						                    @("(Declined)")
-					                    }
-					                    else if (attendee.ResponseStatus == "tentative")
-					                    {
-						                    @("(Maybe)")
-					                    }
-					                    else if (attendee.ResponseStatus == "needsAction")
-					                    {
-						                    @("(Pending)")
-					                    }
-					                </span>
+							            <!-- Show response status -->
+							            @if (attendee.ResponseStatus == "accepted")
+							            {
+								            @("(Accepted)")
+							            }
+							            else if (attendee.ResponseStatus == "declined")
+							            {
+								            @("(Declined)")
+							            }
+							            else if (attendee.ResponseStatus == "tentative")
+							            {
+								            @("(Maybe)")
+							            }
+							            else if (attendee.ResponseStatus == "needsAction")
+							            {
+								            @("(Pending)")
+							            }
+						            </span>
 					            </li>
-					        }
-					    </ul>
-					}
+				            }
+			            </ul>
+		            }
 
-                </div>
+	            </div>
                 <br />
                 
                 
