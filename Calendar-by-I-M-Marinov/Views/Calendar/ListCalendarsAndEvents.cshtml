@@ -161,7 +161,7 @@
                 {
 	                <div class="event-actions">
 		                <!-- Edit Button -->
-		                <a asp-action="EditEvent" 
+		                <a asp-action="CreateEvent" 
 		                   asp-route-calendarId="@(Model.SelectedCalendarId == "all" ? Model.EventCalendarMap[evt.Id] : Model.SelectedCalendarId)" 
 		                   asp-route-eventId="@evt.Id" 
 		                   class="btn btn-warning btn-sm">Edit</a>
