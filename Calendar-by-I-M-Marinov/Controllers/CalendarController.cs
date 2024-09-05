@@ -7,6 +7,7 @@ using Google.Apis.Calendar.v3;
 using System.Reflection;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Calendar_by_I_M_Marinov.Common;
+using System.Globalization;
 
 public class CalendarController : Controller
 {
@@ -159,112 +160,190 @@ public class CalendarController : Controller
         return View(eventToView);
     }
 
-    [HttpGet]
-    public IActionResult CreateEvent()
-    {
-        ViewBag.PageTitle = "Create a new Event";
-        ViewBag.FormAction = "CreateEvent";
-        ViewBag.ButtonText = "Create Event";
+	[HttpGet]
+	public async Task<IActionResult> CreateEvent(string? eventId)
+	{
+		// Initialize the model
+		var model = new EventViewModel
+		{
+			Attendants = new List<string>()
+		};
 
-        var model = new EventViewModel
-        {
-            EventType = "single" // default value
-        };
+		model.VisibilityOptions = new List<SelectListItem>
+	{
+		new SelectListItem { Value = "public", Text = "Public" },
+		new SelectListItem { Value = "private", Text = "Private" }
+    };
 
-        return View(model);
-    }
+		model.EventTypeOptions = new List<SelectListItem>
+	{
+		new SelectListItem { Value = "single", Text = "Single" },
+		new SelectListItem { Value = "allDay", Text = "All Day" },
+		new SelectListItem { Value = "annual", Text = "Annual" }
+    };
 
-    [HttpPost]
-    [HttpPost]
-    public async Task<IActionResult> CreateEvent(EventViewModel model)
-    {
-        var timeZone = "Europe/Sofia";
-        EventDateTime startEventDateTime;
-        EventDateTime endEventDateTime;
+		if (!string.IsNullOrEmpty(eventId))
+		{
+			try
+			{
+				var existingEvent = await _googleCalendarService.GetEventByIdAsync(eventId); // Get the Event details
 
-        if (model.EventType == "allDay")
-        {
-            startEventDateTime = new EventDateTime
-            {
-                Date = model.Start?.ToString("yyyy-MM-dd"),
-                TimeZone = timeZone
-            };
+				model.EventId = existingEvent.Id;
+				model.Summary = existingEvent.Summary;
+				model.Description = existingEvent.Description;
+				model.Location = existingEvent.Location;
 
-            endEventDateTime = new EventDateTime
-            {
-                Date = model.Start?.AddDays(1).ToString("yyyy-MM-dd"), // End date is one day after start date
-                TimeZone = timeZone
-            };
-        }
-        else
-        {
-            startEventDateTime = new EventDateTime
-            {
-                DateTime = model.Start.Value.ToUniversalTime(),
-                TimeZone = timeZone
-            };
+				bool isAllDayEvent = !string.IsNullOrEmpty(existingEvent.Start?.Date) && existingEvent.Start.DateTime == null;
 
-            endEventDateTime = new EventDateTime
-            {
-                DateTime = model.End.Value.ToUniversalTime(),
-                TimeZone = timeZone
-            };
-        }
+				if (isAllDayEvent)
+				{
+					model.EventType = "allDay";
+					model.Start = DateTime.Parse(existingEvent.Start.Date);
+				}
+				else if (existingEvent.Recurrence != null && existingEvent.Recurrence.Any())
+				{
+					model.EventType = "annual";
+					model.Start = existingEvent.Start.DateTime;
+					model.End = existingEvent.End.DateTime;
+				}
+				else
+				{
+					model.EventType = "single";
+					model.Start = existingEvent.Start.DateTime;
+					model.End = existingEvent.End.DateTime;
+				}
 
-        var attendees = model.Attendants?
-            .Select(email => new EventAttendee { Email = email.Trim() }) // Create new EventAttendee for each email
-            .ToList();
+				if (existingEvent.Attendees != null)
+				{
+					model.Attendants = existingEvent.Attendees.Select(a => a.Email).ToList();
+				}
 
-        var newEvent = new Event
-        {
-            Summary = model.Summary,
-            Description = model.Description,
-            Location = model.Location,
-            Visibility = model.Visibility,
-            Start = startEventDateTime,
-            End = endEventDateTime,
-            Recurrence = model.EventType == "annual"
-                ? new List<string>
-                {
-                $"RRULE:FREQ=YEARLY;BYMONTH={model.Start?.Month};BYMONTHDAY={model.Start?.Day}"
-                }
-                : null,
-            Attendees = attendees
-        };
+				model.Visibility = existingEvent.Visibility;
+				model.SendUpdates = existingEvent.ExtendedProperties?.Shared.ContainsKey("SendUpdates") == true ? existingEvent.ExtendedProperties.Shared["SendUpdates"] : "None";
+			}
+			catch (Exception ex)
+			{
+				ModelState.AddModelError("", $"Error retrieving event: {ex.Message}");
+				return View(model); 
+			}
+		}
 
+		// Return the view with the model for editing or creating
+		return View(model);
+	}
 
+	[HttpPost]
+	public async Task<IActionResult> CreateEvent(EventViewModel model)
+	{
+		var calendarId = "primary";
 
-        try
-        {
+		var timeZone = "Europe/Sofia";
+		EventDateTime startEventDateTime;
+		EventDateTime endEventDateTime;
 
-            EventsResource.InsertRequest.SendUpdatesEnum sendUpdates;
-            switch (model.SendUpdates)
-            {
-                case "All":
-                    sendUpdates = EventsResource.InsertRequest.SendUpdatesEnum.All;
-                    break;
-                case "ExternalOnly":
-                    sendUpdates = EventsResource.InsertRequest.SendUpdatesEnum.ExternalOnly;
-                    break;
-                case "None":
-                default:
-                    sendUpdates = EventsResource.InsertRequest.SendUpdatesEnum.None;
-                    break;
-            }
+		if (model.EventType == "allDay")
+		{
+			startEventDateTime = new EventDateTime
+			{
+				Date = model.Start?.ToString("yyyy-MM-dd"),
+				TimeZone = timeZone
+			};
 
-            // Add the new event to the primary calendar
-            await _googleCalendarService.AddEventAsync("primary", newEvent, sendUpdates); // Ensure the calendar ID is specified
-            return RedirectToAction("ViewNewEventAdded", new { message = "Event created successfully." });
-        }
-        catch (Exception ex)
-        {
-            // Handle any errors that occur during event creation
-            ModelState.AddModelError("", $"Error creating event: {ex.Message}");
-            return View(model); // Return the view with the model to display errors
-        }
-    }
+			endEventDateTime = new EventDateTime
+			{
+				Date = model.Start?.AddDays(1).ToString("yyyy-MM-dd"), // End date is one day after start date
+				TimeZone = timeZone
+			};
+		}
+		else
+		{
+			startEventDateTime = new EventDateTime
+			{
+				DateTime = model.Start.Value.ToUniversalTime(),
+				TimeZone = timeZone
+			};
 
-    [HttpPost]
+			endEventDateTime = new EventDateTime
+			{
+				DateTime = model.End.Value.ToUniversalTime(),
+				TimeZone = timeZone
+			};
+		}
+
+		var attendees = model.Attendants?
+			.Select(email => new EventAttendee { Email = email.Trim() })
+			.ToList();
+
+		var newEvent = new Event
+		{
+			Summary = model.Summary,
+			Description = model.Description,
+			Location = model.Location,
+			Visibility = model.Visibility,
+			Start = startEventDateTime,
+			End = endEventDateTime,
+			Recurrence = model.EventType == "annual"
+				? new List<string>
+				{
+			$"RRULE:FREQ=YEARLY;BYMONTH={model.Start?.Month};BYMONTHDAY={model.Start?.Day}"
+				}
+				: null,
+			Attendees = attendees
+		};
+
+		try
+		{
+			if (string.IsNullOrEmpty(model.EventId))
+			{
+				// Creating a new event
+				EventsResource.InsertRequest.SendUpdatesEnum sendUpdatesInsert;
+				switch (model.SendUpdates)
+				{
+					case "All":
+						sendUpdatesInsert = EventsResource.InsertRequest.SendUpdatesEnum.All;
+						break;
+					case "ExternalOnly":
+						sendUpdatesInsert = EventsResource.InsertRequest.SendUpdatesEnum.ExternalOnly;
+						break;
+					case "None":
+					default:
+						sendUpdatesInsert = EventsResource.InsertRequest.SendUpdatesEnum.None;
+						break;
+				}
+
+				await _googleCalendarService.AddEventAsync("primary", newEvent, sendUpdatesInsert);
+				return RedirectToAction("ViewNewEventAdded", new { message = "Event created successfully." });
+			}
+			else
+			{
+				// Updating an existing event
+				EventsResource.UpdateRequest.SendUpdatesEnum sendUpdatesUpdate;
+				switch (model.SendUpdates)
+				{
+					case "All":
+						sendUpdatesUpdate = EventsResource.UpdateRequest.SendUpdatesEnum.All;
+						break;
+					case "ExternalOnly":
+						sendUpdatesUpdate = EventsResource.UpdateRequest.SendUpdatesEnum.ExternalOnly;
+						break;
+					case "None":
+					default:
+						sendUpdatesUpdate = EventsResource.UpdateRequest.SendUpdatesEnum.None;
+						break;
+				}
+
+				await _googleCalendarService.UpdateEventAsync("primary", model.EventId, newEvent, sendUpdatesUpdate);
+				return RedirectToAction("ViewNewEventUpdated", new { calendarId, eventId = model.EventId, message = "Event updated successfully." });
+			}
+		}
+		catch (Exception ex)
+		{
+			ModelState.AddModelError("", $"Error creating/updating event: {ex.Message}");
+			return View(model);
+		}
+	}
+
+	[HttpPost]
     public async Task<IActionResult> DeletePrimaryEvent(DeleteEventViewModel model)
     {
         if (string.IsNullOrEmpty(model.EventId))
@@ -718,6 +797,7 @@ public class CalendarController : Controller
             Description = model.Description,
             Location = model.Location,
             EventType = model.EventType
+
         };
 
         // Check if the event is an all-day event
