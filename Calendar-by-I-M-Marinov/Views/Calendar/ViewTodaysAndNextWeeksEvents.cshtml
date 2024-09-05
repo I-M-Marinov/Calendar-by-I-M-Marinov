@@ -27,14 +27,14 @@
 					@if (calendarEvent.Start.DateTimeDateTimeOffset.HasValue && calendarEvent.End.DateTimeDateTimeOffset.HasValue)
 					{
 						<!-- Timed Event -->
-						<p><span style="color: green;">Start:</span> @calendarEvent.Start.DateTime.Value.ToLocalTime().ToString("MMMM dd, yyyy h:mm tt")</p>
-						<p><span style="color: red;">End:</span> @calendarEvent.End.DateTime.Value.ToLocalTime().ToString("MMMM dd, yyyy h:mm tt")</p>
+						<p><span style="color: green; font-weight:600;">Start:</span> @calendarEvent.Start.DateTime.Value.ToLocalTime().ToString("MMMM dd, yyyy h:mm tt")</p>
+						<p><span style="color: red; font-weight:600;">End:</span> @calendarEvent.End.DateTime.Value.ToLocalTime().ToString("MMMM dd, yyyy h:mm tt")</p>
 					}
 					else if (!string.IsNullOrEmpty(calendarEvent.Start.Date) && !string.IsNullOrEmpty(calendarEvent.End.Date))
 					{
 						<!-- All-Day Event -->
 						<br/>
-						<p><span style="color: royalblue; font-weight:500;">Date: @DateTime.Parse(calendarEvent.Start.Date).ToString("ddd dd MMM yyyy")</span></p>
+						<p><span style="color: royalblue; font-weight:600;">Date: @DateTime.Parse(calendarEvent.Start.Date).ToString("ddd dd MMM yyyy")</span></p>
 					}
 
 					@if (!string.IsNullOrEmpty(calendarEvent.Description))
@@ -47,7 +47,7 @@
 						<ul style="margin-top: -2em;">
 							@foreach (var attendee in calendarEvent.Attendees)
 							{
-								<li style="list-style-type: disc; border:none;">
+								<li style="list-style-type: disc; border: none; margin-bottom: 0.2em;">
 									<!-- Determine color based on response status -->
 									@{
 										string color = "black"; // Default color
@@ -132,14 +132,14 @@
 		        @if (nextEvent.Start.DateTimeDateTimeOffset.HasValue && nextEvent.End.DateTimeDateTimeOffset.HasValue)
 		        {
 			        <!-- Timed Event -->
-			        <p><span style="color: green;font-weight:500;">Start:</span> @nextEvent.Start.DateTime.Value.ToLocalTime().ToString("MMMM dd, yyyy h:mm tt")</p>
-			        <p><span style="color: red; font-weight:500;">End:</span> @nextEvent.End.DateTime.Value.ToLocalTime().ToString("MMMM dd, yyyy h:mm tt")</p>
+			        <p><span style="color: green;font-weight:600;">Start:</span> @nextEvent.Start.DateTime.Value.ToLocalTime().ToString("MMMM dd, yyyy h:mm tt")</p>
+					<p><span style="color: red; font-weight:600;">End:</span> @nextEvent.End.DateTime.Value.ToLocalTime().ToString("MMMM dd, yyyy h:mm tt")</p>
 		        }
 		        else if (!string.IsNullOrEmpty(nextEvent.Start.Date) && !string.IsNullOrEmpty(nextEvent.End.Date))
 		        {
 			        <!-- All-Day Event -->
 			        <br/>
-			        <p><span style="color: royalblue; font-weight:500;">Date: @DateTime.Parse(nextEvent.Start.Date).ToString("ddd dd MMM yyyy")</span></p>
+					<p><span style="color: royalblue; font-weight:600;">Date: @DateTime.Parse(nextEvent.Start.Date).ToString("ddd dd MMM yyyy")</span></p>
 		        }
 
 		        @if (!string.IsNullOrEmpty(nextEvent.Description))
