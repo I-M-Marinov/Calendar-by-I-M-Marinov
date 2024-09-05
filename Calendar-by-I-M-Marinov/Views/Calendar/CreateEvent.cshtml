@@ -1,82 +1,129 @@
 ﻿@model Calendar_by_I_M_Marinov.Models.EventViewModel
 <script src="~/js/site.js"></script>
 
-<h2>Create Event</h2>
+@{
+    var isEdit = Model.EventId != null;  // Determine if it's an edit or create
+	var actionUrl = isEdit ? "CreateEvent" : "CreateEvent";
+    var submitButtonText = isEdit ? "Update Event" : "Create Event"; // Button text changes
+    var calendarId = "primary"; 
+}
 
-<form asp-action="CreateEvent" method="post">
-    <div class="create-event-group summary">
-        <label asp-for="Summary">Title</label>
-        <input asp-for="Summary" class="form-control" />
-    </div>
-    <div class="create-event-group location">
-        <label asp-for="Location"></label>
-        <input asp-for="Location" class="form-control" />
-    </div>
-    <div class="create-event-group description">
-        <label asp-for="Description"></label>
-        <textarea asp-for="Description" class="form-control" rows="7" cols="30"></textarea>
-    </div>
+<h2>@(isEdit ? "Update an Event" : "Create an Event")</h2>
 
-    <div class="create-event-container">
-	    <div class="create-event-group2">
-		    <div class="create-event-group start">
-			    <label asp-for="Start" id="startDateLabel"></label>
-			    <input asp-for="Start" type="datetime-local" class="form-control" id="startDateInput" />
-		    </div>
-		    <div class="create-event-group end">
-			    <label asp-for="End"></label>
-			    <input asp-for="End" type="datetime-local" class="form-control" id="endDateInput" />
-		    </div>
-	    </div>
+<form asp-action="@actionUrl" method="post">
+	<input type="hidden" name="calendarId" value="@calendarId" />
+	<input type="hidden" asp-for="EventId"/> 
 
-	    <div class="create-event-group3">
-		    <div class="create-event-group visibility">
-			    <label asp-for="Visibility">Visibility</label>
-			    <select asp-for="Visibility" class="form-control">
-				    <option value="public">Public</option>
-				    <option value="private">Private</option>
-			    </select>
-		    </div>
+	<div class="create-event-group summary">
+		<label asp-for="Summary">Title</label>
+		<input asp-for="Summary" class="form-control" value="@Model.Summary"/>
+	</div>
 
-		    <div class="create-event-group eventtype">
-			    <label asp-for="EventType">Event Type</label>
-			    <select asp-for="EventType" class="form-control" id="eventTypeSelect">
-				    <option value="single">Single</option>
-				    <option value="annual">Annual</option>
-				    <option value="allDay">All Day</option>
-			    </select>
-		    </div>
-	    </div>
-    </div>
-    <br/>
-    <div class="attendees-notification">
-		<label>Notify attendees?</label><br />
-		<br />
-	    <div class="attendees-notification-options">
-		    <input type="radio" id="all" name="SendUpdates" value="All" title="Notify all attendees">
-		    <label for="all">Yes</label>
+	<div class="create-event-group location">
+		<label asp-for="Location"></label>
+		<input asp-for="Location" class="form-control" value="@Model.Location"/>
+	</div>
 
-		    <input type="radio" id="externalOnly" name="SendUpdates" value="ExternalOnly" title="Notify attendees that have a non Gmail email only">
-		    <label for="externalOnly">Non-Gmail Only</label>
+	<div class="create-event-group description">
+		<label asp-for="Description"></label>
+		<textarea asp-for="Description" class="form-control" rows="7" cols="30">@Model.Description</textarea>
+	</div>
 
-		    <input type="radio" id="none" name="SendUpdates" value="None" checked title="Do not notify anyone">
-		    <label for="none">No</label>
-	    </div>
-    </div>
+	<div class="create-event-container">
+		@{
+			var isAllDayEvent = Model.EventType == "allDay";
+		}
 
-    <div id="attendeesContainer" class="create-event-group attendees">
-        <label asp-for="Attendants">Attendees</label>
-        <div class="attendee-row">
-            <input type="email" name="Attendants" class="form-control" placeholder="Enter email address" />
-            <button type="button" class="btn btn-remove-attendee">Remove</button>
-        </div>
-        <!-- Placeholder for dynamically added fields -->
-    </div>
+		<div class="create-event-group2">
+			<!-- Start Date Input -->
+			<div class="create-event-group start">
+				<label asp-for="Start" id="startDateLabel"></label>
+				@if (isAllDayEvent)
+				{
+					<input asp-for="Start"
+					       type="date"
+					       class="form-control"
+					       id="startDateInput"
+					       value="@(Model.Start.HasValue ? Model.Start.Value.ToString("yyyy-MM-dd") : "")"/>
+				}
+				else
+				{
+					<input asp-for="Start"
+					       class="form-control"
+					       id="startDateInput"
+					       value="@(Model.Start.HasValue ? Model.Start.Value.ToString("yyyy-MM-ddTHH:mm") : "")"/>
+				}
+			</div>
 
-    <!-- Button to add more attendees -->
-    <button type="button" id="addAttendee" class="btn btn-add-attendee">Add</button>
+			<!-- End Date Input -->
+			<div class="create-event-group end">
+				<label asp-for="End" id="endDateLabel"></label>
+				@if (isAllDayEvent)
+				{
+					<input asp-for="End"
+					       type="date"
+					       class="form-control"
+					       id="endDateInput"
+					       value="@(Model.End.HasValue ? Model.End.Value.ToString("yyyy-MM-dd") : "")"/>
+				}
+				else
+				{
+					<input asp-for="End"
+					       class="form-control"
+					       id="endDateInput"
+					       value="@(Model.End.HasValue ? Model.End.Value.ToString("yyyy-MM-ddTHH:mm") : "")"/>
+				}
+			</div>
+		</div>
 
-    <button type="submit" class="btn btn-create-event">Create Event</button>
+		<div class="create-event-group3">
+			<div class="create-event-group visibility">
+				<label asp-for="Visibility">Visibility</label>
+				<select asp-for="Visibility" asp-items="Model.VisibilityOptions" class="form-control"></select>
+			</div>
+
+			<div class="create-event-group eventtype">
+				<label asp-for="EventType">Event Type</label>
+				<select asp-for="EventType" asp-items="Model.EventTypeOptions" class="form-control" id="eventTypeSelect"></select>
+			</div>
+		</div>
+	</div>
+
+	<br/>
+	<div class="attendees-notification">
+		<label>Notify attendees?</label><br/>
+		<br/>
+		<div class="attendees-notification-options">
+			<input type="radio" id="all" name="SendUpdates" value="All" @(Model.SendUpdates == "All" ? "checked" : "")/>
+			<label for="all">Yes</label>
+
+			<input type="radio" id="externalOnly" name="SendUpdates" value="ExternalOnly" @(Model.SendUpdates == "ExternalOnly" ? "checked" : "")/>
+			<label for="externalOnly">Non-Gmail Only</label>
+
+			<input type="radio" id="none" name="SendUpdates" value="None" @(Model.SendUpdates == "None" ? "checked" : "")/>
+			<label for="none">No</label>
+		</div>
+	</div>
+
+	<div id="attendeesContainer" class="create-event-group attendees">
+		<label asp-for="Attendants">Attendees</label>
+		@if (Model.Attendants != null && Model.Attendants.Any())
+		{
+			@foreach (var attendee in Model.Attendants)
+			{
+				<div class="attendee-row">
+					<input type="email" name="Attendants" class="form-control" value="@attendee"/>
+					<button type="button" class="btn btn-remove-attendee">Remove</button>
+				</div>
+			}
+		}
+	</div>
+
+
+	<!-- Button to add more attendees -->
+	<button type="button" id="addAttendee" class="btn btn-add-attendee">Add</button>
+
+	<button type="submit" class="btn btn-create-event">@submitButtonText</button>
 </form>
 
 <style>
