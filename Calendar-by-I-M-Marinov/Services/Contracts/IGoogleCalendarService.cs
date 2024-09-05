@@ -17,8 +17,9 @@ namespace Calendar_by_I_M_Marinov.Services.Contracts
          Task<Event> AddEventAsync(string calendarId, Event newEvent, EventsResource.InsertRequest.SendUpdatesEnum sendUpdates);
          Task<Event> AddEventAsync(string calendarId, string eventId, Event newEvent);
          Task<IList<Event>> GetEventByIdAcrossAllCalendarsAsync(string eventId);
-         Task UpdateEventAsync(string calendarId, string eventId, Event updatedEvent);         
-         Task DeleteEventAsync(string calendarId, string eventId);
+         Task UpdateEventAsync(string calendarId, string eventId, Event updatedEvent);
+         Task UpdateEventAsync(string calendarId, string eventId, Event updatedEvent, EventsResource.UpdateRequest.SendUpdatesEnum sendUpdates);
+		 Task DeleteEventAsync(string calendarId, string eventId);
          Task DeleteEventAsync(string eventId);
          Task<int> DeleteEventAsync(string calendarId, string eventId, bool deleteSeries = false);
          Task<Calendar> CreateCalendarAsync(string summary, string timeZone, string? description);

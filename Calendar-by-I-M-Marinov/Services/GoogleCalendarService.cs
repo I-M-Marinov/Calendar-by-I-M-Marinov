@@ -276,7 +276,13 @@ public class GoogleCalendarService : IGoogleCalendarService
 		var request = _calendarService.Events.Update(updatedEvent, calendarId, eventId);
 		await request.ExecuteAsync();
 	}
-    public async Task<Calendar> CreateCalendarAsync(string summary, string timeZone, string? description = null)
+	public async Task UpdateEventAsync(string calendarId, string eventId, Event updatedEvent, EventsResource.UpdateRequest.SendUpdatesEnum sendUpdates)
+	{
+		var request = _calendarService.Events.Update(updatedEvent, calendarId, eventId);
+		request.SendUpdates = sendUpdates;
+		await request.ExecuteAsync();
+	}
+	public async Task<Calendar> CreateCalendarAsync(string summary, string timeZone, string? description = null)
     {
         var newCalendar = new Calendar
         {
