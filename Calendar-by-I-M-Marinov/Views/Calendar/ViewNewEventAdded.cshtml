@@ -2,6 +2,7 @@
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @model Google.Apis.Calendar.v3.Data.Event
 
+
 @{
     var calendarId = ViewBag.CalendarId as string; // Retrieve calendarId from ViewBag
 }
@@ -161,7 +162,6 @@ else
 	.event-details{
 		display: flex;
 		flex-direction: column;
-
 	}
 
 	.event-details ul li{

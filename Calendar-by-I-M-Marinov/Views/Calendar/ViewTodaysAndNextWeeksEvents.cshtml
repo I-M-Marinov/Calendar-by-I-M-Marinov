@@ -2,11 +2,11 @@
 @model IList<Google.Apis.Calendar.v3.Data.Event>
 
 @{
-    StringBuilder sb = new();
-    sb.AppendLine($"Events for today:");
-    sb.AppendLine($"{DateTime.Now.Date.ToString("D")}");
+	StringBuilder sb = new();
+	sb.AppendLine($"Events for today:");
+	sb.AppendLine($"{DateTime.Now.Date.ToString("D")}");
 
-    ViewBag.Title = sb;
+	ViewBag.Title = sb;
 }
 
 <div id="todays-container">
@@ -17,8 +17,8 @@
 		<ul class="todays-event" style="list-style-type: none; text-align:center;">
 			@foreach (var calendarEvent in Model)
 			{
-				<li>
-					@if (!string.IsNullOrEmpty(calendarEvent.Start.Date) && !string.IsNullOrEmpty(calendarEvent.End.Date)) // if it is an all day event add the icon
+				<li class="event-item" onclick="toggleDescription(this)">
+					@if (!string.IsNullOrEmpty(calendarEvent.Start.Date) && !string.IsNullOrEmpty(calendarEvent.End.Date)) // if it is an all day event, add the icon
 					{
 						<img class="allDay-icon" src="/Icons/all-day.png" alt="allDay-icon">
 					}
@@ -33,14 +33,18 @@
 					else if (!string.IsNullOrEmpty(calendarEvent.Start.Date) && !string.IsNullOrEmpty(calendarEvent.End.Date))
 					{
 						<!-- All-Day Event -->
-						<br/>
+						<br />
 						<p><span style="color: royalblue; font-weight:600;">Date: @DateTime.Parse(calendarEvent.Start.Date).ToString("ddd dd MMM yyyy")</span></p>
 					}
 
 					@if (!string.IsNullOrEmpty(calendarEvent.Description))
 					{
-						<p>Description: @calendarEvent.Description</p>
+						<!-- Collapsible description, initially hidden -->
+						<div class="description-container" style="display:none;">
+							<p>Description: @calendarEvent.Description</p>
+						</div>
 					}
+
 					@if (calendarEvent.Attendees != null && calendarEvent.Attendees.Any())
 					{
 						<h6>Attendees:</h6>
@@ -118,104 +122,156 @@
 
 @if (ViewBag.NextWeekEvents != null && ((IList<Google.Apis.Calendar.v3.Data.Event>)ViewBag.NextWeekEvents).Count > 0)
 {
-    <ul class="next-week-event" style="list-style-type: none; text-align:center;">
-        @foreach (var nextEvent in (IList<Google.Apis.Calendar.v3.Data.Event>)ViewBag.NextWeekEvents)
-        {
-	        <li>
-
+	<ul class="next-week-event" style="list-style-type: none; display: flex; flex-direction: column; flex-wrap: nowrap; text-align:center;">
+		@foreach (var nextEvent in (IList<Google.Apis.Calendar.v3.Data.Event>)ViewBag.NextWeekEvents)
+		{
+			<li class="event-item" onclick="toggleDescription(this)" style="flex-direction: column;">
 				@if (!string.IsNullOrEmpty(nextEvent.Start.Date) && !string.IsNullOrEmpty(nextEvent.End.Date)) // if it is an all day event add the icon
-		        {
-			        <img class="allDay-icon" src="/Icons/all-day.png" alt="allDay-icon">
-		        }
-		        <strong>@nextEvent.Summary</strong>
+				{
+					<img class="allDay-icon" src="/Icons/all-day.png" alt="allDay-icon">
+				}
+				<strong>@nextEvent.Summary</strong>
 
-		        @if (nextEvent.Start.DateTimeDateTimeOffset.HasValue && nextEvent.End.DateTimeDateTimeOffset.HasValue)
-		        {
-			        <!-- Timed Event -->
-			        <p><span style="color: green;font-weight:600;">Start:</span> @nextEvent.Start.DateTime.Value.ToLocalTime().ToString("MMMM dd, yyyy h:mm tt")</p>
+				@if (nextEvent.Start.DateTimeDateTimeOffset.HasValue && nextEvent.End.DateTimeDateTimeOffset.HasValue)
+				{
+					<!-- Timed Event -->
+					<p><span style="color: green;font-weight:600;">Start:</span> @nextEvent.Start.DateTime.Value.ToLocalTime().ToString("MMMM dd, yyyy h:mm tt")</p>
 					<p><span style="color: red; font-weight:600;">End:</span> @nextEvent.End.DateTime.Value.ToLocalTime().ToString("MMMM dd, yyyy h:mm tt")</p>
-		        }
-		        else if (!string.IsNullOrEmpty(nextEvent.Start.Date) && !string.IsNullOrEmpty(nextEvent.End.Date))
-		        {
-			        <!-- All-Day Event -->
-			        <br/>
+				}
+				else if (!string.IsNullOrEmpty(nextEvent.Start.Date) && !string.IsNullOrEmpty(nextEvent.End.Date))
+				{
+					<!-- All-Day Event -->
+					<br />
 					<p><span style="color: royalblue; font-weight:600;">Date: @DateTime.Parse(nextEvent.Start.Date).ToString("ddd dd MMM yyyy")</span></p>
-		        }
+				}
 
-		        @if (!string.IsNullOrEmpty(nextEvent.Description))
-		        {
-			        <p>Description: @nextEvent.Description</p>
-		        }
+				@if (!string.IsNullOrEmpty(nextEvent.Description))
+				{
+					<!-- Collapsible description, initially hidden -->
+					<div class="description-container" style="display:none;">
+						<p>Description: @nextEvent.Description</p>
+					</div>
+				}
 
-		        @if (nextEvent.Attendees != null && nextEvent.Attendees.Any())
-		        {
+				@if (nextEvent.Attendees != null && nextEvent.Attendees.Any())
+				{
+					<p id="attendees-container">
+						<h6>Attendees:</h6>
+						<ul style="margin-top: -1.8em;">
+							@foreach (var attendee in nextEvent.Attendees)
+							{
+								<li style="list-style-type: square; border:none;">
+									<!-- Determine color based on response status -->
+									@{
+										string color = "black"; // Default color
+										if (attendee.ResponseStatus == "accepted")
+										{
+											color = "green";
+										}
+										else if (attendee.ResponseStatus == "declined")
+										{
+											color = "darkred";
+										}
+										else if (attendee.ResponseStatus == "tentative")
+										{
+											color = "orange";
+										}
+										else if (attendee.ResponseStatus == "needsAction")
+										{
+											color = "blue";
+										}
+									}
 
-			        <p id="attendees-container">
-				        <h6>Attendees:</h6>
-				        <ul style="margin-top: -1.8em;">
-					        @foreach (var attendee in nextEvent.Attendees)
-					        {
-						        <li style="list-style-type: square; border:none;">
-							        <!-- Determine color based on response status -->
-							        @{
-								        string color = "black"; // Default color
-								        if (attendee.ResponseStatus == "accepted")
-								        {
-									        color = "green";
-								        }
-								        else if (attendee.ResponseStatus == "declined")
-								        {
-									        color = "darkred";
-								        }
-								        else if (attendee.ResponseStatus == "tentative")
-								        {
-									        color = "orange";
-								        }
-								        else if (attendee.ResponseStatus == "needsAction")
-								        {
-									        color = "blue";
-								        }
-							        }
+									<!-- Show display name or email with color -->
+									<span style="color:@color; font-weight: 600;">
+										@if (attendee.DisplayName == null)
+										{
+											@attendee.Email
+										}
+										else
+										{
+											@attendee.DisplayName
+										}
 
-							        <!-- Show display name or email with color -->
-							        <span style="color:@color; font-weight: 600;">
-								        @if (attendee.DisplayName == null)
-								        {
-									        @attendee.Email
-								        }
-								        else
-								        {
-									        @attendee.DisplayName
-								        }
-
-								        <!-- Show response status -->
-								        @if (attendee.ResponseStatus == "accepted")
-								        {
-									        @("(Accepted)")
-								        }
-								        else if (attendee.ResponseStatus == "declined")
-								        {
-									        @("(Declined)")
-								        }
-								        else if (attendee.ResponseStatus == "tentative")
-								        {
-									        @("(Maybe)")
-								        }
-								        else if (attendee.ResponseStatus == "needsAction")
-								        {
-									        @("(Pending)")
-								        }
-							        </span>
-						        </li>
-					        }
-				        </ul>
-			        </p>
-		        }
-	        </li>
-        }
-    </ul>
+										<!-- Show response status -->
+										@if (attendee.ResponseStatus == "accepted")
+										{
+											@("(Accepted)")
+										}
+										else if (attendee.ResponseStatus == "declined")
+										{
+											@("(Declined)")
+										}
+										else if (attendee.ResponseStatus == "tentative")
+										{
+											@("(Maybe)")
+										}
+										else if (attendee.ResponseStatus == "needsAction")
+										{
+											@("(Pending)")
+										}
+									</span>
+								</li>
+							}
+						</ul>
+					</p>
+				}
+			</li>
+		}
+	</ul>
 }
 else
 {
-    <p class="next-week-event warning">No events found for next week.</p>
+	<p class="next-week-event warning">No events found for next week.</p>
 }
+
+<!-- JavaScript to handle the toggle functionality -->
+<script>
+	function toggleDescription(el) {
+		var descriptionDiv = el.querySelector('.description-container');
+		if (descriptionDiv) {
+			if (descriptionDiv.style.display === "none" || descriptionDiv.style.display === "") {
+				descriptionDiv.style.display = "block";
+			} else {
+				descriptionDiv.style.display = "none";
+			}
+		}
+	}
+</script>
+
+<style>
+
+	.event-item {
+		flex-direction: column;
+		flex-wrap: nowrap;
+		cursor: pointer;
+		padding: 10px;
+		margin-bottom: 20px;
+		border: 1px solid #ddd;
+		border-radius: 5px;
+		text-align: center;
+		background-color: #f9f9f9;
+		transition: background-color 0.3s ease;
+	}
+
+	.event-item:hover {
+		background-color: #f1f1f1;
+	}
+
+	.description-container {
+		margin-top: 10px;
+		padding: 10px;
+		border-top: 1px solid #ccc;
+	}
+
+	/* next-week event layout */
+	.next-week-event li {
+
+		padding: 15px;
+		flex-direction: column;
+	}
+
+	.next-week-event .description-container {
+		display: none;
+	}
+</style>
