@@ -1,4 +1,6 @@
-﻿@model Google.Apis.Calendar.v3.Data.Event
+﻿@using Calendar_by_I_M_Marinov.Common
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model Google.Apis.Calendar.v3.Data.Event
 
 @{
     var calendarId = ViewBag.CalendarId as string; // Retrieve calendarId from ViewBag
@@ -8,50 +10,163 @@
 
 @if (ViewBag.DeleteMessage != null)
 {
-    <div class="alert @((ViewBag.DeleteMessage.Contains("Failed") ? "alert-danger" : "alert-success"))">
+        <div class="alert @((ViewBag.DeleteMessage.Contains("Failed") ? "alert-danger" : "alert-success"))">
         @ViewBag.DeleteMessage
-    </div>
+        </div>
 }
 
 @if (Model != null)
 {
-    <span>
-        <ul style="list-style-type: none;">
-	        <li style="text-align:center">
-		        <br />
-		        <strong>@Model.Summary</strong><br/>
+        <ul class="event-details" style="list-style-type: none; text-align:center;">
+            <li>
+	            <br />
+			@if (!string.IsNullOrEmpty(Model.Start?.Date) && !string.IsNullOrEmpty(Model.End?.Date)) // if it is an all day event add the icon
+	            {
+		            <img class="allDay-icon" src="/Icons/all-day.png" alt="allDay-icon">
+	            }
+	                <strong>@Model.Summary</strong>
+	            <br />
 
-		        <!-- Check if it's a timed event or an all-day event -->
-		        @if (Model.Start.DateTimeDateTimeOffset != null && Model.End.DateTimeDateTimeOffset != null)
-		        {
-			        <!-- Timed event -->
-			        <p>Start: @Model.Start.DateTimeDateTimeOffset?.ToString("MMMM dd, yyyy h:mm tt")</p>
-			        <p>End: @Model.End.DateTimeDateTimeOffset?.ToString("MMMM dd, yyyy h:mm tt")</p>
-
-		        }
-		        else if (!string.IsNullOrEmpty(Model.Start.Date) && !string.IsNullOrEmpty(Model.End.Date))
-		        {
-			        <!-- All-day event -->
-			        <p>Date: @DateTime.Parse(Model.Start.Date).ToString("MMMM dd, yyyy")</p>
-		        }
-
-		        <p>Location: @Model.Location</p><br/>
-
-		        <!-- Edit Button -->
-		        <a asp-action="EditEvent" asp-route-calendarId="primary" asp-route-eventId="@Model.Id" class="btn btn-primary btn-sm">Edit</a>
+                <!-- Display Start and End times -->
+			@if (!string.IsNullOrEmpty(Model.Start?.Date) && !string.IsNullOrEmpty(Model.End?.Date))
+	            {
+					<!-- All-Day Event -->
+					<br/>
+					<p><span style="color: royalblue; font-weight:500;">Date: @DateTime.Parse(Model.Start.Date).ToString("ddd dd MMM yyyy")</span></p>
+				
+	            }
+	            else if (Model.Start?.DateTimeDateTimeOffset != null && Model.End?.DateTimeDateTimeOffset != null)
+	            {
+		            <span><span style="color: green;font-weight:500;">Start:</span> @Model.Start.DateTimeDateTimeOffset.Value.ConvertToLocalTime("Europe/Sofia").ToString("MMMM dd, yyyy h:mm tt")</span>
+		            <br/>
+		            <span><span style="color: red; font-weight:500;">End:</span> @Model.End.DateTimeDateTimeOffset.Value.ConvertToLocalTime("Europe/Sofia").ToString("MMMM dd, yyyy h:mm tt")</span>
+		            <br/>
+	            }
 
 
-		        <!-- Delete Button -->
-		        <form asp-action="ConfirmDelete" method="get" style="display:inline;">
-			        <input type="hidden" name="calendarId" value="@calendarId"/>
-			        <input type="hidden" name="eventId" value="@Model.Id"/>
-			        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-		        </form>
-	        </li>
+                <!-- Display Location -->
+            @if (!string.IsNullOrEmpty(Model.Location))
+            {
+                <p>Location: @Model.Location</p>
+            }
+
+                <!-- Display Description -->
+            @if (!string.IsNullOrEmpty(Model.Description))
+            {
+                <p>Description: @Model.Description</p>
+            }
+			
+            <!-- Display Visibility -->
+            <p>Visibility: @(string.IsNullOrEmpty(Model.Visibility) ? "Unspecified" : Model.Visibility)</p>
+
+
+            <!-- Display Attendees -->
+            @if (Model.Attendees != null && Model.Attendees.Count > 0)
+            {
+                
+	            <ul>
+					@if (Model.Attendees != null && Model.Attendees.Any())
+					{
+						<br/>
+						<h6>Attendees:</h6>
+							<ul>
+								@foreach (var attendee in Model.Attendees)
+								{
+									<li style="list-style-type: none; text-align: center;">
+										<!-- Determine color based on response status -->
+										@{
+											string color = "black"; // Default color
+											if (attendee.ResponseStatus == "accepted")
+											{
+												color = "green";
+											}
+											else if (attendee.ResponseStatus == "declined")
+											{
+												color = "darkred";
+											}
+											else if (attendee.ResponseStatus == "tentative")
+											{
+												color = "orange";
+											}
+											else if (attendee.ResponseStatus == "needsAction")
+											{
+												color = "blue";
+											}
+										}
+
+										<!-- Show display name or email with color -->
+
+										<span style="color:@color; font-weight: 600;">
+											@if (attendee.DisplayName == null)
+											{
+												@attendee.Email
+											}
+											else
+											{
+												@attendee.DisplayName
+											}
+
+															<!-- Show response status -->
+											@if (attendee.ResponseStatus == "accepted")
+											{
+												@("(Accepted)")
+											}
+											else if (attendee.ResponseStatus == "declined")
+											{
+												@("(Declined)")
+											}
+											else if (attendee.ResponseStatus == "tentative")
+											{
+												@("(Maybe)")
+											}
+											else if (attendee.ResponseStatus == "needsAction")
+											{
+												@("(Pending)")
+											}
+										</span>
+									</li>
+								}
+						</ul>
+					}
+				</ul>
+            }
+
+               
+	            <!-- Display Recurrence (if any) -->
+
+            @if (Model.Recurrence != null && Model.Recurrence.Any())
+            {
+                        <p>Recurrence: @string.Join(", ", Model.Recurrence)</p>
+            }
+
+                <!-- Edit Button -->
+                <a asp-action="CreateEvent" asp-route-calendarId="@calendarId" asp-route-eventId="@Model.Id" class="btn btn-primary btn-sm">Edit</a>
+
+                <!-- Delete Button -->
+                <form asp-action="ConfirmDelete" method="get" style="display:inline;">
+                    <input type="hidden" name="calendarId" value="@calendarId"/>
+                    <input type="hidden" name="eventId" value="@Model.Id"/>
+                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                </form>
+            </li>
         </ul>
-    </span>
 }
 else
 {
-    <p>No events found.</p>
+        <p>No event details found.</p>
 }
+
+<style>
+	
+	.event-details{
+		display: flex;
+		flex-direction: column;
+
+	}
+
+	.event-details ul li{
+		margin-bottom: 2em;
+		margin-left: -2em;
+	}
+
+</style>
