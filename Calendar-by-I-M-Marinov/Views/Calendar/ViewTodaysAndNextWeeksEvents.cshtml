@@ -37,13 +37,7 @@
 						<p><span style="color: royalblue; font-weight:600;">Date: @DateTime.Parse(calendarEvent.Start.Date).ToString("ddd dd MMM yyyy")</span></p>
 					}
 
-					@if (!string.IsNullOrEmpty(calendarEvent.Description))
-					{
-						<!-- Collapsible description, initially hidden -->
-						<div class="description-container" style="display:none;">
-							<p>Description: @calendarEvent.Description</p>
-						</div>
-					}
+
 
 					@if (calendarEvent.Attendees != null && calendarEvent.Attendees.Any())
 					{
@@ -106,6 +100,14 @@
 							}
 						</ul>
 					}
+					
+					@if (!string.IsNullOrEmpty(calendarEvent.Description))
+					{
+						<!-- Collapsible description, initially hidden -->
+						<div class="description-container" style="display:none;">
+							<p>Description: @calendarEvent.Description</p>
+						</div>
+					}
 				</li>
 			}
 		</ul>
@@ -145,13 +147,7 @@
 					<p><span style="color: royalblue; font-weight:600;">Date: @DateTime.Parse(nextEvent.Start.Date).ToString("ddd dd MMM yyyy")</span></p>
 				}
 
-				@if (!string.IsNullOrEmpty(nextEvent.Description))
-				{
-					<!-- Collapsible description, initially hidden -->
-					<div class="description-container" style="display:none;">
-						<p>Description: @nextEvent.Description</p>
-					</div>
-				}
+
 
 				@if (nextEvent.Attendees != null && nextEvent.Attendees.Any())
 				{
@@ -216,6 +212,15 @@
 						</ul>
 					</p>
 				}
+				
+				@if (!string.IsNullOrEmpty(nextEvent.Description))
+				{
+					<!-- Collapsible description, initially hidden -->
+					<div class="description-container" style="display:none;">
+						<p>Description: @nextEvent.Description</p>
+					</div>
+				}
+
 			</li>
 		}
 	</ul>
