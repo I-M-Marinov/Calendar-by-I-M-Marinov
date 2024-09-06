@@ -100,7 +100,7 @@
 			<input type="radio" id="externalOnly" name="SendUpdates" value="ExternalOnly" @(Model.SendUpdates == "ExternalOnly" ? "checked" : "")/>
 			<label for="externalOnly">Non-Gmail Only</label>
 
-			<input type="radio" id="none" name="SendUpdates" value="None" @(Model.SendUpdates == "None" ? "checked" : "")/>
+			<input type="radio" id="none" name="SendUpdates" value="None" checked @(Model.SendUpdates == "None" ? "checked" : "")/>
 			<label for="none">No</label>
 		</div>
 	</div>
