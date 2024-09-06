@@ -99,7 +99,7 @@ public class GoogleCalendarService : IGoogleCalendarService
 		var request = _calendarService.Events.List(calendarId);
 
 
-        request.Fields = "items(id,summary,start,end,location,attendees,creator,guestsCanModify,status,transparency,extendedProperties)";
+        request.Fields = "items(id,summary,start,end,location,attendees,creator,guestsCanModify,status,transparency,extendedProperties,description,visibility,recurrence)";
 
         // Get the current date in UTC
         DateTime nowUtc = DateTime.UtcNow;
