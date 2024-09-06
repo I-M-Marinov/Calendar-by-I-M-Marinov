@@ -18,6 +18,14 @@
 			@foreach (var calendarEvent in Model)
 			{
 				<li class="event-item" onclick="toggleDescription(this)">
+
+					@if (calendarEvent.Attendees != null && calendarEvent.Attendees.Any())
+					{
+						<div class="attendees-info" onclick="toggleAttendees(this, event)">
+							<img src="/Icons/attendee.png" alt="Attendees Icon" class="attendees-icon">
+							<span class="attendees-count">@calendarEvent.Attendees.Count()</span>
+						</div>
+					}
 					@if (!string.IsNullOrEmpty(calendarEvent.Start.Date) && !string.IsNullOrEmpty(calendarEvent.End.Date)) // if it is an all day event, add the icon
 					{
 						<img class="allDay-icon" src="/Icons/all-day.png" alt="allDay-icon">
@@ -33,7 +41,7 @@
 					else if (!string.IsNullOrEmpty(calendarEvent.Start.Date) && !string.IsNullOrEmpty(calendarEvent.End.Date))
 					{
 						<!-- All-Day Event -->
-						<br />
+						<br/>
 						<p><span style="color: royalblue; font-weight:600;">Date: @DateTime.Parse(calendarEvent.Start.Date).ToString("ddd dd MMM yyyy")</span></p>
 					}
 
@@ -41,76 +49,78 @@
 
 					@if (calendarEvent.Attendees != null && calendarEvent.Attendees.Any())
 					{
-						<h6>Attendees:</h6>
-						<ul style="margin-top: -2em;">
-							@foreach (var attendee in calendarEvent.Attendees)
-							{
-								<li style="list-style-type: disc; border: none; margin-bottom: 0.2em;">
-									<!-- Determine color based on response status -->
-									@{
-										string color = "black"; // Default color
-										if (attendee.ResponseStatus == "accepted")
-										{
-											color = "green";
-										}
-										else if (attendee.ResponseStatus == "declined")
-										{
-											color = "darkred";
-										}
-										else if (attendee.ResponseStatus == "tentative")
-										{
-											color = "orange";
-										}
-										else if (attendee.ResponseStatus == "needsAction")
-										{
-											color = "blue";
-										}
-									}
-
-									<!-- Show display name or email with color -->
-									<span style="color:@color; font-weight: 600;">
-										@if (attendee.DisplayName == null)
-										{
-											@attendee.Email
-										}
-										else
-										{
-											@attendee.DisplayName
+						<div class="attendees-container">
+							<h6>Attendees:</h6>
+							<ul style="margin-top: -1.8em;">
+								@foreach (var attendee in calendarEvent.Attendees)
+								{
+									<li style="list-style-type: square; border:none;">
+										<!-- Determine color based on response status -->
+										@{
+											string color = "black"; // Default color
+											if (attendee.ResponseStatus == "accepted")
+											{
+												color = "green";
+											}
+											else if (attendee.ResponseStatus == "declined")
+											{
+												color = "darkred";
+											}
+											else if (attendee.ResponseStatus == "tentative")
+											{
+												color = "orange";
+											}
+											else if (attendee.ResponseStatus == "needsAction")
+											{
+												color = "blue";
+											}
 										}
 
-										<!-- Show response status -->
-										@if (attendee.ResponseStatus == "accepted")
-										{
-											@("(Accepted)")
-										}
-										else if (attendee.ResponseStatus == "declined")
-										{
-											@("(Declined)")
-										}
-										else if (attendee.ResponseStatus == "tentative")
-										{
-											@("(Maybe)")
-										}
-										else if (attendee.ResponseStatus == "needsAction")
-										{
-											@("(Pending)")
-										}
-									</span>
-								</li>
-							}
-						</ul>
+										<!-- Show display name or email with color -->
+										<span style="color:@color; font-weight: 600;">
+											@if (attendee.DisplayName == null)
+											{
+												@attendee.Email
+											}
+											else
+											{
+												@attendee.DisplayName
+											}
+
+											<!-- Show response status -->
+											@if (attendee.ResponseStatus == "accepted")
+											{
+												@("(Accepted)")
+											}
+											else if (attendee.ResponseStatus == "declined")
+											{
+												@("(Declined)")
+											}
+											else if (attendee.ResponseStatus == "tentative")
+											{
+												@("(Maybe)")
+											}
+											else if (attendee.ResponseStatus == "needsAction")
+											{
+												@("(Pending)")
+											}
+										</span>
+									</li>
+								}
+							</ul>
+						</div>
 					}
 
 					@if (calendarEvent.Description != null)
 					{
 						<img class="unfold-icon" src="/Icons/unfold.png" alt="unfold-icon">
 					}
-					
+
 					@if (!string.IsNullOrEmpty(calendarEvent.Description))
 					{
 						<!-- Collapsible description, initially hidden -->
 						<div class="description-container" style="display:none;">
-							<p>Description: @calendarEvent.Description</p>
+							<p>@calendarEvent.Description</p>
 						</div>
 					}
 				</li>
@@ -133,11 +143,20 @@
 		@foreach (var nextEvent in (IList<Google.Apis.Calendar.v3.Data.Event>)ViewBag.NextWeekEvents)
 		{
 			<li class="event-item" onclick="toggleDescription(this)" style="flex-direction: column;">
+				
+				@if (nextEvent.Attendees != null && nextEvent.Attendees.Any())
+				{
+					<div class="attendees-info" onclick="toggleAttendees(this, event)">
+						<img src="/Icons/attendee.png" alt="Attendees Icon" class="attendees-icon">
+						<span class="attendees-count">@nextEvent.Attendees.Count()</span>
+					</div>
+				}
+
 				@if (!string.IsNullOrEmpty(nextEvent.Start.Date) && !string.IsNullOrEmpty(nextEvent.End.Date)) // if it is an all day event add the icon
 				{
 					<img class="allDay-icon" src="/Icons/all-day.png" alt="allDay-icon">
 				}
-				<strong>@nextEvent.Summary</strong>
+				<p><strong>@nextEvent.Summary</strong></p>
 
 				@if (nextEvent.Start.DateTimeDateTimeOffset.HasValue && nextEvent.End.DateTimeDateTimeOffset.HasValue)
 				{
@@ -148,17 +167,15 @@
 				else if (!string.IsNullOrEmpty(nextEvent.Start.Date) && !string.IsNullOrEmpty(nextEvent.End.Date))
 				{
 					<!-- All-Day Event -->
-					<br />
+					<br/>
 					<p><span style="color: royalblue; font-weight:600;">Date: @DateTime.Parse(nextEvent.Start.Date).ToString("ddd dd MMM yyyy")</span></p>
 				}
 
-
-
 				@if (nextEvent.Attendees != null && nextEvent.Attendees.Any())
 				{
-					<p id="attendees-container">
+					<div class="attendees-container">
 						<h6>Attendees:</h6>
-						<ul style="margin-top: -1.8em;">
+						<ul>
 							@foreach (var attendee in nextEvent.Attendees)
 							{
 								<li style="list-style-type: square; border:none;">
@@ -215,19 +232,19 @@
 								</li>
 							}
 						</ul>
-					</p>
+					</div>
 				}
-				
+
 				@if (nextEvent.Description != null)
 				{
 					<img class="unfold-icon" src="/Icons/unfold.png" alt="unfold-icon">
 				}
-				
+
 				@if (!string.IsNullOrEmpty(nextEvent.Description))
 				{
 					<!-- Collapsible description, initially hidden -->
 					<div class="description-container" style="display:none;">
-						<p>Description: @nextEvent.Description</p>
+						<p>@nextEvent.Description</p>
 					</div>
 				}
 
@@ -256,6 +273,20 @@ else
 			}
 		}
 	}
+
+		function toggleAttendees(el, event) {
+		event.stopPropagation(); // Prevent the event from bubbling up
+
+		var eventItem = el.closest('.event-item'); 
+		var attendeesContainer = eventItem.querySelector('.attendees-container'); 
+
+		// Toggle the 'visible' class
+		if (attendeesContainer.classList.contains('visible')) {
+			attendeesContainer.classList.remove('visible');
+		} else {
+			attendeesContainer.classList.add('visible'); 
+		}
+	}
 </script>
 
 <style>
@@ -263,6 +294,7 @@ else
 	.event-item {
 		flex-direction: column;
 		flex-wrap: nowrap;
+		position: relative;
 		cursor: pointer;
 		padding: 10px;
 		margin-bottom: 20px;
@@ -271,10 +303,15 @@ else
 		text-align: center;
 		background-color: #f9f9f9;
 		transition: background-color 0.3s ease;
+		z-index: 1;
 	}
 
 	.event-item:hover {
 		background-color: #f1f1f1;
+	}
+
+	.event-item p{
+		padding: 0 15px 0 15px;
 	}
 
 	.description-container {
@@ -286,7 +323,6 @@ else
 	/* next-week event layout */
 	.next-week-event li {
 
-		padding: 15px;
 		flex-direction: column;
 	}
 
@@ -298,4 +334,53 @@ else
 		width: 15px;
 		padding-bottom: 0;
 	}
+
+	.attendees-info {
+		position: absolute;
+		z-index: 10;
+		top: 10px;
+		right: 10px;
+		display: flex;
+		align-items: center;
+		cursor: pointer;
+	}
+
+	.attendees-icon {
+		width: 14px;
+		height: auto;
+		margin-right: 3px;
+	}
+
+	.attendees-info:hover {
+		background-color: forestgreen;
+	}
+
+	.attendees-count {
+		font-size: 12px;
+		color: #333;
+		font-weight: bold;
+	}
+
+	.attendees-container {
+		max-height: 0; 
+		opacity: 0; 
+		overflow: hidden; 
+		transition: max-height 0.4s ease, opacity 0.4s ease;
+		display: block; 
+	}
+
+	.attendees-container.visible {
+		max-height: auto; 
+		opacity: 1; 
+	}
+
+	.attendees-container ul:first-of-type{
+		margin-top: 0.25em;
+	}
+
+	.attendees-container ul li{
+		margin: 0 auto;
+	}
+
+
 </style>
