@@ -100,6 +100,11 @@
 							}
 						</ul>
 					}
+
+					@if (calendarEvent.Description != null)
+					{
+						<img class="unfold-icon" src="/Icons/unfold.png" alt="unfold-icon">
+					}
 					
 					@if (!string.IsNullOrEmpty(calendarEvent.Description))
 					{
@@ -213,6 +218,11 @@
 					</p>
 				}
 				
+				@if (nextEvent.Description != null)
+				{
+					<img class="unfold-icon" src="/Icons/unfold.png" alt="unfold-icon">
+				}
+				
 				@if (!string.IsNullOrEmpty(nextEvent.Description))
 				{
 					<!-- Collapsible description, initially hidden -->
@@ -234,11 +244,15 @@ else
 <script>
 	function toggleDescription(el) {
 		var descriptionDiv = el.querySelector('.description-container');
+		var unfoldIcon = el.querySelector('.unfold-icon');
+
 		if (descriptionDiv) {
 			if (descriptionDiv.style.display === "none" || descriptionDiv.style.display === "") {
 				descriptionDiv.style.display = "block";
+				unfoldIcon.style.display = "none";
 			} else {
 				descriptionDiv.style.display = "none";
+				unfoldIcon.style.display = "block";
 			}
 		}
 	}
@@ -278,5 +292,10 @@ else
 
 	.next-week-event .description-container {
 		display: none;
+	}
+
+	.unfold-icon{
+		width: 15px;
+		padding-bottom: 0;
 	}
 </style>
