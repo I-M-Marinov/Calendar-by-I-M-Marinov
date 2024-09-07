@@ -49,149 +49,171 @@
                 </div>
             }
 
-            <li class="event-item">
+			<li class="event-item" onclick="handleEventClick(this)">
 	            <div class="event-info">
 
-					@if (!string.IsNullOrEmpty(evt.Start?.Date) && !string.IsNullOrEmpty(evt.End?.Date)) // if it is an all day event add the icon
+		            @if (!string.IsNullOrEmpty(evt.Start?.Date) && !string.IsNullOrEmpty(evt.End?.Date)) // if it is an all day event add the icon
 		            {
 			            <img class="allDay-icon" src="/Icons/all-day.png" alt="allDay-icon">
 		            }
 		            <strong>@evt.Summary</strong><br/>
 
-		            @if (!string.IsNullOrEmpty(evt.Start?.Date))
+		            @if (evt.Attendees != null && evt.Attendees.Any())
 		            {
-			            <span><span style="color: green;font-weight:500;">Start:</span> @DateTime.Parse(evt.Start.Date).ToLocalTime().ToString("MMMM dd, yyyy")</span>
-			            <br/>
-			            <span><span style="color: red; font-weight:500;">End:</span> @DateTime.Parse(evt.End?.Date).ToLocalTime().ToString("MMMM dd, yyyy")</span>
-			            <br/>
+			            <div class="attendees-info" onclick="toggleAttendees(this, event)">
+				            <img src="/Icons/attendee.png" alt="Attendees Icon" class="attendees-icon">
+				            <span class="attendees-count">@evt.Attendees.Count()</span>
+			            </div>
+		            }
+
+		            @if (!string.IsNullOrEmpty(evt.Start?.Date) && evt.Start?.DateTime == null && !string.IsNullOrEmpty(evt.End?.Date) && evt.End?.DateTime == null)
+		            {
+			            <!-- All-Day Event -->
+			            <p>
+				            <span style="color: royalblue; font-weight:500;">Date: @DateTime.Parse(evt.Start.Date).ToString("ddd dd MMM yyyy")</span>
+			            </p>
 		            }
 		            else if (evt.Start?.DateTimeDateTimeOffset != null && evt.End?.DateTimeDateTimeOffset != null)
 		            {
-			            <span><span style="color: green;font-weight:500;">Start:</span> @evt.Start.DateTimeDateTimeOffset.Value.ConvertToLocalTime("Europe/Sofia").ToString("MMMM dd, yyyy h:mm tt")</span>
+			            <!-- Timed Event -->
+			            <span>
+				            <span style="color: green; font-weight:500;">Start:</span> 
+				            @evt.Start.DateTimeDateTimeOffset.Value.ConvertToLocalTime("Europe/Sofia").ToString("MMMM dd, yyyy h:mm tt")
+			            </span>
 			            <br/>
-			            <span><span style="color: red; font-weight:500;">End:</span> @evt.End.DateTimeDateTimeOffset.Value.ConvertToLocalTime("Europe/Sofia").ToString("MMMM dd, yyyy h:mm tt")</span>
+			            <span>
+				            <span style="color: red; font-weight:500;">End:</span> 
+				            @evt.End.DateTimeDateTimeOffset.Value.ConvertToLocalTime("Europe/Sofia").ToString("MMMM dd, yyyy h:mm tt")
+			            </span>
 			            <br/>
 		            }
 		            else if (!string.IsNullOrEmpty(evt.Start?.Date) && !string.IsNullOrEmpty(evt.End?.Date))
 		            {
-			            <!-- All-Day Event -->
+			            <!-- Multi-day Event with only Dates (all-day across multiple days) -->
+			            <span>
+				            <span style="color: green; font-weight:500;">Start:</span> 
+				            @DateTime.Parse(evt.Start.Date).ToLocalTime().ToString("MMMM dd, yyyy")
+			            </span>
 			            <br/>
-			            <p><span style="color: royalblue; font-weight:500;">Date: @DateTime.Parse(evt.Start.Date).ToString("ddd dd MMM yyyy")</span></p>
+			            <span>
+				            <span style="color: red; font-weight:500;">End:</span> 
+				            @DateTime.Parse(evt.End?.Date).ToLocalTime().ToString("MMMM dd, yyyy")
+			            </span>
+			            <br/>
 		            }
 
 		            @if (!string.IsNullOrEmpty(evt.Location))
 		            {
-			            <span>Location: @evt.Location</span>
+			            <span id="location">Location: @evt.Location</span>
 		            }
 
 		            <!-- Display Attendees -->
-
-		            @if (evt.Attendees != null && evt.Attendees.Any())
+					@if (evt.Attendees != null && evt.Attendees.Any())
 		            {
-			            <br/>
-			            <h6 style="margin-top: 0.5em;">Attendees:</h6>
-			            <ul>
-				            @foreach (var attendee in evt.Attendees)
-				            {
-					            <li style="list-style-type: square">
-						            <!-- Determine color based on response status -->
-						            @{
-							            string color = "black"; // Default color
-							            if (attendee.ResponseStatus == "accepted")
-							            {
-								            color = "green";
-							            }
-							            else if (attendee.ResponseStatus == "declined")
-							            {
-								            color = "darkred";
-							            }
-							            else if (attendee.ResponseStatus == "tentative")
-							            {
-								            color = "orange";
-							            }
-							            else if (attendee.ResponseStatus == "needsAction")
-							            {
-								            color = "blue";
-							            }
-						            }
-
-						            <!-- Show display name or email with color -->
-						            <span style="color:@color; font-weight: 600;">
-							            @if (attendee.DisplayName == null)
-							            {
-								            @attendee.Email
-							            }
-							            else
-							            {
-								            @attendee.DisplayName
+			            <div class="attendees-container">
+				            <h6>Attendees:</h6>
+				            <ul>
+								@foreach (var attendee in evt.Attendees)
+					            {
+						            <li style="list-style-type: square; border:none;">
+							            <!-- Determine color based on response status -->
+							            @{
+								            string color = "black"; // Default color
+								            if (attendee.ResponseStatus == "accepted")
+								            {
+									            color = "green";
+								            }
+								            else if (attendee.ResponseStatus == "declined")
+								            {
+									            color = "darkred";
+								            }
+								            else if (attendee.ResponseStatus == "tentative")
+								            {
+									            color = "orange";
+								            }
+								            else if (attendee.ResponseStatus == "needsAction")
+								            {
+									            color = "blue";
+								            }
 							            }
 
-							            <!-- Show response status -->
-							            @if (attendee.ResponseStatus == "accepted")
-							            {
-								            @("(Accepted)")
-							            }
-							            else if (attendee.ResponseStatus == "declined")
-							            {
-								            @("(Declined)")
-							            }
-							            else if (attendee.ResponseStatus == "tentative")
-							            {
-								            @("(Maybe)")
-							            }
-							            else if (attendee.ResponseStatus == "needsAction")
-							            {
-								            @("(Pending)")
-							            }
-						            </span>
-					            </li>
-				            }
-			            </ul>
+							            <!-- Show display name or email with color -->
+							            <span style="color:@color; font-weight: 600;">
+								            @if (attendee.DisplayName == null)
+								            {
+									            @attendee.Email
+								            }
+								            else
+								            {
+									            @attendee.DisplayName
+								            }
+
+								            <!-- Show response status -->
+								            @if (attendee.ResponseStatus == "accepted")
+								            {
+									            @("(Accepted)")
+								            }
+								            else if (attendee.ResponseStatus == "declined")
+								            {
+									            @("(Declined)")
+								            }
+								            else if (attendee.ResponseStatus == "tentative")
+								            {
+									            @("(Maybe)")
+								            }
+								            else if (attendee.ResponseStatus == "needsAction")
+								            {
+									            @("(Pending)")
+								            }
+							            </span>
+						            </li>
+					            }
+				            </ul>
+			            </div>
 		            }
 
 	            </div>
-                <br />
-                
-                
+				
+	               @if (evt.Description != null)
+	            {
+		            <img class="unfold-icon" src="/Icons/unfold.png" alt="unfold-icon">
+	            }
 
-                <br />
 
+	            @if (!string.IsNullOrEmpty(evt.Description))
+	            {
+		            <!-- Collapsible description, initially hidden -->
+		            <div class="description-container" style="display: none;">
+						<p>@evt.Description</p>
+		            </div>
+	            }
+	            <br />
 
                 @if (isOwnedEvent)
                 {
-	                <div class="event-actions">
-		                <!-- Edit Button -->
+					<div class="event-actions-container" style="display: none;">
 		                <a asp-action="CreateEvent" 
 		                   asp-route-calendarId="@(Model.SelectedCalendarId == "all" ? Model.EventCalendarMap[evt.Id] : Model.SelectedCalendarId)" 
 		                   asp-route-eventId="@evt.Id" 
 		                   class="btn btn-warning btn-sm">Edit</a>
 
-		                <!-- Delete Button -->
-		                <form asp-action="ConfirmDelete" method="get" style="display:inline;">
-			                @if (Model.SelectedCalendarId == "all")
-			                {
-				                <input type="hidden" name="calendarId" value="@(Model.EventCalendarMap.TryGetValue(evt.Id, out var calendarId) ? calendarId : Model.SelectedCalendarId)" />
-			                }
-			                else
-			                {
-				                <input type="hidden" name="calendarId" value="@Model.SelectedCalendarId" />
-			                }
+		                <form asp-action="ConfirmDelete" method="get">
+			                <input type="hidden" name="calendarId" value="@(Model.SelectedCalendarId == "all" ? Model.EventCalendarMap[evt.Id] : Model.SelectedCalendarId)" />
 			                <input type="hidden" name="eventId" value="@evt.Id" />
 			                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
 		                </form>
 
+		                @if (!isAllDayEvent)
+		                {
+			                <form asp-action="DuplicateEvent" method="post">
+				                <input type="hidden" name="eventId" value="@evt.Id" />
+				                <input type="hidden" name="calendarId" value="@(Model.SelectedCalendarId == "all" ? (Model.EventCalendarMap.TryGetValue(evt.Id, out var calendarId) ? calendarId : Model.SelectedCalendarId) : Model.SelectedCalendarId)" />
+				                <button type="submit" class="btn btn-duplicate-event">Duplicate</button>
+			                </form>
+		                }
 	                </div>
                 }
 
-                @if (!isAllDayEvent)
-                {
-                    <!-- Duplicate Button -->
-                    <form asp-action="DuplicateEvent" method="post">
-                        <input type="hidden" name="eventId" value="@evt.Id" />
-                        <input type="hidden" name="calendarId" value="@(Model.SelectedCalendarId == "all" ? (Model.EventCalendarMap.TryGetValue(evt.Id, out var calendarId) ? calendarId : Model.SelectedCalendarId) : Model.SelectedCalendarId)" />
-                        <button type="submit" class="btn btn-duplicate-event">Duplicate Event</button>
-                    </form>
-                }
             </li>
         }
     </ul>
@@ -200,3 +222,187 @@ else if (Model.SelectedCalendarId != null)
 {
     <p>No events found for the selected calendar.</p>
 }
+
+						
+<style>
+
+	.event-item {
+		flex-direction: column;
+		align-items: center;
+		flex-wrap: nowrap;
+		position: relative;
+		cursor: pointer;
+		padding: 10px;
+		margin-bottom: 20px;
+		border: 1px solid #ddd;
+		border-radius: 5px;
+		text-align: center;
+		background-color: #f9f9f9;
+		transition: background-color 0.3s ease;
+		z-index: 1;
+		width: 400px;
+	}
+
+	.event-item:hover {
+		background-color: #f1f1f1;
+	}
+
+	.event-item p{
+		padding: 0 15px 0 15px;
+	}
+
+	#location{
+		overflow:hidden;
+	}
+
+	.description-container {
+		margin-top: 10px;
+		padding: 10px;
+		border-top: 1px solid #ccc;
+	}
+
+	.attendees-info {
+		position: absolute;
+		z-index: 10;
+		top: 10px;
+		right: 10px;
+		display: flex;
+		align-items: center;
+		cursor: pointer;
+	}
+
+	.attendees-icon {
+		width: 14px;
+		height: auto;
+		margin-right: 3px;
+	}
+
+	.attendees-info:hover {
+		background-color: forestgreen;
+	}
+
+	.unfold-icon {
+		width: 15px;
+		padding-top: 0.2em;
+		padding-bottom: 0;
+	}
+
+	.attendees-container {
+		max-height: 0;
+		opacity: 0;
+		overflow: hidden;
+		transition: max-height 0.4s ease, opacity 0.4s ease;
+		display: block;
+	}
+
+	.attendees-count {
+		font-size: 12px;
+		color: #333;
+		font-weight: bold;
+	}
+
+	.attendees-container.visible {
+		max-height: auto;
+		opacity: 1;
+	}
+
+	.attendees-container ul li {
+		margin: 0 auto;
+	}
+
+	/* Buttons styling */
+
+	.event-actions-container {
+		display: none;
+		position: absolute;
+		right: -100px; /* Move it outside the event-item container */
+		top: 50%;
+		transform: translateY(-50%); /* Center it vertically */
+		transition: transform 0.3s ease, opacity 0.3s ease; /* Smooth transition */
+		display: flex;
+		flex-grow: 1;
+		flex-direction: column; /* Stack buttons vertically */
+		gap: 5px; /* Add space between buttons */
+	}
+
+	.event-actions-container .btn {
+		width: 80px; /* Set a fixed width for buttons */
+		max-width: 120px;
+	}
+
+	.event-item:hover {
+		background-color: #f1f1f1;
+	}
+
+	.event-actions-container form {
+		margin: 0; /* Ensure form buttons don't have extra margin */
+	}
+
+	</style>
+	
+<script>
+
+	// Function to toggle visibility of buttons
+	function toggleButtons(el, show) {
+		var buttonsDiv = el.querySelector('.event-actions-container');
+		if (buttonsDiv) {
+			buttonsDiv.style.display = show ? "flex" : "none";
+		}
+	}
+
+	// Function to toggle description visibility
+	function toggleDescription(el) {
+		var descriptionDiv = el.querySelector('.description-container');
+		var unfoldIcon = el.querySelector('.unfold-icon');
+
+		if (descriptionDiv) {
+			if (descriptionDiv.style.display === "none" || descriptionDiv.style.display === "") {
+				descriptionDiv.style.display = "block";
+				unfoldIcon.style.display = "none";
+			} else {
+				descriptionDiv.style.display = "none";
+				unfoldIcon.style.display = "block";
+			}
+		}
+	}
+
+	// Function to handle click event on an event item
+	function handleEventClick(el) {
+		var descriptionDiv = el.querySelector('.description-container');
+		var buttonsDiv = el.querySelector('.event-actions-container');
+
+		// Toggle the visibility of description
+		if (descriptionDiv) {
+			if (descriptionDiv.style.display === "none" || descriptionDiv.style.display === "") {
+				descriptionDiv.style.display = "block";
+				toggleButtons(el, true); // Show buttons when description is shown
+			} else {
+				descriptionDiv.style.display = "none";
+				toggleButtons(el, false); // Hide buttons when description is hidden
+			}
+		} else {
+			// If no description, just toggle buttons
+			toggleButtons(el, buttonsDiv.style.display === "none");
+		}
+	}
+
+
+
+
+		function toggleAttendees(el, event) {
+		event.stopPropagation(); // Prevent the event from bubbling up
+
+		var eventItem = el.closest('.event-item');
+		var attendeesContainer = eventItem.querySelector('.attendees-container');
+
+		if (attendeesContainer.classList.contains('visible')) {
+			attendeesContainer.style.maxHeight = "0"; // Collapse the container
+			attendeesContainer.style.opacity = "0";
+			attendeesContainer.classList.remove('visible');
+		} else {
+			attendeesContainer.style.maxHeight = attendeesContainer.scrollHeight + "px"; // Expand the container
+			attendeesContainer.style.opacity = "1";
+			attendeesContainer.classList.add('visible');
+		}
+	}
+</script>
