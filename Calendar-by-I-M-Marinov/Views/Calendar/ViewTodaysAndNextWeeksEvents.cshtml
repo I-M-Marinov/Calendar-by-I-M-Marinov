@@ -273,18 +273,20 @@ else
 			}
 		}
 	}
-
 		function toggleAttendees(el, event) {
 		event.stopPropagation(); // Prevent the event from bubbling up
 
-		var eventItem = el.closest('.event-item'); 
-		var attendeesContainer = eventItem.querySelector('.attendees-container'); 
+		var eventItem = el.closest('.event-item');
+		var attendeesContainer = eventItem.querySelector('.attendees-container');
 
-		// Toggle the 'visible' class
 		if (attendeesContainer.classList.contains('visible')) {
+			attendeesContainer.style.maxHeight = "0"; // Collapse the container
+			attendeesContainer.style.opacity = "0";
 			attendeesContainer.classList.remove('visible');
 		} else {
-			attendeesContainer.classList.add('visible'); 
+			attendeesContainer.style.maxHeight = attendeesContainer.scrollHeight + "px"; // Expand the container
+			attendeesContainer.style.opacity = "1";
+			attendeesContainer.classList.add('visible');
 		}
 	}
 </script>
