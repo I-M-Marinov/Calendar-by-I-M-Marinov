@@ -6,6 +6,7 @@ using Google.Apis.Util.Store;
 using Google.Apis.Calendar.v3.Data;
 using Calendar_by_I_M_Marinov.Services;
 using Calendar_by_I_M_Marinov.Services.Contracts;
+using static Google.Apis.Requests.BatchRequest;
 
 public class GoogleCalendarService : IGoogleCalendarService
 {
@@ -141,7 +142,16 @@ public class GoogleCalendarService : IGoogleCalendarService
 	public async Task<Event> GetEventByIdAsync(string calendarId, string eventId)
 	{
 		var request = _calendarService.Events.Get(calendarId, eventId);
-		return await request.ExecuteAsync();
+
+		var requestedEvent = await request.ExecuteAsync();
+
+		foreach (var attendee in requestedEvent.Attendees)
+		{
+			// Fetch and set display names if needed
+			attendee.DisplayName = await _peopleService.FetchDisplayNameByEmailAsync(attendee.Email);
+		}
+
+		return requestedEvent;
 	}
 	/* The three methods below are used for Adding and Editing events respectively */
 	public async Task<Event> AddEventAsync(Event newEvent)
