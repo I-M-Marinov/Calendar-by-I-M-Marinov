@@ -80,7 +80,7 @@
 </p>
 
 <p align="center">
-<img src="./Screenshots/scrn2-1.PNG">
+<img src="./Screenshots/scrn14.PNG">
 </p>
 
 <p align="center">
@@ -96,7 +96,7 @@
 </p>
 
 <p align="center">
-<img src="./Screenshots/scrn5.png">
+<img src="./Screenshots/scrn15.png">
 </p>
 
 <p align="center">
@@ -105,6 +105,10 @@
 
 <p align="center">
 <img src="./Screenshots/scrn7.PNG">
+</p>
+
+<p align="center">
+<img src="./Screenshots/scrn7-1.PNG">
 </p>
 
 <p align="center">
