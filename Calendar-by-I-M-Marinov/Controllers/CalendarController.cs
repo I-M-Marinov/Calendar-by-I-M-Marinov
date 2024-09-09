@@ -933,8 +933,19 @@ public class CalendarController : Controller
 
         // Calculate the start of next week (assumed to be Monday) and the end of the week (Sunday)
         var daysUntilNextMonday = ((int)DayOfWeek.Monday - (int)now.DayOfWeek + 7) % 7; // Find how many days from today until next Monday
-        DateTime startOfNextWeek = now.AddDays(daysUntilNextMonday).Date; // Next Monday (start of next week)
-        DateTime endOfNextWeek = startOfNextWeek.AddDays(7).AddTicks(-1); // End of next week (Sunday 23:59:59)
+        DateTime startOfNextWeek;
+
+		if (daysUntilNextMonday == 0)
+        {
+	        startOfNextWeek = now.AddDays(7).Date; // Next Monday (start of next week)
+
+		}
+        else
+        {
+	        startOfNextWeek = now.AddDays(daysUntilNextMonday).Date; 
+		}
+
+		DateTime endOfNextWeek = startOfNextWeek.AddDays(7).AddTicks(-1); // End of next week (Sunday 23:59:59)
 
         // Retrieve the primary calendar's time zone
         var primaryCalendarTimeZone = await _googleCalendarService.GetPrimaryCalendarTimeZoneAsync();
