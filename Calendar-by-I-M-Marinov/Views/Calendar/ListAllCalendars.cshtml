@@ -15,48 +15,45 @@
     </div>
 }
 
-<table class="table table-striped centered-table">
-    <thead>
-        <tr>
-            <th>Calendar Name</th>
-            <th>Access Role</th>
-            <th>Number of events</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var calendar in Model)
-        {
-            <tr>
-                <!-- Link around the calendar name -->
-                <td>
-                    <a asp-action="ListCalendarsAndEvents" asp-route-selectedCalendarId="@calendar.CalendarId">
-                        @calendar.CalendarName
-                    </a>
-                </td>
-                <!-- Display Access Role -->
-                <td>@calendar.AccessRole</td>
-                <td>@calendar.EventsCount</td>
-                <td>
-                    @if (calendar.Primary != true)
-                    {
-                        <!-- Delete Button -->
-                        <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete('@calendar.CalendarId')">Delete</button>
-                    }
-                    @if (calendar.Primary == true)
-                    {
-                        <span title="Primary Calendar" class="primary-calendar-icon">
-                            <i class="fas fa-star" style="color: royalblue; user-select: none;">primary</i>
-                        </span>
-                    }
-                </td>
-            </tr>
-        }
-    </tbody>
+<table class="table centered-table">
+	<thead>
+	<tr>
+		<th>Calendar Name</th>
+		<th>Access Role</th>
+		<th>Number of events</th>
+		<th>Actions</th>
+	</tr>
+	</thead>
+	<tbody>
+	@foreach (var calendar in Model)
+	{
+		<tr data-href="@Url.Action("ListCalendarsAndEvents", new { selectedCalendarId = calendar.CalendarId })" class="clickable-row">
+			<td>@calendar.CalendarName</td>
+			<td>@calendar.AccessRole</td>
+			<td>@calendar.EventsCount</td>
+			<td>
+				@if (calendar.Primary != true)
+				{
+					<!-- Delete Button -->
+					<button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete('@calendar.CalendarId')">Delete</button>
+				}
+				@if (calendar.Primary == true)
+				{
+					<span title="Primary Calendar" class="primary-calendar-icon">
+						<i class="fas fa-star" style="color: royalblue; user-select: none;">primary</i>
+					</span>
+				}
+			</td>
+		</tr>
+	}
+	</tbody>
 </table>
+
+
 
 <script>
     function confirmDelete(calendarId) {
+		event.stopPropagation();
         if (confirm("Are you sure you want to delete this calendar?")) {
 
             var form = document.createElement("form");
@@ -73,4 +70,20 @@
             form.submit(); 
         }
     }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        var rows = document.querySelectorAll(".clickable-row");
+        rows.forEach(function (row) {
+            row.addEventListener("click", function () {
+                window.location.href = row.getAttribute("data-href");
+            });
+        });
+    });
 </script>
+
+<style>
+
+
+
+
+</style>

@@ -28,15 +28,28 @@ form-group{
     width: 45%; 
     max-width: 800px; 
     border-collapse: collapse; 
+    border-bottom: 1px solid grey;
 }
 
-.centered-table th, .centered-table td {
+.centered-table th, 
+.centered-table td {
     text-align: center; 
     padding: 8px; 
 }
 
+.centered-table td{
+    color: royalblue;
+    padding-bottom: 0em;
+}
+
 .centered-table thead {
     background-color: #4489cf;
+}
+
+.clickable-row:hover {
+    cursor: pointer;
+    background-color: lightblue;
+    box-shadow: 8px 8px 0px #000000;
 }
 
 .event-item {
