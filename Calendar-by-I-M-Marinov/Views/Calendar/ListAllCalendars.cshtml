@@ -1,6 +1,8 @@
 ﻿@model IEnumerable<Calendar_by_I_M_Marinov.Models.CalendarViewModel>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
 
+
+
 @{
     ViewData["Title"] = "Calendars List";
 }
@@ -19,8 +21,7 @@
 	<thead>
 	<tr>
 		<th>Calendar Name</th>
-		<th>Access Role</th>
-		<th>Number of events</th>
+		<th>Events</th>
 		<th>Actions</th>
 	</tr>
 	</thead>
@@ -28,14 +29,13 @@
 	@foreach (var calendar in Model)
 	{
 		<tr data-href="@Url.Action("ListCalendarsAndEvents", new { selectedCalendarId = calendar.CalendarId })" class="clickable-row">
-			<td>@calendar.CalendarName</td>
-			<td>@calendar.AccessRole</td>
+			<td title="Access role for this calendar is @calendar.AccessRole.ToUpper()">@calendar.CalendarName</td>
 			<td>@calendar.EventsCount</td>
 			<td>
 				@if (calendar.Primary != true)
 				{
-					<!-- Delete Button -->
-					<button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete('@calendar.CalendarId')">Delete</button>
+						<!-- Remove Button -->
+					<button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete('@calendar.CalendarId')">Remove</button>
 				}
 				@if (calendar.Primary == true)
 				{
@@ -80,10 +80,3 @@
         });
     });
 </script>
-
-<style>
-
-
-
-
-</style>

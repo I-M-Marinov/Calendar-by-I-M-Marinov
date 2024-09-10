@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
+
 html {
   font-size: 14px;
 }
@@ -24,22 +26,30 @@ form-group{
 /* CSS for the table in the ListAllCalendars View */
 
 .centered-table {
-    margin: 0 auto; 
-    width: 45%; 
-    max-width: 800px; 
-    border-collapse: collapse; 
+    font-family: 'Rubik', sans-serif;
+    margin: 0 auto;
+    width: 45%;
+    max-width: 800px;
+    border-collapse: collapse;
     border-bottom: 1px solid grey;
 }
 
-.centered-table th, 
+.centered-table th,
 .centered-table td {
-    text-align: center; 
-    padding: 8px; 
+    text-align: center;
+    padding: 8px;
 }
 
-.centered-table td{
+.centered-table td:first-child {
+    font-size: 16px;
+}
+
+.centered-table td:nth-child(2) {
+    font-size: 16px;
+}
+
+.centered-table td {
     color: royalblue;
-    padding-bottom: 0em;
 }
 
 .centered-table thead {
@@ -47,10 +57,12 @@ form-group{
 }
 
 .clickable-row:hover {
+    color: black;
     cursor: pointer;
     background-color: lightblue;
-    box-shadow: 8px 8px 0px #000000;
+    box-shadow: 0px 1px 0px 0px rgba(0,0,0,0.22), 1px 0px 0px 0px rgba(0,0,0,0.22), 1px 2px 0px 0px rgba(0,0,0,0.22), 2px 1px 0px 0px rgba(0,0,0,0.22), 2px 3px 0px 0px rgba(0,0,0,0.22), 3px 2px 0px 0px rgba(0,0,0,0.22), 3px 4px 0px 0px rgba(0,0,0,0.22), 4px 3px 0px 0px rgba(0,0,0,0.22), 4px 5px 0px 0px rgba(0,0,0,0.22), 5px 4px 0px 0px rgba(0,0,0,0.22), 5px 6px 0px 0px rgba(0,0,0,0.22), 6px 5px 0px 0px rgba(0,0,0,0.22), 6px 7px 0px 0px rgba(0,0,0,0.22), 7px 6px 0px 0px rgba(0,0,0,0.22), 7px 8px 0px 0px rgba(0,0,0,0.22), 8px 7px 0px 0px rgba(0,0,0,0.22);
 }
+
 
 .event-item {
     display: flex;
