@@ -1,7 +1,5 @@
-﻿using Calendar_by_I_M_Marinov.Models;
-using Google.Apis.Calendar.v3;
+﻿using Google.Apis.Calendar.v3;
 using Google.Apis.Calendar.v3.Data;
-using Microsoft.AspNetCore.Mvc;
 
 namespace Calendar_by_I_M_Marinov.Services.Contracts
 {

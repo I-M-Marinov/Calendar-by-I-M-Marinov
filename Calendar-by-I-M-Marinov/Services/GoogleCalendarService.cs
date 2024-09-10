@@ -6,7 +6,6 @@ using Google.Apis.Util.Store;
 using Google.Apis.Calendar.v3.Data;
 using Calendar_by_I_M_Marinov.Services;
 using Calendar_by_I_M_Marinov.Services.Contracts;
-using static Google.Apis.Requests.BatchRequest;
 
 public class GoogleCalendarService : IGoogleCalendarService
 {

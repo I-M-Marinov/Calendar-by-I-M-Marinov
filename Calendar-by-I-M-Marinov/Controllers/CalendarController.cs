@@ -2,12 +2,9 @@
 using Google.Apis.Calendar.v3.Data;
 using Calendar_by_I_M_Marinov.Services.Contracts;
 using Calendar_by_I_M_Marinov.Models;
-using static Calendar_by_I_M_Marinov.Common.DateTimeExtensions;
 using Google.Apis.Calendar.v3;
-using System.Reflection;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Calendar_by_I_M_Marinov.Common;
-using System.Globalization;
 
 public class CalendarController : Controller
 {

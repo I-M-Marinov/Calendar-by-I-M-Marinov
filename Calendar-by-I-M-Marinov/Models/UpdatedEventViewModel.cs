@@ -1,6 +1,6 @@
 ﻿namespace Calendar_by_I_M_Marinov.Models
 {
-    public class UpdatedEventViewModel
+   public class UpdatedEventViewModel
     {
         public string EventId { get; set; }
         public string CalendarId { get; set; }
@@ -13,3 +13,4 @@
     }
 
 }
+ 
