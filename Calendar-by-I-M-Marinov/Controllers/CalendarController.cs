@@ -158,12 +158,13 @@ public class CalendarController : Controller
     }
 
 	[HttpGet]
-	public async Task<IActionResult> CreateEvent(string? eventId)
+	public async Task<IActionResult> CreateEvent(string calendarId, string? eventId)
 	{
 		// Initialize the model
 		var model = new EventViewModel
 		{
-			Attendants = new List<string>()
+			Attendants = new List<string>(),
+            CalendarId = calendarId
 		};
 
 		model.VisibilityOptions = new List<SelectListItem>
@@ -183,7 +184,7 @@ public class CalendarController : Controller
 		{
 			try
 			{
-				var existingEvent = await _googleCalendarService.GetEventByIdAsync(eventId); // Get the Event details
+				var existingEvent = await _googleCalendarService.GetEventByIdAsync(calendarId, eventId); // Get the Event details
 
 				model.EventId = existingEvent.Id;
 				model.Summary = existingEvent.Summary;
@@ -232,7 +233,7 @@ public class CalendarController : Controller
 	[HttpPost]
 	public async Task<IActionResult> CreateEvent(EventViewModel model)
 	{
-		var calendarId = "primary";
+		var calendarId = model.CalendarId; 
 
 		var timeZone = "Europe/Sofia";
 		EventDateTime startEventDateTime;
