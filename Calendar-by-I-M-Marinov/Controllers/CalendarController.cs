@@ -217,7 +217,11 @@ public class CalendarController : Controller
 				}
 
 				model.Visibility = existingEvent.Visibility;
-				model.SendUpdates = existingEvent.ExtendedProperties?.Shared.ContainsKey("SendUpdates") == true ? existingEvent.ExtendedProperties.Shared["SendUpdates"] : "None";
+
+				model.SendUpdates = existingEvent.ExtendedProperties?.Shared != null &&
+				                    existingEvent.ExtendedProperties.Shared.ContainsKey("SendUpdates")
+					? existingEvent.ExtendedProperties.Shared["SendUpdates"]
+					: "None";
 			}
 			catch (Exception ex)
 			{
@@ -309,7 +313,7 @@ public class CalendarController : Controller
 						break;
 				}
 
-				await _googleCalendarService.AddEventAsync("primary", newEvent, sendUpdatesInsert);
+				await _googleCalendarService.AddEventAsync(calendarId, newEvent, sendUpdatesInsert);
 				return RedirectToAction("ViewNewEventAdded", new { message = "Event created successfully." });
 			}
 			else
@@ -330,7 +334,7 @@ public class CalendarController : Controller
 						break;
 				}
 
-				await _googleCalendarService.UpdateEventAsync("primary", model.EventId, newEvent, sendUpdatesUpdate);
+				await _googleCalendarService.UpdateEventAsync(calendarId, model.EventId, newEvent, sendUpdatesUpdate);
 				return RedirectToAction("ViewNewEventUpdated", new { calendarId, eventId = model.EventId, message = "Event updated successfully." });
 			}
 		}

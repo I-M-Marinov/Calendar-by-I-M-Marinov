@@ -5,7 +5,7 @@
     var isEdit = Model.EventId != null;  // Determine if it's an edit or create
 	var actionUrl = isEdit ? "CreateEvent" : "CreateEvent";
     var submitButtonText = isEdit ? "Update Event" : "Create Event"; // Button text changes
-    var calendarId = "primary"; 
+    var calendarId = Model.CalendarId; 
 }
 
 <h2>@(isEdit ? "Update an Event" : "Create an Event")</h2>
