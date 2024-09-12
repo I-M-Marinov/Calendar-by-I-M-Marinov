@@ -289,9 +289,20 @@ public class GoogleCalendarService : IGoogleCalendarService
 	}
 	public async Task UpdateEventAsync(string calendarId, string eventId, Event updatedEvent, EventsResource.UpdateRequest.SendUpdatesEnum sendUpdates)
 	{
-		var request = _calendarService.Events.Update(updatedEvent, calendarId, eventId);
-		request.SendUpdates = sendUpdates;
-		await request.ExecuteAsync();
+		try
+		{
+			var request = _calendarService.Events.Update(updatedEvent, calendarId, eventId);
+			request.SendUpdates = sendUpdates;
+			await request.ExecuteAsync();
+		}
+		catch (Google.GoogleApiException ex)
+		{
+			throw new Exception($"Failed to update event with ID: {eventId}. Details: {ex.Message}");
+		}
+		catch (Exception ex)
+		{
+			throw new Exception($"An unexpected error occurred while updating the event: {ex.Message}");
+		}
 	}
 	public async Task<Calendar> CreateCalendarAsync(string summary, string timeZone, string? description = null)
     {
