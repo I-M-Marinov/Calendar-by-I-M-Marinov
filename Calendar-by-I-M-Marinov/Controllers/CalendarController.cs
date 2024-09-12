@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Diagnostics.Eventing.Reader;
+using Microsoft.AspNetCore.Mvc;
 using Google.Apis.Calendar.v3.Data;
 using Calendar_by_I_M_Marinov.Services.Contracts;
 using Calendar_by_I_M_Marinov.Models;
@@ -189,25 +190,36 @@ public class CalendarController : Controller
 				model.Summary = existingEvent.Summary;
 				model.Description = existingEvent.Description;
 				model.Location = existingEvent.Location;
+				model.IsAllDayEvent = existingEvent.Start.Date != null && existingEvent.End.Date != null;
 
-				bool isAllDayEvent = !string.IsNullOrEmpty(existingEvent.Start?.Date) && existingEvent.Start.DateTime == null;
+				bool isAllDayEvent = model.IsAllDayEvent;
 
-				if (isAllDayEvent)
+				
+				if (existingEvent.Recurrence != null && existingEvent.Recurrence.Any())
 				{
-					model.EventType = "allDay";
-					model.Start = DateTime.Parse(existingEvent.Start.Date);
-				}
-				else if (existingEvent.Recurrence != null && existingEvent.Recurrence.Any())
-				{
-					model.EventType = "annual";
-					model.Start = existingEvent.Start.DateTime;
-					model.End = existingEvent.End.DateTime;
+					if (isAllDayEvent)
+					{
+						model.Start = DateTime.Parse(existingEvent.Start.Date);
+					}
+					else
+					{
+						model.EventType = "annual";
+						model.Start = existingEvent.Start.DateTime;
+						model.End = existingEvent.End.DateTime;
+					}
 				}
 				else
 				{
-					model.EventType = "single";
-					model.Start = existingEvent.Start.DateTime;
-					model.End = existingEvent.End.DateTime;
+					if (isAllDayEvent)
+					{
+						model.Start = DateTime.Parse(existingEvent.Start.Date);
+					}
+					else
+					{
+						model.EventType = "single";
+						model.Start = existingEvent.Start.DateTime;
+						model.End = existingEvent.End.DateTime;
+					}
 				}
 
 				if (existingEvent.Attendees != null)
