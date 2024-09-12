@@ -31,7 +31,7 @@
 
 	<div class="create-event-container">
 		@{
-			var isAllDayEvent = Model.EventType == "allDay";
+			var isAllDayEvent = Model.IsAllDayEvent;
 		}
 
 		<div class="create-event-group2">
@@ -85,6 +85,9 @@
 			<div class="create-event-group eventtype">
 				<label asp-for="EventType">Event Type</label>
 				<select asp-for="EventType" asp-items="Model.EventTypeOptions" class="form-control" id="eventTypeSelect"></select>
+				
+				<label asp-for="IsAllDayEvent">All Day?</label>
+				<input asp-for="IsAllDayEvent" type="checkbox" id="isAllDayCheckbox"/>
 			</div>
 		</div>
 	</div>
