@@ -6,38 +6,6 @@
 
 // Function to toggle date input types
 
-async function toggleDateTimeInputs() {
-    var eventType = document.getElementById("eventTypeSelect").value;
-    var startDateInput = document.getElementById("startDateInput");
-    var endDateInput = document.getElementById("endDateInput");
-
-    if (eventType === "allDay") {
-        // Simulate an asynchronous operation (e.g., fetching data)
-        await new Promise(resolve => setTimeout(resolve, 100)); // Example delay
-
-        startDateInput.type = "date"; // Show only date picker
-        endDateInput.type = "date";   // Show only date picker
-    } else {
-        // Simulate an asynchronous operation (e.g., fetching data)
-        await new Promise(resolve => setTimeout(resolve, 100)); // Example delay
-
-        startDateInput.type = "datetime-local"; // Show date and time picker
-        endDateInput.type = "datetime-local";   // Show date and time picker
-    }
-}
-
-// Initial check on page load
-document.addEventListener("DOMContentLoaded", async function () {
-    await toggleDateTimeInputs();
-});
-
-// Attach event listener to the event type dropdown
-document.getElementById("eventTypeSelect").addEventListener("change", async function () {
-    await toggleDateTimeInputs();
-});
-
-// Function to hide the End Date Input and Label when ALL DAY Event is selected
-
 document.addEventListener('DOMContentLoaded', function () {
     var startDateInput = document.getElementById('startDateInput');
     var endDateInput = document.getElementById('endDateInput');
@@ -46,54 +14,51 @@ document.addEventListener('DOMContentLoaded', function () {
     var isAllDayCheckbox = document.getElementById('isAllDayCheckbox');
     var eventTypeSelect = document.getElementById('eventTypeSelect');
 
+    // Get the initial values of start and end dates 
+    var startDateValue = startDateInput.getAttribute('data-value') || startDateInput.value || '';
+    var endDateValue = endDateInput.getAttribute('data-value') || endDateInput.value || '';
+
     function updateInputTypesAndLabels() {
         var isAllDay = isAllDayCheckbox.checked;
+        var eventType = eventTypeSelect.value;
 
-        if (isAllDay) {
+        if (isAllDay || eventType === 'allDay') {
             // Handle all-day events
-            endDateInput.style.display = 'none';
+            endDateInput.style.display = 'none'; 
             endDateLabel.style.display = 'none';
             startDateInput.type = 'date';
-            endDateInput.type = 'date';
             startDateLabel.textContent = "Date";
 
-            // Ensure that input values are formatted correctly
-            if (startDateInput.value) {
-                var startDate = new Date(startDateInput.value);
+            // Set input values formatted as "yyyy-MM-dd"
+            if (startDateValue) {
+                var startDate = new Date(startDateValue);
                 startDateInput.value = startDate.toISOString().slice(0, 10); // yyyy-MM-dd
             }
-            if (endDateInput.value) {
-                var endDate = new Date(endDateInput.value);
-                endDateInput.value = endDate.toISOString().slice(0, 10); // yyyy-MM-dd
-            }
-
         } else {
             // Handle timed events
             startDateLabel.textContent = "Start";
-            endDateInput.style.display = 'block';
+            endDateInput.style.display = 'block'; 
             endDateLabel.style.display = 'block';
             startDateInput.type = 'datetime-local';
-            endDateInput.type = 'datetime-local';
+
+            // Set input values formatted as "yyyy-MM-ddTHH:mm"
+            if (startDateValue) {
+                var startDate = new Date(startDateValue);
+                startDateInput.value = startDate.toISOString().slice(0, 16); // yyyy-MM-ddTHH:mm
+            }
+            if (endDateValue) {
+                var endDate = new Date(endDateValue);
+                endDateInput.value = endDate.toISOString().slice(0, 16); // yyyy-MM-ddTHH:mm
+            }
         }
     }
 
-    // Update input types and labels based on checkbox for all-day event
     isAllDayCheckbox.addEventListener('change', updateInputTypesAndLabels);
-
-    // Ensure dropdown change updates inputs accordingly
-    eventTypeSelect.addEventListener('change', function () {
-        var eventType = eventTypeSelect.value;
-        var isAllDayEvent = eventType === 'allDay';
-        isAllDayCheckbox.checked = isAllDayEvent;
-        updateInputTypesAndLabels();
-    });
+    eventTypeSelect.addEventListener('change', updateInputTypesAndLabels);
 
     // Initial update on page load
     updateInputTypesAndLabels();
 });
-
-
-
 
 
 
