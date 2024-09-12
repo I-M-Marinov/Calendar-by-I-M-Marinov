@@ -176,7 +176,6 @@ public class CalendarController : Controller
 		model.EventTypeOptions = new List<SelectListItem>
 	{
 		new SelectListItem { Value = "single", Text = "Single" },
-		new SelectListItem { Value = "allDay", Text = "All Day" },
 		new SelectListItem { Value = "annual", Text = "Annual" }
     };
 
@@ -237,47 +236,85 @@ public class CalendarController : Controller
 	[HttpPost]
 	public async Task<IActionResult> CreateEvent(EventViewModel model)
 	{
-		var calendarId = model.CalendarId; 
+		
+		var calendarId = model.CalendarId != null ? model.CalendarId : "primary";
 
 		var timeZone = "Europe/Sofia";
 		EventDateTime startEventDateTime;
 		EventDateTime endEventDateTime;
 
-		if (model.EventType == "allDay")
+		if (model.EventType == "annual")
 		{
-			startEventDateTime = new EventDateTime
+			// Annual event
+			if (model.IsAllDayEvent) 
 			{
-				Date = model.Start?.ToString("yyyy-MM-dd"),
-				TimeZone = timeZone
-			};
+				startEventDateTime = new EventDateTime
+				{
+					Date = model.Start?.ToString("yyyy-MM-dd"),
+					TimeZone = timeZone
+				};
 
-			endEventDateTime = new EventDateTime
+				endEventDateTime = new EventDateTime
+				{
+					Date = model.Start?.AddDays(1).ToString("yyyy-MM-dd"), // End date is one day after start date
+					TimeZone = timeZone
+				};
+			}
+			else
 			{
-				Date = model.Start?.AddDays(1).ToString("yyyy-MM-dd"), // End date is one day after start date
-				TimeZone = timeZone
-			};
+				startEventDateTime = new EventDateTime
+				{
+					DateTime = model.Start.Value.ToUniversalTime(),
+					TimeZone = timeZone
+				};
+
+				endEventDateTime = new EventDateTime
+				{
+					DateTime = model.End.Value.ToUniversalTime(),
+					TimeZone = timeZone
+				};
+			}
 		}
 		else
 		{
-			startEventDateTime = new EventDateTime
+			// Non-annual event
+			if (model.IsAllDayEvent)
 			{
-				DateTime = model.Start.Value.ToUniversalTime(),
-				TimeZone = timeZone
-			};
+				startEventDateTime = new EventDateTime
+				{
+					Date = model.Start?.ToString("yyyy-MM-dd"),
+					TimeZone = timeZone
+				};
 
-			endEventDateTime = new EventDateTime
+				endEventDateTime = new EventDateTime
+				{
+					Date = model.Start?.AddDays(1).ToString("yyyy-MM-dd"), // End date is one day after start date
+					TimeZone = timeZone
+				};
+			}
+			else
 			{
-				DateTime = model.End.Value.ToUniversalTime(),
-				TimeZone = timeZone
-			};
+				startEventDateTime = new EventDateTime
+				{
+					DateTime = model.Start.Value.ToUniversalTime(),
+					TimeZone = timeZone
+				};
+
+				endEventDateTime = new EventDateTime
+				{
+					DateTime = model.End.Value.ToUniversalTime(),
+					TimeZone = timeZone
+				};
+			}
 		}
 
-		var attendees = model.Attendants?
-			.Select(email => new EventAttendee { Email = email.Trim() })
-			.ToList();
+		var attendees = model.Attendants?.Any() == true
+			? model.Attendants.Select(email => new EventAttendee { Email = email.Trim() }).ToList()
+			: null; 
 
 		var newEvent = new Event
 		{
+            Id = model.EventId,
 			Summary = model.Summary,
 			Description = model.Description,
 			Location = model.Location,
@@ -335,8 +372,14 @@ public class CalendarController : Controller
 				}
 
 				await _googleCalendarService.UpdateEventAsync(calendarId, model.EventId, newEvent, sendUpdatesUpdate);
+
 				return RedirectToAction("ViewNewEventUpdated", new { calendarId, eventId = model.EventId, message = "Event updated successfully." });
 			}
+		}
+		catch (Google.GoogleApiException ex)
+		{
+			ModelState.AddModelError("", $"Error from Google API: {ex.Message}");
+			return View(model);
 		}
 		catch (Exception ex)
 		{
