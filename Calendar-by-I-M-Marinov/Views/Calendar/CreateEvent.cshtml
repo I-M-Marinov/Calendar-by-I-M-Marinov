@@ -44,18 +44,19 @@
 					       type="date"
 					       class="form-control"
 					       id="startDateInput"
-					       value="@(Model.Start.HasValue ? Model.Start.Value.ToString("yyyy-MM-dd") : "")"/>
+					       data-value="@(Model.Start.HasValue ? Model.Start.Value.ToString("yyyy-MM-dd") : "")"
+					       value="@(Model.Start.HasValue ? Model.Start.Value.ToString("yyyy-MM-dd") : "")" />
 				}
 				else
 				{
 					<input asp-for="Start"
 					       class="form-control"
 					       id="startDateInput"
+					       data-value="@(Model.Start.HasValue ? Model.Start.Value.ToString("yyyy-MM-ddTHH:mm") : "")"
 					       value="@(Model.Start.HasValue ? Model.Start.Value.ToString("yyyy-MM-ddTHH:mm") : "")"/>
 				}
 			</div>
 
-			<!-- End Date Input -->
 			<div class="create-event-group end">
 				<label asp-for="End" id="endDateLabel"></label>
 				@if (isAllDayEvent)
@@ -64,16 +65,19 @@
 					       type="date"
 					       class="form-control"
 					       id="endDateInput"
-					       value="@(Model.End.HasValue ? Model.End.Value.ToString("yyyy-MM-dd") : "")"/>
+					       data-value="@(Model.End.HasValue ? Model.End.Value.ToString("yyyy-MM-dd") : "")"
+					       value="@(Model.End.HasValue ? Model.End.Value.ToString("yyyy-MM-dd") : "")" />
 				}
 				else
 				{
 					<input asp-for="End"
 					       class="form-control"
 					       id="endDateInput"
+					       data-value="@(Model.End.HasValue ? Model.End.Value.ToString("yyyy-MM-ddTHH:mm") : "")"
 					       value="@(Model.End.HasValue ? Model.End.Value.ToString("yyyy-MM-ddTHH:mm") : "")"/>
 				}
 			</div>
+
 		</div>
 
 		<div class="create-event-group3">
