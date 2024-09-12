@@ -20,7 +20,8 @@ namespace Calendar_by_I_M_Marinov.Models
         public DateTime? End { get; set; }
 
         public string Visibility { get; set; }  
-        public string EventType { get; set; }  // Options: single, annual, allDay 
+        public string EventType { get; set; }  // Options: single, annual
+        public bool IsAllDayEvent { get; set; }
         public List<string> Attendants { get; set; } = new();
         public string SendUpdates { get; set; } // Options: all, externalOnly, none 
 
