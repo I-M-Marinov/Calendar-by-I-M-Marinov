@@ -18,38 +18,42 @@ document.addEventListener('DOMContentLoaded', function () {
     var startDateValue = startDateInput.getAttribute('data-value') || startDateInput.value || '';
     var endDateValue = endDateInput.getAttribute('data-value') || endDateInput.value || '';
 
+    function formatDate(dateString) {
+        var date = new Date(dateString);
+        // Adjust to local time zone
+        var localDate = new Date(date.getTime() - (date.getTimezoneOffset() * 60000));
+        return localDate.toISOString().slice(0, 16); // yyyy-MM-ddTHH:mm
+    }
+
     function updateInputTypesAndLabels() {
         var isAllDay = isAllDayCheckbox.checked;
         var eventType = eventTypeSelect.value;
 
         if (isAllDay || eventType === 'allDay') {
             // Handle all-day events
-            endDateInput.style.display = 'none'; 
+            endDateInput.style.display = 'none';
             endDateLabel.style.display = 'none';
             startDateInput.type = 'date';
             startDateLabel.textContent = "Date";
 
             // Set input values formatted as "yyyy-MM-dd"
             if (startDateValue) {
-                var startDate = new Date(startDateValue);
-                startDateInput.value = startDate.toISOString().slice(0, 10); // yyyy-MM-dd
+                startDateInput.value = new Date(startDateValue).toISOString().slice(0, 10); // yyyy-MM-dd
             }
         } else {
             // Handle timed events
             startDateLabel.textContent = "Start";
-            endDateInput.style.display = 'block'; 
+            endDateInput.style.display = 'block';
             endDateLabel.style.display = 'block';
             startDateInput.type = 'datetime-local';
             endDateInput.type = 'datetime-local';
 
             // Set input values formatted as "yyyy-MM-ddTHH:mm"
             if (startDateValue) {
-                var startDate = new Date(startDateValue);
-                startDateInput.value = startDate.toISOString().slice(0, 16); // yyyy-MM-ddTHH:mm
+                startDateInput.value = formatDate(startDateValue); // yyyy-MM-ddTHH:mm
             }
             if (endDateValue) {
-                var endDate = new Date(endDateValue);
-                endDateInput.value = endDate.toISOString().slice(0, 16); // yyyy-MM-ddTHH:mm
+                endDateInput.value = formatDate(endDateValue); // yyyy-MM-ddTHH:mm
             }
         }
     }
@@ -60,6 +64,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Initial update on page load
     updateInputTypesAndLabels();
 });
+
 
 
 
