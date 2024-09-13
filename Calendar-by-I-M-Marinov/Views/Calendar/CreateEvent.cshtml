@@ -50,6 +50,7 @@
 				else
 				{
 					<input asp-for="Start"
+					       type="datetime-local"
 					       class="form-control"
 					       id="startDateInput"
 					       data-value="@(Model.Start.HasValue ? Model.Start.Value.ToString("yyyy-MM-ddTHH:mm") : "")"
@@ -71,6 +72,7 @@
 				else
 				{
 					<input asp-for="End"
+					       type="datetime-local"
 					       class="form-control"
 					       id="endDateInput"
 					       data-value="@(Model.End.HasValue ? Model.End.Value.ToString("yyyy-MM-ddTHH:mm") : "")"
