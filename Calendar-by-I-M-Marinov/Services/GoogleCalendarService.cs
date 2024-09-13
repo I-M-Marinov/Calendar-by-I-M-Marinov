@@ -297,6 +297,7 @@ public class GoogleCalendarService : IGoogleCalendarService
 		}
 		catch (Google.GoogleApiException ex)
 		{
+			Console.WriteLine($"Failed to update event with ID: {eventId}. Details: {ex.Message}");
 			throw new Exception($"Failed to update event with ID: {eventId}. Details: {ex.Message}");
 		}
 		catch (Exception ex)
