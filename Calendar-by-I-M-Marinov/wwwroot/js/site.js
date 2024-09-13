@@ -40,6 +40,7 @@ document.addEventListener('DOMContentLoaded', function () {
             endDateInput.style.display = 'block'; 
             endDateLabel.style.display = 'block';
             startDateInput.type = 'datetime-local';
+            endDateInput.type = 'datetime-local';
 
             // Set input values formatted as "yyyy-MM-ddTHH:mm"
             if (startDateValue) {
