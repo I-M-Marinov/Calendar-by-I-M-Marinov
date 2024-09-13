@@ -191,32 +191,33 @@ public class CalendarController : Controller
 				model.Description = existingEvent.Description;
 				model.Location = existingEvent.Location;
 				model.IsAllDayEvent = existingEvent.Start.Date != null && existingEvent.End.Date != null;
+                model.RecurringEventId = existingEvent.RecurringEventId;
 
 				bool isAllDayEvent = model.IsAllDayEvent;
 
 				
-				if (existingEvent.Recurrence != null && existingEvent.Recurrence.Any())
+				if (existingEvent.RecurringEventId != null)
 				{
+					model.EventType = "annual";
 					if (isAllDayEvent)
 					{
 						model.Start = DateTime.Parse(existingEvent.Start.Date);
 					}
 					else
 					{
-						model.EventType = "annual";
 						model.Start = existingEvent.Start.DateTime;
 						model.End = existingEvent.End.DateTime;
 					}
 				}
 				else
 				{
+					model.EventType = "single";
 					if (isAllDayEvent)
 					{
 						model.Start = DateTime.Parse(existingEvent.Start.Date);
 					}
 					else
 					{
-						model.EventType = "single";
 						model.Start = existingEvent.Start.DateTime;
 						model.End = existingEvent.End.DateTime;
 					}
@@ -255,7 +256,7 @@ public class CalendarController : Controller
 		EventDateTime startEventDateTime;
 		EventDateTime endEventDateTime;
 
-		if (model.EventType == "annual")
+		if (model.EventType == "annual" || model.RecurringEventId != null)
 		{
 			// Annual event
 			if (model.IsAllDayEvent) 
@@ -339,6 +340,7 @@ public class CalendarController : Controller
 			$"RRULE:FREQ=YEARLY;BYMONTH={model.Start?.Month};BYMONTHDAY={model.Start?.Day}"
 				}
 				: null,
+            RecurringEventId = model.RecurringEventId,
 			Attendees = attendees
 		};
 
