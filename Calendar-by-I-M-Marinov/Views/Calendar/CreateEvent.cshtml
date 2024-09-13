@@ -56,7 +56,7 @@
 					       value="@(Model.Start.HasValue ? Model.Start.Value.ToString("yyyy-MM-ddTHH:mm") : "")"/>
 				}
 			</div>
-
+			<!-- End Date Input -->
 			<div class="create-event-group end">
 				<label asp-for="End" id="endDateLabel"></label>
 				@if (isAllDayEvent)
@@ -93,6 +93,8 @@
 				<label asp-for="IsAllDayEvent">All Day?</label>
 				<input asp-for="IsAllDayEvent" type="checkbox" id="isAllDayCheckbox"/>
 			</div>
+			
+			<input type="hidden" name="RecurringEventId" value="@Model.RecurringEventId" />
 		</div>
 	</div>
 
