@@ -76,6 +76,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const addAttendeeBtn = document.getElementById('addAttendee');
     const attendeesContainer = document.getElementById('attendeesContainer');
 
+    // Make sure no duplicate event listeners are added
+    if (addAttendeeBtn && !addAttendeeBtn.dataset.listenerAdded) {
+        addAttendeeBtn.dataset.listenerAdded = true; 
+
     addAttendeeBtn.addEventListener('click', () => {
         const newAttendeeRow = document.createElement('div');
         newAttendeeRow.classList.add('attendee-row');
@@ -93,12 +97,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Attach remove button functionality for existing rows
     document.querySelectorAll('.btn-remove-attendee').forEach(button => {
-        button.addEventListener('click', () => {
-            const row = button.parentElement;
-            attendeesContainer.removeChild(row);
-        });
+        if (!button.dataset.listenerAdded) {
+            button.dataset.listenerAdded = true; // Prevent duplicate listeners
+
+            button.addEventListener('click', () => {
+                const row = button.parentElement;
+                attendeesContainer.removeChild(row);
+            });
+        }
     });
 });
-
