@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.Eventing.Reader;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Google.Apis.Calendar.v3.Data;
 using Calendar_by_I_M_Marinov.Services.Contracts;
 using Calendar_by_I_M_Marinov.Models;
@@ -123,26 +122,18 @@ public class CalendarController : Controller
         {
             ModelState.AddModelError("", $"An error occurred while loading events: {ex.Message}");
             return View("Error");
-        }
-    }
+		}
+	}
 
 
-    public async Task<IActionResult> ViewNewEventAdded()
-    {
-        var events = await _googleCalendarService.GetEventsAsync("primary");
-        var lastAdded = events.OrderByDescending(e => e.CreatedDateTimeOffset ?? e.UpdatedDateTimeOffset)
-            .FirstOrDefault();
+    public async Task<IActionResult> ViewNewEventAdded(string eventId)
+	{
 
-        if (lastAdded == null)
-        {
-            return NotFound("No events found.");
-        }
+		var addedEvent = await _googleCalendarService.GetEventByIdAsync(eventId);
+		return View(addedEvent); 
+	}
 
-
-        return View(lastAdded);
-    }
-
-    public async Task<IActionResult> ViewNewEventUpdated(string calendarId, string eventId)
+	public async Task<IActionResult> ViewNewEventUpdated(string calendarId, string eventId)
     {
         // Retrieve the specific event by its ID
         var eventToView = await _googleCalendarService.GetEventByIdAsync(calendarId, eventId);
@@ -348,6 +339,8 @@ public class CalendarController : Controller
 		{
 			if (string.IsNullOrEmpty(model.EventId))
 			{
+				Event createdEvent;
+
 				// Creating a new event
 				EventsResource.InsertRequest.SendUpdatesEnum sendUpdatesInsert;
 				switch (model.SendUpdates)
@@ -364,8 +357,9 @@ public class CalendarController : Controller
 						break;
 				}
 
-				await _googleCalendarService.AddEventAsync(calendarId, newEvent, sendUpdatesInsert);
-				return RedirectToAction("ViewNewEventAdded", new { message = "Event created successfully." });
+
+				createdEvent = await _googleCalendarService.AddEventAsync(calendarId, newEvent, sendUpdatesInsert);
+				return RedirectToAction("ViewNewEventAdded", new { eventId = createdEvent.Id, message = "Event created successfully." });
 			}
 			else
 			{
