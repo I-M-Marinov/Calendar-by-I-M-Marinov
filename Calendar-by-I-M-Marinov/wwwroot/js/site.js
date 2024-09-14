@@ -78,25 +78,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Make sure no duplicate event listeners are added
     if (addAttendeeBtn && !addAttendeeBtn.dataset.listenerAdded) {
-        addAttendeeBtn.dataset.listenerAdded = true; 
+        addAttendeeBtn.dataset.listenerAdded = true; // Flag to prevent duplicate listeners
 
-    addAttendeeBtn.addEventListener('click', () => {
-        const newAttendeeRow = document.createElement('div');
-        newAttendeeRow.classList.add('attendee-row');
+        addAttendeeBtn.addEventListener('click', () => {
+            const newAttendeeRow = document.createElement('div');
+            newAttendeeRow.classList.add('attendee-row');
 
-        newAttendeeRow.innerHTML = `
-            <input type="email" name="Attendants" class="form-control" placeholder="Enter email address" />
-            <button type="button" class="btn btn-remove-attendee">Remove</button>
-        `;
+            newAttendeeRow.innerHTML = `
+                <input type="email" name="Attendants" class="form-control" placeholder="Enter email address" />
+                <button type="button" class="btn btn-remove-attendee">Remove</button>
+            `;
 
-        attendeesContainer.appendChild(newAttendeeRow);
+            attendeesContainer.appendChild(newAttendeeRow);
 
-        // Attach remove button functionality
-        newAttendeeRow.querySelector('.btn-remove-attendee').addEventListener('click', () => {
-            attendeesContainer.removeChild(newAttendeeRow);
+            // Attach remove button functionality
+            newAttendeeRow.querySelector('.btn-remove-attendee').addEventListener('click', () => {
+                attendeesContainer.removeChild(newAttendeeRow);
+            });
         });
-    });
+    }
 
+    // Attach remove button functionality for existing rows, ensure no duplicates
     document.querySelectorAll('.btn-remove-attendee').forEach(button => {
         if (!button.dataset.listenerAdded) {
             button.dataset.listenerAdded = true; // Prevent duplicate listeners
