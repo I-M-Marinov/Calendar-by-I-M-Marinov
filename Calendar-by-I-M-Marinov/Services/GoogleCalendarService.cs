@@ -6,6 +6,7 @@ using Google.Apis.Util.Store;
 using Google.Apis.Calendar.v3.Data;
 using Calendar_by_I_M_Marinov.Services;
 using Calendar_by_I_M_Marinov.Services.Contracts;
+using static Google.Apis.Requests.BatchRequest;
 
 public class GoogleCalendarService : IGoogleCalendarService
 {
@@ -134,7 +135,19 @@ public class GoogleCalendarService : IGoogleCalendarService
     public virtual async Task<Event> GetEventByIdAsync(string eventId)
 	{
 		var request = _calendarService.Events.Get("primary", eventId);
-		return await request.ExecuteAsync();
+		var resultEvent = await request.ExecuteAsync();
+
+		if (resultEvent.Attendees != null)
+		{
+			foreach (var attendee in resultEvent.Attendees)
+			{
+				// Fetch and set display names if needed
+				attendee.DisplayName = await _peopleService.FetchDisplayNameByEmailAsync(attendee.Email);
+			}
+		}
+
+
+		return resultEvent;
 	}
 	// overload of the original method taking calendarId and eventId
 	public async Task<Event> GetEventByIdAsync(string calendarId, string eventId)
