@@ -413,7 +413,7 @@ public class CalendarController : Controller
 
             TempData["IsSuccess"] = true;
             TempData["SuccessMessage"] = model.DeleteSeries
-                ? "The recurring event series was deleted successfully."
+                ? "The annual event series was deleted successfully."
                 : "The event was deleted successfully.";
             TempData["DeletedInstancesCount"] = deletedInstancesCount;
             return RedirectToAction("DeletionConfirmed");
@@ -461,24 +461,34 @@ public class CalendarController : Controller
                 return RedirectToAction("ListCalendarsAndEvents");
             }
 
-            // Store the necessary data in TempData
-            TempData["EventId"] = eventToDelete.Id;
-            TempData["Summary"] = eventToDelete.Summary;
-            TempData["Start"] = eventToDelete.Start.DateTime;
-            TempData["End"] = eventToDelete.End.DateTime;
-            TempData["Location"] = eventToDelete.Location;
+            // Determine if it's an all-day event
+            DateTime? startDateTime = eventToDelete.Start?.DateTime;
+            DateTime? endDateTime = eventToDelete.End?.DateTime;
+            string startDate = eventToDelete.Start?.Date;
+            string endDate = eventToDelete.End?.Date;
 
-            // Redirect to ConfirmDelete view
-            return View(new DeleteEventViewModel
+            if (!startDateTime.HasValue && !string.IsNullOrEmpty(startDate))
             {
-                EventId = eventToDelete.Id,
+	            startDateTime = DateTime.Parse(startDate); 
+            }
+
+            if (!endDateTime.HasValue && !string.IsNullOrEmpty(endDate))
+            {
+	            endDateTime = DateTime.Parse(endDate);
+            }
+
+			return View(new DeleteEventViewModel
+			{
+				EventId = eventToDelete.Id,
+				RecurringEventId = eventToDelete.RecurringEventId,
+                IsAllDayEvent = eventToDelete.Start.Date != null && eventToDelete.End.Date != null,
                 Summary = eventToDelete.Summary,
-                Start = eventToDelete.Start.DateTime,
-                End = eventToDelete.End.DateTime,
-                Location = eventToDelete.Location,
-                DeleteSeries = false
-            });
-        }
+				Start = startDateTime, 
+				End = endDateTime,     
+				Location = eventToDelete.Location,
+				DeleteSeries = false 
+			});
+		}
         catch (Exception ex)
         {
             TempData["ErrorMessage"] = $"An error occurred while retrieving the event details: {ex.Message}";
