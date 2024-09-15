@@ -1,4 +1,5 @@
-﻿@model DeleteEventViewModel
+﻿@using Google.Apis.PeopleService.v1.Data
+@model DeleteEventViewModel
 
 @{
     bool isSuccess = TempData["IsSuccess"] != null && (bool)TempData["IsSuccess"];
@@ -17,9 +18,9 @@ else if (isSuccess)
 {
     <div class="alert alert-success" style="text-align: center;">
         @TempData["SuccessMessage"]
-        @if (deletedInstancesCount > 0)
+        @if (deletedInstancesCount > 1)
         {
-            <p>@deletedInstancesCount instance(s) of the recurring event were deleted.</p>
+            <p>@deletedInstancesCount instances of the annual event were deleted.</p>
         }
     </div>
 }
@@ -30,9 +31,29 @@ else if (isSuccess)
         <li style="text-align: center;">
             <br />
             <br />
+
+
+            @if (Model.RecurringEventId != null)
+            {
+                <img class="annual-icon" src="/Icons/annual-icon.PNG" alt="annual-icon">
+            }
+
+            @if (Model.IsAllDayEvent) // if it is an all day event add the icon
+            {
+	            <img class="allDay-icon" src="/Icons/all-day.png" alt="allDay-icon">
+            }
             <strong>@Model.Summary</strong><br />
-            Start: @Model.Start?.ToString("MMMM dd, yyyy h:mm")<br />
-            End: @Model.End?.ToString("MMMM dd, yyyy h:mm")<br />
+
+            @if (Model.IsAllDayEvent)
+            {
+                <p>Date: @Model.Start?.ToString("ddd dd MMM yyyy")</p>
+            }
+            else
+            {
+                <p>Start: @Model.Start?.ToString("MMMM dd, yyyy h:mm")</p>
+                <p>End: @Model.End?.ToString("MMMM dd, yyyy h:mm")</p>
+            }
+
             Location: @Model.Location<br />
         </li>
     </ul>
@@ -40,10 +61,15 @@ else if (isSuccess)
     <!-- Form to confirm deletion -->
     <form asp-action="DeletePrimaryEvent" method="post" style="text-align: center;">
         <input type="hidden" name="eventId" value="@Model.EventId" />
-        <div class="form-group">
-            <input type="checkbox" id="deleteSeries" name="deleteSeries" value="true" />
-            <label for="deleteSeries">Delete entire event series?</label>
-        </div>
+        
+        @if (Model.RecurringEventId != null)
+        {
+	        <div class="form-group">
+		        <input type="checkbox" id="deleteSeries" name="deleteSeries" value="true" />
+		        <label for="deleteSeries">Delete all events in the series?</label>
+	        </div>
+        }
+
         <button type="submit" class="btn btn-danger btn-sm">Confirm Delete</button>
         <a href="@Url.Action("ListCalendarsAndEvents")" class="btn btn-secondary btn-sm">Cancel</a>
     </form>
