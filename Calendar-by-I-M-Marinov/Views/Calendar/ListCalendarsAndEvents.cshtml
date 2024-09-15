@@ -50,129 +50,135 @@
             }
 
 			<li class="event-item" onclick="handleEventClick(this)">
-	            <div class="event-info">
+				<div class="event-info">
+					
+					@if (evt.RecurringEventId != null) // if it is an annual event add the icon
+					{
+						<img class="annual-icon" src="/Icons/annual-icon.PNG" alt="annual-icon">
+					}
 
-		            @if (!string.IsNullOrEmpty(evt.Start?.Date) && !string.IsNullOrEmpty(evt.End?.Date)) // if it is an all day event add the icon
-		            {
-			            <img class="allDay-icon" src="/Icons/all-day.png" alt="allDay-icon">
-		            }
-		            <strong>@evt.Summary</strong><br/>
+					@if (!string.IsNullOrEmpty(evt.Start?.Date) && !string.IsNullOrEmpty(evt.End?.Date)) // if it is an all day event add the icon
+					{
+						<img class="allDay-icon" src="/Icons/all-day.png" alt="allDay-icon">
+					}
 
-		            @if (evt.Attendees != null && evt.Attendees.Any())
-		            {
-			            <div class="attendees-info" onclick="toggleAttendees(this, event)">
-				            <img src="/Icons/attendee.png" alt="Attendees Icon" class="attendees-icon">
-				            <span class="attendees-count">@evt.Attendees.Count()</span>
-			            </div>
-		            }
+					<strong>@evt.Summary</strong><br/>
 
-		            @if (!string.IsNullOrEmpty(evt.Start?.Date) && evt.Start?.DateTime == null && !string.IsNullOrEmpty(evt.End?.Date) && evt.End?.DateTime == null)
-		            {
-			            <!-- All-Day Event -->
-			            <p>
-				            <span style="color: royalblue; font-weight:500;">Date: @DateTime.Parse(evt.Start.Date).ToString("ddd dd MMM yyyy")</span>
-			            </p>
-		            }
-		            else if (evt.Start?.DateTimeDateTimeOffset != null && evt.End?.DateTimeDateTimeOffset != null)
-		            {
-			            <!-- Timed Event -->
-			            <span>
-				            <span style="color: green; font-weight:500;">Start:</span> 
-				            @evt.Start.DateTimeDateTimeOffset.Value.ConvertToLocalTime("Europe/Sofia").ToString("MMMM dd, yyyy h:mm tt")
-			            </span>
-			            <br/>
-			            <span>
-				            <span style="color: red; font-weight:500;">End:</span> 
-				            @evt.End.DateTimeDateTimeOffset.Value.ConvertToLocalTime("Europe/Sofia").ToString("MMMM dd, yyyy h:mm tt")
-			            </span>
-			            <br/>
-		            }
-		            else if (!string.IsNullOrEmpty(evt.Start?.Date) && !string.IsNullOrEmpty(evt.End?.Date))
-		            {
-			            <!-- Multi-day Event with only Dates (all-day across multiple days) -->
-			            <span>
-				            <span style="color: green; font-weight:500;">Start:</span> 
-				            @DateTime.Parse(evt.Start.Date).ToLocalTime().ToString("MMMM dd, yyyy")
-			            </span>
-			            <br/>
-			            <span>
-				            <span style="color: red; font-weight:500;">End:</span> 
-				            @DateTime.Parse(evt.End?.Date).ToLocalTime().ToString("MMMM dd, yyyy")
-			            </span>
-			            <br/>
-		            }
-
-		            @if (!string.IsNullOrEmpty(evt.Location))
-		            {
-			            <span id="location">Location: @evt.Location</span>
-		            }
-
-		            <!-- Display Attendees -->
 					@if (evt.Attendees != null && evt.Attendees.Any())
-		            {
-			            <div class="attendees-container">
-				            <h6>Attendees:</h6>
-				            <ul>
+					{
+						<div class="attendees-info" onclick="toggleAttendees(this, event)">
+							<img src="/Icons/attendee.png" alt="Attendees Icon" class="attendees-icon">
+							<span class="attendees-count">@evt.Attendees.Count()</span>
+						</div>
+					}
+
+					@if (!string.IsNullOrEmpty(evt.Start?.Date) && evt.Start?.DateTime == null && !string.IsNullOrEmpty(evt.End?.Date) && evt.End?.DateTime == null)
+					{
+						<!-- All-Day Event -->
+						<p>
+							<span style="color: royalblue; font-weight:500;">Date: @DateTime.Parse(evt.Start.Date).ToString("ddd dd MMM yyyy")</span>
+						</p>
+					}
+					else if (evt.Start?.DateTimeDateTimeOffset != null && evt.End?.DateTimeDateTimeOffset != null)
+					{
+						<!-- Timed Event -->
+						<span>
+							<span style="color: green; font-weight:500;">Start:</span>
+							@evt.Start.DateTimeDateTimeOffset.Value.ConvertToLocalTime("Europe/Sofia").ToString("MMMM dd, yyyy h:mm tt")
+						</span>
+						<br/>
+						<span>
+							<span style="color: red; font-weight:500;">End:</span>
+							@evt.End.DateTimeDateTimeOffset.Value.ConvertToLocalTime("Europe/Sofia").ToString("MMMM dd, yyyy h:mm tt")
+						</span>
+						<br/>
+					}
+					else if (!string.IsNullOrEmpty(evt.Start?.Date) && !string.IsNullOrEmpty(evt.End?.Date))
+					{
+						<!-- Multi-day Event with only Dates (all-day across multiple days) -->
+						<span>
+							<span style="color: green; font-weight:500;">Start:</span>
+							@DateTime.Parse(evt.Start.Date).ToLocalTime().ToString("MMMM dd, yyyy")
+						</span>
+						<br/>
+						<span>
+							<span style="color: red; font-weight:500;">End:</span>
+							@DateTime.Parse(evt.End?.Date).ToLocalTime().ToString("MMMM dd, yyyy")
+						</span>
+						<br/>
+					}
+
+					@if (!string.IsNullOrEmpty(evt.Location))
+					{
+						<span id="location">Location: @evt.Location</span>
+					}
+
+					<!-- Display Attendees -->
+					@if (evt.Attendees != null && evt.Attendees.Any())
+					{
+						<div class="attendees-container">
+							<h6>Attendees:</h6>
+							<ul>
 								@foreach (var attendee in evt.Attendees)
-					            {
-						            <li style="list-style-type: square; border:none;">
-							            <!-- Determine color based on response status -->
-							            @{
-								            string color = "black"; // Default color
-								            if (attendee.ResponseStatus == "accepted")
-								            {
-									            color = "green";
-								            }
-								            else if (attendee.ResponseStatus == "declined")
-								            {
-									            color = "darkred";
-								            }
-								            else if (attendee.ResponseStatus == "tentative")
-								            {
-									            color = "orange";
-								            }
-								            else if (attendee.ResponseStatus == "needsAction")
-								            {
-									            color = "blue";
-								            }
-							            }
+								{
+									<li style="list-style-type: square; border:none;">
+										<!-- Determine color based on response status -->
+										@{
+											string color = "black"; // Default color
+											if (attendee.ResponseStatus == "accepted")
+											{
+												color = "green";
+											}
+											else if (attendee.ResponseStatus == "declined")
+											{
+												color = "darkred";
+											}
+											else if (attendee.ResponseStatus == "tentative")
+											{
+												color = "orange";
+											}
+											else if (attendee.ResponseStatus == "needsAction")
+											{
+												color = "blue";
+											}
+										}
 
-							            <!-- Show display name or email with color -->
-							            <span style="color:@color; font-weight: 600;">
-								            @if (attendee.DisplayName == null)
-								            {
-									            @attendee.Email
-								            }
-								            else
-								            {
-									            @attendee.DisplayName
-								            }
+										<!-- Show display name or email with color -->
+										<span style="color:@color; font-weight: 600;">
+											@if (attendee.DisplayName == null)
+											{
+												@attendee.Email
+											}
+											else
+											{
+												@attendee.DisplayName
+											}
 
-								            <!-- Show response status -->
-								            @if (attendee.ResponseStatus == "accepted")
-								            {
-									            @("(Accepted)")
-								            }
-								            else if (attendee.ResponseStatus == "declined")
-								            {
-									            @("(Declined)")
-								            }
-								            else if (attendee.ResponseStatus == "tentative")
-								            {
-									            @("(Maybe)")
-								            }
-								            else if (attendee.ResponseStatus == "needsAction")
-								            {
-									            @("(Pending)")
-								            }
-							            </span>
-						            </li>
-					            }
-				            </ul>
-			            </div>
-		            }
+											<!-- Show response status -->
+											@if (attendee.ResponseStatus == "accepted")
+											{
+												@("(Accepted)")
+											}
+											else if (attendee.ResponseStatus == "declined")
+											{
+												@("(Declined)")
+											}
+											else if (attendee.ResponseStatus == "tentative")
+											{
+												@("(Maybe)")
+											}
+											else if (attendee.ResponseStatus == "needsAction")
+											{
+												@("(Pending)")
+											}
+										</span>
+									</li>
+								}
+							</ul>
+						</div>
+					}
 
-	            </div>
+				</div>
 				
 	               @if (evt.Description != null)
 	            {
