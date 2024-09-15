@@ -137,15 +137,16 @@
 
             @if (Model.Recurrence != null && Model.Recurrence.Any())
             {
-                        <p>Recurrence: @string.Join(", ", Model.Recurrence)</p>
+	            <img class="annual-icon" src="/Icons/annual-icon.PNG" alt="annual-icon"><p style="color: purple;font-weight:500;">Annual Event</p>
             }
 
-                <!-- Edit Button -->
+
+	            <!-- Edit Button -->
 			<a asp-action="CreateEvent" asp-route-calendarId="primary" asp-route-eventId="@Model.Id" class="btn btn-primary btn-sm">Edit</a>
 
                 <!-- Delete Button -->
                 <form asp-action="ConfirmDelete" method="get" style="display:inline;">
-                    <input type="hidden" name="calendarId" value="@calendarId"/>
+                    <input type="hidden" name="calendarId" value="primary"/>
                     <input type="hidden" name="eventId" value="@Model.Id"/>
                     <button type="submit" class="btn btn-danger btn-sm">Delete</button>
                 </form>
