@@ -309,9 +309,15 @@ h4{
     margin-left: 5em;
 }
 
-.allDay-icon {
+.allDay-icon{
     width: 30px;
     margin-right: 0.5em;
+    pointer-events: none;
+}
+
+.annual-icon {
+    width: 20px;
+    margin-right: 0.1em;
     pointer-events: none;
 }
 
