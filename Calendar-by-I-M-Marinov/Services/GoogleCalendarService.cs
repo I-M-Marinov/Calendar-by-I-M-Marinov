@@ -6,7 +6,6 @@ using Google.Apis.Util.Store;
 using Google.Apis.Calendar.v3.Data;
 using Calendar_by_I_M_Marinov.Services;
 using Calendar_by_I_M_Marinov.Services.Contracts;
-using static Google.Apis.Requests.BatchRequest;
 
 public class GoogleCalendarService : IGoogleCalendarService
 {
@@ -336,9 +335,22 @@ public class GoogleCalendarService : IGoogleCalendarService
 
         var createdCalendar = await _calendarService.Calendars.Insert(newCalendar).ExecuteAsync();
 
-        return createdCalendar;
+		return createdCalendar;
     }
-    public async Task<string> GetPrimaryCalendarTimeZoneAsync()
+
+	public async Task<Calendar> UpdateExistingCalendar(string calendarId, Calendar calendarToUpdate)
+	{
+
+		var requestedCalendar = await _calendarService.Calendars.Get(calendarId).ExecuteAsync();
+
+		requestedCalendar.Summary = calendarToUpdate.Summary;
+		requestedCalendar.Description = calendarToUpdate.Description;
+
+		var updatedCalendar = await _calendarService.Calendars.Update(requestedCalendar, calendarId).ExecuteAsync();
+
+		return updatedCalendar;
+	}
+	public async Task<string> GetPrimaryCalendarTimeZoneAsync()
     {
 	    var calendarId = "primary"; // ID for the primary calendar
 	    var calendar = await _calendarService.Calendars.Get(calendarId).ExecuteAsync();
