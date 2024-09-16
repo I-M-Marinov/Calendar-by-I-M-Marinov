@@ -5,6 +5,7 @@ using Calendar_by_I_M_Marinov.Models;
 using Google.Apis.Calendar.v3;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Calendar_by_I_M_Marinov.Common;
+using System.Globalization;
 
 public class CalendarController : Controller
 {
@@ -128,9 +129,15 @@ public class CalendarController : Controller
 
     public async Task<IActionResult> ViewNewEventAdded(string eventId)
 	{
-
 		var addedEvent = await _googleCalendarService.GetEventByIdAsync(eventId);
 		return View(addedEvent); 
+	}
+
+	public async Task<IActionResult> ViewDuplicateEventAdded(string calendarId, string eventId)
+	{
+		Console.WriteLine(eventId);
+		var duplicatedEvent = await _googleCalendarService.GetEventByIdAsync(calendarId,eventId);
+		return View("ViewNewEventAdded", duplicatedEvent);
 	}
 
 	public async Task<IActionResult> ViewNewEventUpdated(string calendarId, string eventId)
@@ -359,7 +366,7 @@ public class CalendarController : Controller
 
 
 				createdEvent = await _googleCalendarService.AddEventAsync(calendarId, newEvent, sendUpdatesInsert);
-				return RedirectToAction("ViewNewEventAdded", new { eventId = createdEvent.Id, message = "Event created successfully." });
+				return RedirectToAction("ViewNewEventAdded", new { calendarId, eventId = createdEvent.Id, message = "Event created successfully." });
 			}
 			else
 			{
@@ -409,7 +416,7 @@ public class CalendarController : Controller
         try
         {
             int deletedInstancesCount =
-                await _googleCalendarService.DeleteEventAsync("primary", model.EventId, model.DeleteSeries);
+                await _googleCalendarService.DeleteEventAsync(model.CalendarId, model.EventId, model.DeleteSeries);
 
             TempData["IsSuccess"] = true;
             TempData["SuccessMessage"] = model.DeleteSeries
@@ -426,7 +433,37 @@ public class CalendarController : Controller
         }
     }
 
-    public IActionResult DeletionConfirmed(string eventId)
+	[HttpPost]
+	public async Task<IActionResult> DeleteEvent(DeleteEventViewModel model)
+	{
+		if (string.IsNullOrEmpty(model.EventId))
+		{
+			TempData["ErrorMessage"] = "Event ID is missing.";
+			TempData["IsSuccess"] = false;
+			return RedirectToAction("ConfirmDelete", new {model.CalendarId, eventId = model.EventId });
+		}
+
+		try
+		{
+			int deletedInstancesCount =
+				await _googleCalendarService.DeleteEventAsync(model.CalendarId, model.EventId, model.DeleteSeries);
+
+			TempData["IsSuccess"] = true;
+			TempData["SuccessMessage"] = model.DeleteSeries
+				? "The annual event series was deleted successfully."
+				: "The event was deleted successfully.";
+			TempData["DeletedInstancesCount"] = deletedInstancesCount;
+			return RedirectToAction("DeletionConfirmed");
+		}
+		catch (Exception ex)
+		{
+			TempData["ErrorMessage"] = $"Failed to delete event. Error: {ex.Message}";
+			TempData["IsSuccess"] = false;
+			return RedirectToAction("ConfirmDelete", new { calendarId = model.CalendarId, eventId = model.EventId });
+		}
+	}
+
+	public IActionResult DeletionConfirmed(string eventId)
     {
         var successMessage = TempData["SuccessMessage"];
         var deletedInstancesCount =
@@ -476,9 +513,10 @@ public class CalendarController : Controller
 	            endDateTime = DateTime.Parse(endDate);
             }
 
-			return View(new DeleteEventViewModel
+			return View("ConfirmDelete", new DeleteEventViewModel
 			{
 				EventId = eventToDelete.Id,
+                CalendarId = calendarId,
 				RecurringEventId = eventToDelete.RecurringEventId,
                 IsAllDayEvent = eventToDelete.Start.Date != null && eventToDelete.End.Date != null,
                 Summary = eventToDelete.Summary,
@@ -508,23 +546,28 @@ public class CalendarController : Controller
                 return NotFound($"Event with ID {eventId} not found in calendar {calendarId}.");
             }
 
-            // Create a new event model based on the existing event
-            var model = new EventViewModel
-            {
-                Summary = existingEvent.Summary + " " + "<duplicate>",
-                Description = existingEvent.Description,
-                Location = existingEvent.Location,
-                Visibility = existingEvent.Visibility,
-                Start = existingEvent.Start?.DateTimeDateTimeOffset?.DateTime,
-                End = existingEvent.End?.DateTimeDateTimeOffset?.DateTime,
-                EventType = existingEvent.Start?.Date != null ? "allDay" : "single" // Determine event type
-            };
+			// Create a new event model based on the existing event
+			var duplicatedEvent = new Event
+			{
+				Summary = existingEvent.Summary + " " + "<duplicate>",
+				Description = existingEvent.Description,
+				Location = existingEvent.Location,
+				Visibility = existingEvent.Visibility,
+				Start = existingEvent.Start,
+				End = existingEvent.End,
+				Recurrence = existingEvent.Recurrence,
+				RecurringEventId = existingEvent.RecurringEventId,
+				Attendees = existingEvent.Attendees,
+				Reminders = existingEvent.Reminders
+			};
 
-            // Call the method to create the duplicated event in the primary calendar
-            var result = await CreateEvent(model);
-
-            return RedirectToAction("ViewNewEventAdded", new { message = "Event duplicated successfully." });
-        }
+			// Step 3: Insert the duplicated event
+			EventsResource.InsertRequest.SendUpdatesEnum sendUpdates = EventsResource.InsertRequest.SendUpdatesEnum.None; // Customize as needed
+			var newEvent = await _googleCalendarService.AddEventAsync(calendarId, duplicatedEvent, sendUpdates);
+			eventId = newEvent.Id;
+			// Step 4: Redirect to a view showing the duplicated event
+			return RedirectToAction("ViewDuplicateEventAdded", new { calendarId, eventId, message = "Event duplicated successfully." });
+		}
         catch (Exception ex)
         {
             ModelState.AddModelError("", $"Error duplicating event: {ex.Message}");
@@ -1216,5 +1259,19 @@ public class CalendarController : Controller
 
 	    return RedirectToAction("ListCalendars");
 
+    }
+
+    public IActionResult BackToPreviousPage()
+    {
+        var refererUrl = Request.Headers["Referer"].ToString();
+
+        // Check if the referer URL exists and is valid
+        if (!string.IsNullOrEmpty(refererUrl))
+        {
+            return Redirect(refererUrl);
+        }
+
+        // Fallback: if referer doesn't exist, redirect to a default page
+        return RedirectToAction("ListCalendarsAndEvents");
     }
 }
