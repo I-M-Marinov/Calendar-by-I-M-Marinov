@@ -1,5 +1,5 @@
 ﻿@{
-	ViewBag.Title = "Create New Calendar";
+	ViewBag.Title = "Create a New Calendar";
 }
 
 <h2>@ViewBag.Title</h2>
@@ -53,7 +53,8 @@
 @if (ViewBag.ShowSuccessMessage != null && ViewBag.ShowSuccessMessage)
 {
 	<div class="alert alert-success" role="alert">
-		New calendar created! <br />
+		<strong>New calendar created!</strong>
+		<br /><br />
 		Name: @ViewBag.NewCalendarName <br />
 		TimeZone: @ViewBag.NewCalendarTimeZone <br />
 		Description: @ViewBag.NewCalendarDescription
