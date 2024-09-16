@@ -3,7 +3,7 @@
 	public class DeleteEventViewModel
 	{
 		public string EventId { get; set; }
-		public string CalendarId { get; set; } = null!;
+		public string CalendarId { get; set; }
 		public string? RecurringEventId { get; set; }
 		public bool DeleteSeries { get; set; } = false; // default to false
 		public string Summary { get; set; }

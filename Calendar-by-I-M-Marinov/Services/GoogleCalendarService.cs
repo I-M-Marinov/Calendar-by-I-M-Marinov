@@ -12,9 +12,6 @@ public class GoogleCalendarService : IGoogleCalendarService
 {
 	private readonly CalendarService _calendarService;
     private readonly GooglePeopleService _peopleService;
-
-
-
     private readonly string _applicationName = "Calendar-by-I-M-Marinov";
 
 	public GoogleCalendarService(IConfiguration configuration)
