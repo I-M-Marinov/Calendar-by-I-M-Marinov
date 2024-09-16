@@ -179,6 +179,16 @@ public class GoogleCalendarService : IGoogleCalendarService
         var insertRequest = _calendarService.Events.Insert(newEvent, calendarId);
         insertRequest.SendUpdates = sendUpdates; 
         var createdEvent = await insertRequest.ExecuteAsync();
+
+        if (createdEvent.Attendees != null)
+        {
+            foreach (var attendee in createdEvent.Attendees)
+            {
+                // Fetch and set display names if needed
+                attendee.DisplayName = await _peopleService.FetchDisplayNameByEmailAsync(attendee.Email);
+            }
+        }
+
         return createdEvent;
     }
     public async Task<Event> AddEventAsync(string calendarId, string eventId, Event newEvent)

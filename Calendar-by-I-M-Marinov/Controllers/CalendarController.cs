@@ -461,7 +461,6 @@ public class CalendarController : Controller
                 return RedirectToAction("ListCalendarsAndEvents");
             }
 
-            // Determine if it's an all-day event
             DateTime? startDateTime = eventToDelete.Start?.DateTime;
             DateTime? endDateTime = eventToDelete.End?.DateTime;
             string startDate = eventToDelete.Start?.Date;
