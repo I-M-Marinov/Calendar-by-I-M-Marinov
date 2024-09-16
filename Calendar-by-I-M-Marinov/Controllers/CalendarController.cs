@@ -5,7 +5,7 @@ using Calendar_by_I_M_Marinov.Models;
 using Google.Apis.Calendar.v3;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Calendar_by_I_M_Marinov.Common;
-using System.Globalization;
+using Calendar = Google.Apis.Calendar.v3.Data.Calendar;
 
 public class CalendarController : Controller
 {
@@ -135,7 +135,6 @@ public class CalendarController : Controller
 
 	public async Task<IActionResult> ViewDuplicateEventAdded(string calendarId, string eventId)
 	{
-		Console.WriteLine(eventId);
 		var duplicatedEvent = await _googleCalendarService.GetEventByIdAsync(calendarId,eventId);
 		return View("ViewNewEventAdded", duplicatedEvent);
 	}
@@ -538,7 +537,6 @@ public class CalendarController : Controller
     {
         try
         {
-            // Retrieve the existing event from the specified calendar
             var existingEvent = await _googleCalendarService.GetEventByIdAsync(calendarId, eventId);
 
             if (existingEvent == null)
@@ -546,7 +544,6 @@ public class CalendarController : Controller
                 return NotFound($"Event with ID {eventId} not found in calendar {calendarId}.");
             }
 
-			// Create a new event model based on the existing event
 			var duplicatedEvent = new Event
 			{
 				Summary = existingEvent.Summary + " " + "<duplicate>",
@@ -561,17 +558,17 @@ public class CalendarController : Controller
 				Reminders = existingEvent.Reminders
 			};
 
-			// Step 3: Insert the duplicated event
 			EventsResource.InsertRequest.SendUpdatesEnum sendUpdates = EventsResource.InsertRequest.SendUpdatesEnum.None; // Customize as needed
 			var newEvent = await _googleCalendarService.AddEventAsync(calendarId, duplicatedEvent, sendUpdates);
+
 			eventId = newEvent.Id;
-			// Step 4: Redirect to a view showing the duplicated event
+
 			return RedirectToAction("ViewDuplicateEventAdded", new { calendarId, eventId, message = "Event duplicated successfully." });
 		}
         catch (Exception ex)
         {
             ModelState.AddModelError("", $"Error duplicating event: {ex.Message}");
-            return RedirectToAction("Error"); // Redirect to an error page or view if something goes wrong
+            return RedirectToAction("Error"); 
         }
     }
 
@@ -1222,7 +1219,85 @@ public class CalendarController : Controller
         return View();
     }
 
-    [HttpPost]
+    [HttpGet]
+    public async Task<IActionResult> EditCalendar(string calendarId)
+    {
+        if (string.IsNullOrEmpty(calendarId))
+        {
+            TempData["ErrorMessage"] = "Calendar ID is missing.";
+            return RedirectToAction("ListCalendars");
+        }
+
+        try
+        {
+            // Fetch calendar details
+            var calendar = await _googleCalendarService.GetCalendarByIdAsync(calendarId);
+
+
+            var model = new CalendarViewModel
+            {
+                CalendarId = calendar.Id,
+                CalendarName = calendar.Summary,
+                Description = calendar.Description
+            };
+
+            return View(model);
+        }
+        catch (Exception ex)
+        {
+            TempData["ErrorMessage"] = $"Error fetching calendar: {ex.Message}";
+            return RedirectToAction("ListCalendars");
+        }
+    }
+
+	[HttpPost]
+	public async Task<IActionResult> EditCalendar(CalendarViewModel model)
+	{
+		if (!ModelState.IsValid)
+		{
+			foreach (var state in ModelState)
+			{
+				foreach (var error in state.Value.Errors)
+				{
+					Console.WriteLine($"Key: {state.Key}, Error: {error.ErrorMessage}"); // Log any issues on the console
+				}
+			}
+
+			return View(model);
+		}
+
+		try
+		{
+			var calendar = new Calendar
+			{
+				Summary = model.CalendarName,
+				Description = model.Description
+			};
+
+			await _googleCalendarService.UpdateExistingCalendar(model.CalendarId, calendar);
+
+			ViewBag.ShowSuccessMessage = true;
+			ViewBag.SuccessMessage = "Calendar updated successfully.";
+
+			var updatedCalendar = await _googleCalendarService.GetCalendarByIdAsync(model.CalendarId);
+
+			var updatedModel = new CalendarViewModel
+			{
+				CalendarId = updatedCalendar.Id,
+				CalendarName = updatedCalendar.Summary,
+				Description = updatedCalendar.Description,
+			};
+
+			return View(updatedModel);
+		}
+		catch (Exception ex)
+		{
+			TempData["ErrorMessage"] = $"Error updating calendar: {ex.Message}";
+			return View(model);
+		}
+	}
+
+	[HttpPost]
     public async Task<IActionResult> DeleteCalendar(string calendarId)
     {
 	    try
@@ -1271,7 +1346,6 @@ public class CalendarController : Controller
             return Redirect(refererUrl);
         }
 
-        // Fallback: if referer doesn't exist, redirect to a default page
         return RedirectToAction("ListCalendarsAndEvents");
     }
 }
