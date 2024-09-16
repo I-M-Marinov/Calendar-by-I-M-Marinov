@@ -26,6 +26,13 @@ form-group{
 .navbar {
     font-family: 'Rubik', sans-serif;
 }
+
+.alert{
+    text-align: center;
+    width: 500px;
+    margin: 0 auto;
+    margin-top: 1em;
+}
 /* CSS for the table in the ListAllCalendars View */
 .centered-table {
     font-family: 'Rubik', sans-serif;
