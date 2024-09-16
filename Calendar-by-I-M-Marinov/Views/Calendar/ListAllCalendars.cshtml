@@ -29,13 +29,21 @@
 	@foreach (var calendar in Model)
 	{
 		<tr data-href="@Url.Action("ListCalendarsAndEvents", new { selectedCalendarId = calendar.CalendarId })" class="clickable-row">
-			<td title="Access role for this calendar is @calendar.AccessRole.ToUpper()">@calendar.CalendarName</td>
+				<td title="@calendar.Description  @Environment.NewLine Access role for this calendar is @calendar.AccessRole.ToUpper()  ">@calendar.CalendarName</td>
 			<td>@calendar.EventsCount</td>
 			<td>
+					<!-- Edit Button if the calendar is an OWNED calendar only -->
 				@if (calendar.Primary != true)
 				{
-						<!-- Remove Button -->
+					@if (calendar.AccessRole == "owner")
+					{
+						<a href="@Url.Action("EditCalendar", "Calendar", new { calendarId = calendar.CalendarId })" class="btn btn-warning btn-sm">Edit</a>
+					}
+
+					<!-- Remove Button -->
 					<button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete('@calendar.CalendarId')">Remove</button>
+
+
 				}
 				@if (calendar.Primary == true)
 				{
