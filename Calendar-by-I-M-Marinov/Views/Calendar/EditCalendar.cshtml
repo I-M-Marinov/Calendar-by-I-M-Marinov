@@ -1,0 +1,45 @@
+﻿@model Calendar_by_I_M_Marinov.Models.CalendarViewModel
+
+@{
+    ViewBag.Title = "Edit Calendar";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<!-- Display error messages only -->
+@if (!string.IsNullOrEmpty(ViewBag.Message) && ViewBag.MessageClass == "alert-danger")
+{
+    <div id="message" class="alert @ViewBag.MessageClass">@ViewBag.Message</div>
+}
+
+<div class="form-container">
+    <form asp-action="EditCalendar" method="post">
+
+        <div class="edit-calendar-container">
+            <div class="edit-calendar name">
+                <label for="summary">Calendar Name</label>
+                <input type="text" id="summary" name="CalendarName" value="@Model.CalendarName" class="form-control" />
+            </div>
+
+            <div class="edit-calendar description">
+                <label for="description">Description (Optional)</label>
+                <textarea id="description" name="Description" class="form-control">@Model.Description</textarea>
+            </div>
+
+            <!-- Hidden field to store CalendarId -->
+            <input type="hidden" name="CalendarId" value="@Model.CalendarId" />
+
+            <button type="submit" class="btn btn-primary">Update Calendar</button>
+        </div>
+    </form>
+</div>
+
+<!-- Hidden fields for validation and success messages -->
+@if (ViewBag.ShowSuccessMessage != null && ViewBag.ShowSuccessMessage)
+{
+    <div class="alert alert-success" role="alert">
+        Calendar updated successfully! <br />
+        Name: @Model.CalendarName <br />
+        Description: @Model.Description
+    </div>
+}
