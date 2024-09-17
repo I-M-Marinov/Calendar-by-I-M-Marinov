@@ -384,3 +384,48 @@ h4{
     margin-top: 1em;
 }
 
+/* Edit Calendar View CSS */
+
+
+.edit-calendar-container {
+    width: 500px;
+    text-align: center;
+    padding: 1em;
+    border: 1px solid #ddd;
+    border-radius: 0.5em;
+    background-color: #fff;
+    align-content: center;
+
+}
+
+.edit-calendar.name{
+    width: 450px;
+    margin: 0 auto;
+    margin-bottom: 1em;
+}
+
+
+.edit-calendar.description {
+    margin: 0 auto;
+    margin-bottom: 1em;
+}
+
+.new-calendar label {
+    display: block;
+    text-align: center;
+    margin-top: 1em;
+    margin-bottom: 5px;
+}
+
+.btn.btn-primary.update-calendar {
+    background-color: #E37400;
+    color: black;
+}
+
+    .btn.btn-primary.update-calendar:hover {
+        background-color: #34A853;
+        color: antiquewhite;
+    }
+
+
+
