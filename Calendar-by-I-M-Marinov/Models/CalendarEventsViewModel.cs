@@ -6,6 +6,7 @@ namespace Calendar_by_I_M_Marinov.Models
 	{
 		public List<CalendarViewModel> Calendars { get; set; } = new List<CalendarViewModel>();
 		public string SelectedCalendarId { get; set; } = null!;
+		public string DestinationCalendarId { get; set; }
         public string? RecurringEventId { get; set; }
         public string SelectedCalendarName { get; set; } = null!;
         public string AccessRole { get; set; } = null!;
