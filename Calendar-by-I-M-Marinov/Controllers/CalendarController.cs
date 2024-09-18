@@ -1348,4 +1348,32 @@ public class CalendarController : Controller
 
         return RedirectToAction("ListCalendarsAndEvents");
     }
+
+    [HttpPost]
+    public async Task<IActionResult> CopyEvent(string eventId, string sourceCalendarId, string destinationCalendarId)
+    {
+	    try
+	    {
+		    var copiedEvent = await _googleCalendarService.CopyEventToCalendarAsync(sourceCalendarId, eventId, destinationCalendarId);
+
+		    if (copiedEvent == null)
+		    {
+			    ViewBag.ErrorMessage = "Failed to copy event. Please try again.";
+		    }
+		    else
+		    {
+			    ViewBag.CopiedEventSummary = copiedEvent.Summary;
+			    ViewBag.DestinationCalendarSummary = (await _googleCalendarService.GetCalendarByIdAsync(destinationCalendarId)).Summary;
+			    ViewBag.SuccessMessage = $"{copiedEvent.Summary} was successfully copied to {ViewBag.DestinationCalendarSummary}.";
+		    }
+	    }
+	    catch (Exception ex)
+	    {
+		    ViewBag.ErrorMessage = $"Error copying event: {ex.Message}";
+	    }
+
+	    return View("ViewCopiedEvent");
+    }
+
+
 }
