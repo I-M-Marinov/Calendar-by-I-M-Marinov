@@ -337,7 +337,6 @@ public class GoogleCalendarService : IGoogleCalendarService
 
 		return createdCalendar;
     }
-
 	public async Task<Calendar> UpdateExistingCalendar(string calendarId, Calendar calendarToUpdate)
 	{
 
@@ -375,5 +374,29 @@ public class GoogleCalendarService : IGoogleCalendarService
 
 	    return calendar;
     }
+    public async Task<Event> CopyEventToCalendarAsync(string sourceCalendarId, string eventId, string destinationCalendarId)
+    {
+        // Get the event from the source calendar
+        var originalEvent = await _calendarService.Events.Get(sourceCalendarId, eventId).ExecuteAsync();
+
+        // Prepare the event for the destination calendar
+        var newEvent = new Event
+        {
+            Summary = originalEvent.Summary,
+            Description = originalEvent.Description,
+            Location = originalEvent.Location,
+            Start = originalEvent.Start,
+            End = originalEvent.End,
+            Attendees = originalEvent.Attendees,
+            Reminders = originalEvent.Reminders,
+            // Copy other fields as necessary, except for event-specific ones like ID, CalendarId, etc.
+        };
+
+        // Insert the copied event into the destination calendar
+        var copiedEvent = await _calendarService.Events.Insert(newEvent, destinationCalendarId).ExecuteAsync();
+
+        return copiedEvent;
+    }
+
 
 }
