@@ -9,6 +9,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Views\Calendar\ViewCopiedEvent.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Google.Apis" Version="1.68.0" />
     <PackageReference Include="Google.Apis.Auth" Version="1.68.0" />
     <PackageReference Include="Google.Apis.Calendar.v3" Version="1.68.0.3473" />
@@ -29,8 +33,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="Views\Calendar\ViewCopiedEvent.cshtml" />
     <None Include="wwwroot\Icons\all-day.png" />
   </ItemGroup>
+
+	<ItemGroup>
+		<Content Include="Views\Calendar\ViewCopiedEvent.cshtml">
+			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+		</Content>
+	</ItemGroup>
 
 
 </Project>
