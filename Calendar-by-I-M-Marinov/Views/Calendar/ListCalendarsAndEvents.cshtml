@@ -34,6 +34,7 @@
         <br />
         <h4>The Calendar "@Model.SelectedCalendarName" has @Model.Events.Count events/entries. </h4>
         <br />
+
         @foreach (var evt in Model.Events)
         {
             // Determine if the event is an all-day event
@@ -49,7 +50,7 @@
                 </div>
             }
 
-			<li class="event-item" onclick="handleEventClick(this)">
+			<li class="event-item" data-event-id="@evt.Id" data-calendar-id="@Model.SelectedCalendarId" onclick="handleEventClick(this)">
 				<div class="event-info">
 					
 					@if (evt.RecurringEventId != null) // if it is an annual event add the icon
@@ -217,10 +218,71 @@
 				                <button type="submit" class="btn btn-duplicate-event">Duplicate</button>
 			                </form>
 		                }
-	                </div>
-                }
+						
+		               
 
-            </li>
+					</div>
+                }
+				
+
+
+				<label for="calendar-dropdown" class="label-copy-to-dropdown" style="display:none;"> Choose a calendar to copy to:</label>
+				<div class="copy-to-container">
+					<!-- Copy To Button -->
+					<button type="button" class="btn btn-primary copy-to-btn" onclick="showDropdown(this)">Copy To</button>
+					
+					<!-- Dropdown for selecting calendar -->
+					<select class="form-control calendar-dropdown" id="calendar-dropdown" style="display: none;">
+						@foreach (var calendar in Model.Calendars.Where(c => c.AccessRole == "owner" || c.AccessRole == "writer"))
+						{
+							<option value="@calendar.CalendarId">@calendar.CalendarName</option>
+						}
+					</select>
+
+					<!-- Button to confirm copy action -->
+					<div class="copy-to-buttons">
+						
+						<button type="button" class="btn btn-success copy-event-btn" style="display: none;" onclick="copyEvent(this)">Copy Event</button>
+						<button type="button" class="btn btn-outline-danger cancel-event-copy-btn" style="display: none;" onclick="resetDropdown(this)">Cancel</button>
+					</div>
+					
+
+				</div>
+				
+				@{
+					var successMessage = ViewBag.SuccessMessage as string;
+					var errorMessage = ViewBag.ErrorMessage as string;
+					var copiedEventSummary = ViewBag.CopiedEventSummary as string;
+					var destinationCalendarSummary = ViewBag.DestinationCalendarSummary as string;
+				}
+
+				<!-- Display success message -->
+				@if (!string.IsNullOrEmpty(successMessage))
+				{
+					<div class="alert alert-success">
+						@successMessage
+					</div>
+				}
+
+				<!-- Display error message -->
+				@if (!string.IsNullOrEmpty(errorMessage))
+				{
+					<div class="alert alert-danger">
+						@errorMessage
+					</div>
+				}
+
+				<!-- Additional messages -->
+				@if (!string.IsNullOrEmpty(copiedEventSummary) && !string.IsNullOrEmpty(destinationCalendarSummary))
+				{
+					<div class="alert alert-info">
+						@copiedEventSummary was successfully copied to @destinationCalendarSummary.
+					</div>
+				}
+
+				<!-- Your existing HTML for the view -->
+
+			</li>
         }
     </ul>
 }
@@ -344,10 +406,37 @@ else if (Model.SelectedCalendarId != null)
 		margin: 0; /* Ensure form buttons don't have extra margin */
 	}
 
+	.copy-to-container{
+		display:flex;
+		flex-direction: column;
+		align-items: center;
+	}
+
+	.copy-to-buttons{
+		display: flex;
+		align-items: center;
+	}
+
+	.copy-event-btn{
+		margin-top: 1em;
+		font-size: 12px;
+		width: 10em;
+	}
+
+	.copy-to-btn{
+		font-size: 12px;
+		width: 6.5em;
+	}
+
+	.cancel-event-copy-btn{
+		margin-top: 1em;
+		font-size: 12px;
+		width: 5em;
+	}
+
 	</style>
 	
 <script>
-
 	// Function to toggle visibility of buttons
 	function toggleButtons(el, show) {
 		var buttonsDiv = el.querySelector('.event-actions-container');
@@ -392,10 +481,8 @@ else if (Model.SelectedCalendarId != null)
 		}
 	}
 
-
-
-
-		function toggleAttendees(el, event) {
+	// Function to toggle attendees visibility
+	function toggleAttendees(el, event) {
 		event.stopPropagation(); // Prevent the event from bubbling up
 
 		var eventItem = el.closest('.event-item');
@@ -411,4 +498,108 @@ else if (Model.SelectedCalendarId != null)
 			attendeesContainer.classList.add('visible');
 		}
 	}
+	// Function to initialize dropdown event listener
+	function initializeDropdownEvent(dropdown) {
+		dropdown.addEventListener('click', function (event) {
+			event.stopPropagation(); // Prevent the event from bubbling up
+		});
+	}
+
+	// Function to show the dropdown and copy button for a specific event item
+	function showDropdown(button) {
+		// Find the closest event item
+		event.stopPropagation(); // Prevent the event from bubbling up
+		var eventItem = button.closest('.event-item');
+
+		// Find the dropdown and copy button within this event item
+		var dropdown = eventItem.querySelector('.calendar-dropdown');
+		var labelDropDown = eventItem.querySelector('.label-copy-to-dropdown');
+		var copyButton = eventItem.querySelector('.copy-event-btn');
+		var copyToButton = eventItem.querySelector('.copy-to-btn');
+		var cancelEventButton = eventItem.querySelector('.cancel-event-copy-btn');
+
+		if (dropdown && copyButton) {
+			dropdown.style.display = 'inline-block';
+			copyButton.style.display = 'inline-block';
+			copyToButton.style.display = 'none';
+			labelDropDown.style.display = 'block';
+			cancelEventButton.style.display = 'inline-block';
+
+			initializeDropdownEvent(dropdown);
+		}
+	}
+
+	function copyEvent(button) {
+		event.stopPropagation(); // Prevent the event from bubbling up
+
+		// Find the closest event item
+		var eventItem = button.closest('.event-item');
+
+		// Get the event ID and source calendar ID from data attributes
+		var eventId = eventItem.getAttribute("data-event-id");
+		var sourceCalendarId = eventItem.getAttribute("data-calendar-id");
+
+		// Get the destination calendar ID from the dropdown
+		var destinationCalendarId = document.querySelector('.calendar-dropdown').value;
+
+		if (eventId && sourceCalendarId && destinationCalendarId) {
+			// Create a form element
+			var form = document.createElement('form');
+			form.method = 'POST';
+			form.action = '@Url.Action("CopyEvent", "Calendar")';
+
+			// Create hidden input fields for each parameter
+			var eventIdInput = document.createElement('input');
+			eventIdInput.type = 'hidden';
+			eventIdInput.name = 'eventId';
+			eventIdInput.value = eventId;
+
+			var sourceCalendarIdInput = document.createElement('input');
+			sourceCalendarIdInput.type = 'hidden';
+			sourceCalendarIdInput.name = 'sourceCalendarId';
+			sourceCalendarIdInput.value = sourceCalendarId;
+
+			var destinationCalendarIdInput = document.createElement('input');
+			destinationCalendarIdInput.type = 'hidden';
+			destinationCalendarIdInput.name = 'destinationCalendarId';
+			destinationCalendarIdInput.value = destinationCalendarId;
+
+			// Append the inputs to the form
+			form.appendChild(eventIdInput);
+			form.appendChild(sourceCalendarIdInput);
+			form.appendChild(destinationCalendarIdInput);
+
+			// Append the form to the body and submit it
+			document.body.appendChild(form);
+			form.submit();
+		}
+	}
+
+
+	// Function to reset the dropdown and action buttons
+	function resetDropdown(button) {
+		event.stopPropagation(); // Prevent the event from bubbling up
+		// Find the closest event item
+		var eventItem = button.closest('.event-item');
+
+		// Find the dropdown and copy button within this event item
+		var dropdown = eventItem.querySelector('.calendar-dropdown');
+		var labelDropDown = eventItem.querySelector('.label-copy-to-dropdown');
+		var copyButton = eventItem.querySelector('.copy-event-btn');
+		var copyToButton = eventItem.querySelector('.copy-to-btn');
+		var cancelEventButton = eventItem.querySelector('.cancel-event-copy-btn');
+
+
+		if (dropdown && copyButton) {
+			dropdown.style.display = 'none';
+			copyButton.style.display = 'none';
+			copyToButton.style.display = 'block';
+			labelDropDown.style.display = 'none';
+			cancelEventButton.style.display = 'none';
+
+
+			initializeDropdownEvent(dropdown);
+		}
+	}
+
 </script>
