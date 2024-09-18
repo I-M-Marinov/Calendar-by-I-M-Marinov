@@ -25,6 +25,7 @@ namespace Calendar_by_I_M_Marinov.Services.Contracts
          Task<string> GetPrimaryCalendarTimeZoneAsync();
          Task<bool> DeleteCalendarAsync(string calendarId);
          Task<Calendar> GetCalendarByIdAsync(string calendarId);
+         Task<Event> CopyEventToCalendarAsync(string sourceCalendarId, string eventId, string destinationCalendarId);
 
     }
 }
