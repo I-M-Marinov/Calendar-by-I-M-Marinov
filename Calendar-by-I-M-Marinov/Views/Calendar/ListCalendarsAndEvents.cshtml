@@ -226,16 +226,19 @@
 					</div>
                 }
 				
+				
+				@{
+					var calendarGetValue = Model.EventCalendarMap.TryGetValue(evt.Id, out var currentCalendarId);
+				}
 
-
-				<label for="calendar-dropdown" class="label-copy-to-dropdown" style="display:none;"> Choose a calendar to copy to:</label>
+				<label for="calendar-dropdown" class="label-copy-to-dropdown" style="display:none;">Choose a calendar to copy to:</label>
 				<div class="copy-to-container">
 					<!-- Copy To Button -->
 					<button type="button" class="btn btn-primary copy-to-btn" onclick="showDropdown(this)">Copy To</button>
 					
 					<!-- Dropdown for selecting calendar -->
 					<select class="form-control calendar-dropdown" id="calendar-dropdown" style="display: none;">
-						@foreach (var calendar in Model.Calendars.Where(c => c.AccessRole == "owner" || c.AccessRole == "writer"))
+						@foreach (var calendar in Model.Calendars.Where(c => c.AccessRole == "owner" && c.CalendarId != currentCalendarId || c.AccessRole == "writer" && c.CalendarId != currentCalendarId))
 						{
 							<option value="@calendar.CalendarId">@calendar.CalendarName</option>
 						}
@@ -250,39 +253,8 @@
 					
 
 				</div>
-				
-				@{
-					var successMessage = ViewBag.SuccessMessage as string;
-					var errorMessage = ViewBag.ErrorMessage as string;
-					var copiedEventSummary = ViewBag.CopiedEventSummary as string;
-					var destinationCalendarSummary = ViewBag.DestinationCalendarSummary as string;
-				}
 
-				<!-- Display success message -->
-				@if (!string.IsNullOrEmpty(successMessage))
-				{
-					<div class="alert alert-success">
-						@successMessage
-					</div>
-				}
-
-				<!-- Display error message -->
-				@if (!string.IsNullOrEmpty(errorMessage))
-				{
-					<div class="alert alert-danger">
-						@errorMessage
-					</div>
-				}
-
-				<!-- Additional messages -->
-				@if (!string.IsNullOrEmpty(copiedEventSummary) && !string.IsNullOrEmpty(destinationCalendarSummary))
-				{
-					<div class="alert alert-info">
-						@copiedEventSummary was successfully copied to @destinationCalendarSummary.
-					</div>
-				}
-
-				<!-- Your existing HTML for the view -->
+			
 
 			</li>
         }
@@ -432,6 +404,7 @@ else if (Model.SelectedCalendarId != null)
 
 	.cancel-event-copy-btn{
 		margin-top: 1em;
+		margin-left: 0.5em;
 		font-size: 12px;
 		width: 5em;
 	}
@@ -609,5 +582,6 @@ else if (Model.SelectedCalendarId != null)
 			initializeDropdownEvent(dropdown);
 		}
 	}
+
 
 </script>
