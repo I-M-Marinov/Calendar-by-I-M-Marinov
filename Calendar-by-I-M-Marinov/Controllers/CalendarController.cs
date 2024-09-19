@@ -1353,6 +1353,7 @@ public class CalendarController : Controller
 
     public IActionResult GotoCalendar(string calendarId)
     {
+
 	    if (string.IsNullOrEmpty(calendarId))
 	    {
 		    TempData["ErrorMessage"] = "Invalid Calendar ID.";
