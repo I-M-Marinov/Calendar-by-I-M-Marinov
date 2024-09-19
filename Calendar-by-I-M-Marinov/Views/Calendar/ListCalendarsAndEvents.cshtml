@@ -40,8 +40,10 @@
             // Determine if the event is an all-day event
             bool isAllDayEvent = !string.IsNullOrEmpty(evt.Start?.Date) && evt.Start?.DateTime == null;
             bool isOwnedEvent = Model.SelectedCalendarId == "all"
-            ? Model.EventCalendarMap.TryGetValue(evt.Id, out var calendarId) && Model.Calendars.FirstOrDefault(c => c.CalendarId == calendarId)?.AccessRole == "owner"
-            : Model.Calendars.FirstOrDefault(c => c.CalendarId == Model.SelectedCalendarId)?.AccessRole == "owner";
+			? Model.EventCalendarMap.TryGetValue(evt.Id, out var calendarId) && Model.Calendars.FirstOrDefault(c => c.CalendarId == calendarId)?.AccessRole == "owner" 
+			  || Model.Calendars.FirstOrDefault(c => c.CalendarId == calendarId)?.AccessRole == "writer"
+			: Model.Calendars.FirstOrDefault(c => c.CalendarId == Model.SelectedCalendarId)?.AccessRole == "owner" 
+			  || Model.Calendars.FirstOrDefault(c => c.CalendarId == Model.SelectedCalendarId)?.AccessRole == "writer";
 
             @if (ViewBag.SuccessMessage != null && ViewBag.SuccessEventId != null && ViewBag.SuccessEventId.ToString() == evt.Id)
             {
@@ -540,7 +542,13 @@ else if (Model.SelectedCalendarId != null)
 		var sourceCalendarId = eventItem.getAttribute("data-calendar-id");
 
 		// Get the destination calendar ID from the dropdown
-		var destinationCalendarId = document.querySelector('.calendar-dropdown').value;
+
+		var dropdown = eventItem.querySelector('.calendar-dropdown');
+		var destinationCalendarId = dropdown ? dropdown.value : null;
+
+		console.log("Event ID:", eventId);
+		console.log("Source Calendar ID:", sourceCalendarId);
+		console.log("Destination Calendar ID:", destinationCalendarId);
 
 		if (eventId && sourceCalendarId && destinationCalendarId) {
 			// Create a form element
