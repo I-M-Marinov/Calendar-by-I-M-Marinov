@@ -4,35 +4,34 @@
 
 
 @{
-	var calendarId = ViewBag.CalendarId as string; // Retrieve calendarId from ViewBag
+	var successMessage = ViewBag.SuccessMessage as string;
+	var errorMessage = ViewBag.ErrorMessage as string;
+	var copiedEventSummary = ViewBag.CopiedEventSummary as string;
+	var destinationCalendarSummary = ViewBag.DestinationCalendarSummary as string;
+	var destinationCalendarId = ViewBag.DestinationCalendarId;
 }
 
-<h2 style="color: green; font-weight:500;">New Calendar Event Added!</h2>
 
-@{
-					var successMessage = ViewBag.SuccessMessage as string;
-					var errorMessage = ViewBag.ErrorMessage as string;
-					var copiedEventSummary = ViewBag.CopiedEventSummary as string;
-					var destinationCalendarSummary = ViewBag.DestinationCalendarSummary as string;
-				}
+<h2 style="color: green; font-weight:500;">Event copied successfully!</h2>
 
-				<!-- Display success message -->
-				@if (!string.IsNullOrEmpty(successMessage))
-				{
-					<div class="alert alert-success">
-						@successMessage
-					</div>
-				}
 
-				<!-- Display error message -->
-				@if (!string.IsNullOrEmpty(errorMessage))
-				{
-					<div class="alert alert-danger">
-						@errorMessage
-					</div>
-				}
 
-				<!-- Your existing HTML for the view -->
+<!-- Success message -->
+@if (!string.IsNullOrEmpty(successMessage))
+{
+	<div class="alert alert-success">
+		@successMessage
+	</div>
+}
+
+<!-- Error message -->
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+	<div class="alert alert-danger">
+		@errorMessage
+	</div>
+}
+
 
 @if (Model != null)
 {
@@ -159,16 +158,11 @@
 				<p style="color: purple;font-weight:500;">Annual Event</p>
 			}
 
+			<a asp-action="GotoCalendar" asp-route-calendarId="@destinationCalendarId" class="btn btn-primary btn-sm">
+				See all events for @destinationCalendarSummary
+			</a>
+			<button class="btn btn-primary btn-sm" onclick="window.history.back();">Back</button>
 
-			<!-- Edit Button -->
-			<a asp-action="CreateEvent" asp-route-calendarId="primary" asp-route-eventId="@Model.Id" class="btn btn-primary btn-sm">Edit</a>
-
-			<!-- Delete Button -->
-			<form asp-action="ConfirmDelete" method="get" style="display:inline;">
-				<input type="hidden" name="calendarId" value="primary" />
-				<input type="hidden" name="eventId" value="@Model.Id" />
-				<button type="submit" class="btn btn-danger btn-sm">Delete</button>
-			</form>
 		</li>
 	</ul>
 }
@@ -182,11 +176,13 @@ else
 	.event-details {
 		display: flex;
 		flex-direction: column;
+		border-bottom: 1px solid royalblue;
+		width: 500px;
 	}
 
-		.event-details ul li {
-			margin-bottom: 2em;
-			margin-left: -2em;
-		}
+	.event-details ul li {
+		margin-bottom: 2em;
+		margin-left: -2em;
+	}
 
 </style>
