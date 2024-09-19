@@ -42,6 +42,8 @@ public class CalendarController : Controller
 
         calendarViewModels = calendarViewModels
             .OrderBy(c => c.AccessRole)
+            .ThenByDescending(c => c.Primary) // ensure the primary calendar will always be on top
+            .ThenByDescending(c => c.EventsCount) // all other calendars needs to be sorted by the number of events descending
             .ToList();
 
         return View("ListAllCalendars", calendarViewModels);
@@ -1340,18 +1342,33 @@ public class CalendarController : Controller
     {
         var refererUrl = Request.Headers["Referer"].ToString();
 
-        // Check if the referer URL exists and is valid
-        if (!string.IsNullOrEmpty(refererUrl))
-        {
-            return Redirect(refererUrl);
-        }
+		// Check if the referer URL exists and is valid
+		if (!string.IsNullOrEmpty(refererUrl) && Uri.IsWellFormedUriString(refererUrl, UriKind.Absolute))
+		{
+			return Redirect(refererUrl);
+		}
 
-        return RedirectToAction("ListCalendarsAndEvents");
+		return RedirectToAction("ListCalendarsAndEvents");
     }
 
-    [HttpPost]
+    public IActionResult GotoCalendar(string calendarId)
+    {
+	    if (string.IsNullOrEmpty(calendarId))
+	    {
+		    TempData["ErrorMessage"] = "Invalid Calendar ID.";
+		    return RedirectToAction("ListCalendarsAndEvents");
+	    }
+
+	    return RedirectToAction("ListCalendarsAndEvents", new { calendarId = calendarId });
+    }
+
+
+
+	[HttpPost]
     public async Task<IActionResult> CopyEvent(string eventId, string sourceCalendarId, string destinationCalendarId)
     {
+	    var eventToPassToTheView = await _googleCalendarService.GetEventByIdAsync(sourceCalendarId, eventId);
+
 	    try
 	    {
 		    var copiedEvent = await _googleCalendarService.CopyEventToCalendarAsync(sourceCalendarId, eventId, destinationCalendarId);
@@ -1362,9 +1379,10 @@ public class CalendarController : Controller
 		    }
 		    else
 		    {
-			    ViewBag.CopiedEventSummary = copiedEvent.Summary;
+			    ViewBag.DestinationCalendarId = destinationCalendarId;
+				ViewBag.CopiedEventSummary = copiedEvent.Summary;
 			    ViewBag.DestinationCalendarSummary = (await _googleCalendarService.GetCalendarByIdAsync(destinationCalendarId)).Summary;
-			    ViewBag.SuccessMessage = $"{copiedEvent.Summary} was successfully copied to {ViewBag.DestinationCalendarSummary}.";
+				ViewBag.SuccessMessage = $"{copiedEvent.Summary} was successfully copied to {ViewBag.DestinationCalendarSummary}.";
 		    }
 	    }
 	    catch (Exception ex)
@@ -1372,7 +1390,7 @@ public class CalendarController : Controller
 		    ViewBag.ErrorMessage = $"Error copying event: {ex.Message}";
 	    }
 
-	    return View("ViewCopiedEvent");
+	    return View("ViewCopiedEvent", eventToPassToTheView);
     }
 
 
