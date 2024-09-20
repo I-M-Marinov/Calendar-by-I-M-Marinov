@@ -145,11 +145,15 @@
 			<a asp-action="CreateEvent" asp-route-calendarId="primary" asp-route-eventId="@Model.Id" class="btn btn-primary btn-sm">Edit</a>
 
                 <!-- Delete Button -->
-                <form asp-action="ConfirmDelete" method="get" style="display:inline;">
-                    <input type="hidden" name="calendarId" value="primary"/>
-                    <input type="hidden" name="eventId" value="@Model.Id"/>
-                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                </form>
+	            <form asp-action="ConfirmDelete" method="get" style="display:inline;">
+		            <input type="hidden" name="calendarId" value="primary"/>
+		            <input type="hidden" name="eventId" value="@Model.Id"/>
+		            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+	            </form>
+				
+	            <a asp-action="ListCalendarsAndEvents" asp-route-selectedCalendarId="primary" id="back-btn" class="btn btn-primary btn-sm">
+		            Back to Calendar's Events
+	            </a>
             </li>
         </ul>
 }
@@ -168,6 +172,10 @@ else
 	.event-details ul li{
 		margin-bottom: 2em;
 		margin-left: -2em;
+	}
+
+	#back-btn{
+		color: white;
 	}
 
 </style>
