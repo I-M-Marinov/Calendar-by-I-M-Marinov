@@ -4,6 +4,7 @@
 @{
     bool isSuccess = TempData["IsSuccess"] != null && (bool)TempData["IsSuccess"];
     int deletedInstancesCount = TempData["DeletedInstancesCount"] != null ? (int)TempData["DeletedInstancesCount"] : 0;
+    TempData["CalendarId"] = Model.CalendarId;
 }
 
 <h2 style="text-align: center;">@(isSuccess ? "Event Deleted Successfully" : "Are you sure you want to delete the following event?")</h2>
@@ -54,7 +55,16 @@ else if (isSuccess)
                 <p>End: @Model.End?.ToString("MMMM dd, yyyy h:mm")</p>
             }
 
-            Location: @Model.Location<br />
+            @if (Model.Location != null)
+            {
+                <p>Location: @Model.Location</p> <br />
+            }
+
+
+            @if (Model.Description != null)
+            {
+                <p>Description: @Model.Description</p> <br />
+            }
         </li>
     </ul>
     <br />
@@ -72,7 +82,11 @@ else if (isSuccess)
         }
 
         <button type="submit" class="btn btn-danger btn-sm">Confirm Delete</button>
-        <a href="@Url.Action("ListCalendarsAndEvents")" class="btn btn-secondary btn-sm">Cancel</a>
+
+        <a asp-action="ListCalendarsAndEvents" asp-route-selectedCalendarId="@Model.CalendarId" class="btn btn-secondary btn-sm">
+	        Cancel
+        </a>
+
     </form>
 }
 else
