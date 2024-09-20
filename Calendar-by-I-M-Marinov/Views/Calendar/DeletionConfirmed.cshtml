@@ -1,19 +1,26 @@
-﻿@{
+﻿@model DeleteEventViewModel
+
+@{
 	bool isSuccess = TempData["IsSuccess"] != null && (bool)TempData["IsSuccess"];
 	int deletedInstancesCount = ViewBag.DeletedInstancesCount != null ? (int)ViewBag.DeletedInstancesCount : 0;
+	var calendarId = TempData["CalendarId"]?.ToString();
 }
 
-<h2 style="text-align: center;">@(isSuccess ? "Event Deleted Successfully" : "Deletion Error")</h2>
+<div class="deletion-confirmed-container">
+	<h2 style="text-align: center;">@(isSuccess ? "Event Deleted Successfully" : "Deletion Error")</h2>
 
-@if (ViewBag.SuccessMessage != null)
-{
-	<div class="alert alert-success" style="text-align: center;">
-		@ViewBag.SuccessMessage
-		@if (deletedInstancesCount > 1)
-		{
-			<p>@deletedInstancesCount instances of the annual event were deleted.</p>
-		}
-	</div>
-}
+	@if (ViewBag.SuccessMessage != null)
+	{
+		<div class="alert alert-success" style="text-align: center;">
+			@ViewBag.SuccessMessage
+			@if (deletedInstancesCount > 1)
+			{
+				<p>@deletedInstancesCount instances of the annual event were deleted.</p>
+			}
+		</div>
+	}
 
-<a href="@Url.Action("BackToPreviousPage")" class="btn btn-primary btn-sm">Back to Events</a>
+	<a asp-action="ListCalendarsAndEvents" asp-route-selectedCalendarId="@calendarId" id="back-btn" class="btn btn-primary btn-sm">
+		Back to Calendar's Events
+	</a>
+</div>
