@@ -6,6 +6,7 @@ using Google.Apis.Calendar.v3;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Calendar_by_I_M_Marinov.Common;
 using Calendar = Google.Apis.Calendar.v3.Data.Calendar;
+using System.Globalization;
 
 public class CalendarController : Controller
 {
@@ -424,7 +425,7 @@ public class CalendarController : Controller
                 ? "The annual event series was deleted successfully."
                 : "The event was deleted successfully.";
             TempData["DeletedInstancesCount"] = deletedInstancesCount;
-            return RedirectToAction("DeletionConfirmed");
+            return RedirectToAction("DeletionConfirmed", model);
         }
         catch (Exception ex)
         {
@@ -442,14 +443,15 @@ public class CalendarController : Controller
 			TempData["ErrorMessage"] = "Event ID is missing.";
 			TempData["IsSuccess"] = false;
 			return RedirectToAction("ConfirmDelete", new {model.CalendarId, eventId = model.EventId });
-		}
+        }
 
-		try
-		{
+        try
+        {
 			int deletedInstancesCount =
 				await _googleCalendarService.DeleteEventAsync(model.CalendarId, model.EventId, model.DeleteSeries);
 
-			TempData["IsSuccess"] = true;
+            TempData["CalendarId"] = model.CalendarId;
+            TempData["IsSuccess"] = true;
 			TempData["SuccessMessage"] = model.DeleteSeries
 				? "The annual event series was deleted successfully."
 				: "The event was deleted successfully.";
@@ -464,8 +466,64 @@ public class CalendarController : Controller
 		}
 	}
 
-	public IActionResult DeletionConfirmed(string eventId)
+	[HttpGet]
+	public async Task<IActionResult> ConfirmDelete(string calendarId, string eventId)
+	{
+		if (string.IsNullOrEmpty(eventId))
+		{
+			TempData["ErrorMessage"] = "Event ID is missing.";
+			return RedirectToAction("ListCalendarsAndEvents");
+		}
+
+		try
+		{
+			var eventToDelete = await _googleCalendarService.GetEventByIdAsync(calendarId, eventId);
+
+			if (eventToDelete == null)
+			{
+				TempData["ErrorMessage"] = "Event not found.";
+				return RedirectToAction("ListCalendarsAndEvents");
+			}
+
+			DateTime? startDateTime = eventToDelete.Start?.DateTime;
+			DateTime? endDateTime = eventToDelete.End?.DateTime;
+			string startDate = eventToDelete.Start?.Date;
+			string endDate = eventToDelete.End?.Date;
+
+			if (!startDateTime.HasValue && !string.IsNullOrEmpty(startDate))
+			{
+				startDateTime = DateTime.Parse(startDate);
+			}
+
+			if (!endDateTime.HasValue && !string.IsNullOrEmpty(endDate))
+			{
+				endDateTime = DateTime.Parse(endDate);
+			}
+
+			return View("ConfirmDelete", new DeleteEventViewModel
+			{
+				EventId = eventToDelete.Id,
+				CalendarId = calendarId,
+				RecurringEventId = eventToDelete.RecurringEventId,
+				IsAllDayEvent = eventToDelete.Start.Date != null && eventToDelete.End.Date != null,
+				Summary = eventToDelete.Summary,
+				Start = startDateTime,
+				End = endDateTime,
+				Location = eventToDelete.Location,
+                Description = eventToDelete.Description,
+				DeleteSeries = false
+			});
+		}
+		catch (Exception ex)
+		{
+			TempData["ErrorMessage"] = $"An error occurred while retrieving the event details: {ex.Message}";
+			return RedirectToAction("ListCalendarsAndEvents");
+		}
+	}
+
+    public IActionResult DeletionConfirmed()
     {
+        var calendarId = TempData["CalendarId"]?.ToString();
         var successMessage = TempData["SuccessMessage"];
         var deletedInstancesCount =
             TempData["DeletedInstancesCount"] != null ? (int)TempData["DeletedInstancesCount"] : 0;
@@ -474,64 +532,11 @@ public class CalendarController : Controller
         {
             ViewBag.SuccessMessage = successMessage;
             ViewBag.DeletedInstancesCount = deletedInstancesCount;
-            return View();
+
+			return View();
         }
 
-        return RedirectToAction("ListCalendarsAndEvents");
-    }
-
-    [HttpGet]
-    public async Task<IActionResult> ConfirmDelete(string calendarId, string eventId)
-    {
-        if (string.IsNullOrEmpty(eventId))
-        {
-            TempData["ErrorMessage"] = "Event ID is missing.";
-            return RedirectToAction("ListCalendarsAndEvents");
-        }
-
-        try
-        {
-            var eventToDelete = await _googleCalendarService.GetEventByIdAsync(calendarId, eventId);
-
-            if (eventToDelete == null)
-            {
-                TempData["ErrorMessage"] = "Event not found.";
-                return RedirectToAction("ListCalendarsAndEvents");
-            }
-
-            DateTime? startDateTime = eventToDelete.Start?.DateTime;
-            DateTime? endDateTime = eventToDelete.End?.DateTime;
-            string startDate = eventToDelete.Start?.Date;
-            string endDate = eventToDelete.End?.Date;
-
-            if (!startDateTime.HasValue && !string.IsNullOrEmpty(startDate))
-            {
-	            startDateTime = DateTime.Parse(startDate); 
-            }
-
-            if (!endDateTime.HasValue && !string.IsNullOrEmpty(endDate))
-            {
-	            endDateTime = DateTime.Parse(endDate);
-            }
-
-			return View("ConfirmDelete", new DeleteEventViewModel
-			{
-				EventId = eventToDelete.Id,
-                CalendarId = calendarId,
-				RecurringEventId = eventToDelete.RecurringEventId,
-                IsAllDayEvent = eventToDelete.Start.Date != null && eventToDelete.End.Date != null,
-                Summary = eventToDelete.Summary,
-				Start = startDateTime, 
-				End = endDateTime,     
-				Location = eventToDelete.Location,
-				DeleteSeries = false 
-			});
-		}
-        catch (Exception ex)
-        {
-            TempData["ErrorMessage"] = $"An error occurred while retrieving the event details: {ex.Message}";
-            return RedirectToAction("ListCalendarsAndEvents");
-        }
+        return RedirectToAction("ListCalendarsAndEvents", new { selectedCalendarId = calendarId ?? "all" });
     }
 
     [HttpPost]
@@ -1362,8 +1367,6 @@ public class CalendarController : Controller
 
 	    return RedirectToAction("ListCalendarsAndEvents", new { calendarId = calendarId });
     }
-
-
 
 	[HttpPost]
     public async Task<IActionResult> CopyEvent(string eventId, string sourceCalendarId, string destinationCalendarId)
