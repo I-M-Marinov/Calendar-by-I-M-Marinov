@@ -158,9 +158,10 @@
 				<p style="color: purple;font-weight:500;">Annual Event</p>
 			}
 
-			<a asp-action="GotoCalendar" asp-route-calendarId="@destinationCalendarId" class="btn btn-primary btn-sm">
+			<a asp-action="ListCalendarsAndEvents" asp-route-selectedCalendarId="@destinationCalendarId" class="btn btn-primary btn-sm">
 				See all events for @destinationCalendarSummary
 			</a>
+
 			<button class="btn btn-primary btn-sm" onclick="window.history.back();">Back</button>
 
 		</li>
