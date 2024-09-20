@@ -33,6 +33,7 @@ form-group{
     margin: 0 auto;
     margin-top: 1em;
 }
+
 /* CSS for the table in the ListAllCalendars View */
 .centered-table {
     font-family: 'Rubik', sans-serif;
@@ -254,9 +255,6 @@ h4{
 
 
 
-
-
-
 /* CSS for the Dashboard View ( ViewTodaysEvents ) */
 
 #todays-container {
@@ -427,5 +425,24 @@ h4{
         color: antiquewhite;
     }
 
+/* Deletion Confirmred View CSS */
 
 
+.deletion-confirmed-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#back-btn{
+    background-color: deepskyblue;
+    color: black;
+}
+
+
+#back-btn:hover {
+    background-color: blue;
+    opacity: 75%;
+    color: white;
+    transition-delay: 
+}
