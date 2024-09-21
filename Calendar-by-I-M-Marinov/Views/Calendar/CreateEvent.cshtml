@@ -8,6 +8,7 @@
     var calendarId = Model.CalendarId; 
 }
 
+
 <h2>@(isEdit ? "Update an Event" : "Create an Event")</h2>
 
 <form asp-action="@actionUrl" method="post">
@@ -117,7 +118,11 @@
 	</div>
 
 	<div id="attendeesContainer" class="create-event-group attendees">
-		<label asp-for="Attendants">Attendees</label>
+		<label asp-for="Attendants">Attendees:</label>
+		
+		<!-- Button to add more attendees -->
+		<button type="button" id="addAttendee" class="btn btn-add-attendee">Add</button>
+
 		@if (Model.Attendants != null && Model.Attendants.Any())
 		{
 			@foreach (var attendee in Model.Attendants)
@@ -131,10 +136,26 @@
 	</div>
 
 
-	<!-- Button to add more attendees -->
-	<button type="button" id="addAttendee" class="btn btn-add-attendee">Add</button>
 
-	<button type="submit" class="btn btn-create-event">@submitButtonText</button>
+	
+	<div class="add-update-event-control-buttons">
+		<button type="submit" class="btn btn-create-event">@submitButtonText</button>
+	
+		@if (submitButtonText == "Create Event")
+		{
+			<a asp-action="ListCalendars" id="back-btn" class="btn btn-primary btn-sm">
+				Back to Calendars List
+			</a>
+		}
+		else
+		{
+			<a asp-action="ListCalendarsAndEvents" asp-route-selectedCalendarId="@calendarId" id="back-btn" class="btn btn-primary btn-sm">
+				Back
+			</a>
+		}
+
+	</div>
+
 </form>
 
 <style>
@@ -176,6 +197,7 @@
     #addAttendee{
         margin: 0 auto;
         display: block;
+		margin-bottom: 1em;
     }
 
 	.attendees-notification{
@@ -190,6 +212,21 @@
 	#none{
 		margin: 0.35em;
 	}
+
+	#back-btn{
+		border-radius: .2rem;
+		border: 0.99px solid #000000;
+		width: 15%;
+		font-weight: 600;
+		margin-top: 0.5em;
+	}
+
+	.add-update-event-control-buttons{
+		display: flex;
+		flex-direction: column; 
+		align-items:center;
+	}
+
 
 
 
