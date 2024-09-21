@@ -178,8 +178,6 @@ h4{
 
 .btn.btn-create-event {
     color: black;
-    display: block;
-    margin: 0 auto;
     color: whitesmoke;
     background-color: #7204d3;
     border-radius: .2rem;
@@ -434,7 +432,8 @@ h4{
     align-items: center;
 }
 
-#back-btn{
+#back-btn {
+    font-family: 'Rubik', sans-serif;
     background-color: deepskyblue;
     color: black;
 }
