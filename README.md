@@ -60,6 +60,7 @@
 - User can choose from the dropdown menu a calendar and use the "Load Events" button to visualize all events for that calendar.
 - "All calendars" option visualizes all the events in all calendars, order by calendar and then by time of occurance.
 - Additional functions "Edit" and "Delete" avaialble for all events that are from calendars that the user has Access Role "owner" or "writer".
+  ###### ➡️ Copy to ---> Copy to function is available for all events, but destination calendars ( where the event will be copied to ) can only be ones with access role "owner" or "writer". This function creates a copy of the event the user designated to one of the calendars from the drop down menu. After it is created the user can navigate easily to the destination calendar to see the newly copied event.
   ###### ➡️ Edit ---> Edit an event and save it back to your google calendar.
   ###### ➡️ Delete ---> Delete an event from your Google calendar.
 - Function "Duplicate Event" available for all events (except all day events), regardless of Access Role for the respective calendar.
