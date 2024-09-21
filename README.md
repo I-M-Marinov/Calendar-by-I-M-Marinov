@@ -47,7 +47,7 @@
 
 #### :large_blue_diamond: Calendars --> Calendar List 
 - Shows the user all the calendars showing in his/her Google Calendar (Family, Phases of the Moon or any imported calendar).
-- See the name of the calendar (user's primary calendar marked with a star and the word "primary"), the access role that the user have for each calendar and the events added for each one.
+- See the name of the calendar (user's primary calendar marked with a star and the word "primary"), the events count for each calendar and actions available. Primary calendar cannot be Edited or Removed, but secondary calendars that have the Access Role of "owner" can. Access role is visualized when the user is hovering over the name of each calendar ( it shows the calendar description if any and then the access role for that calendar ). 
     ###### ➡️ Remove ---> Delete a secondary calendar.
     ###### ➡️ Edit ---> Edit a secondary calendar's title and/or description.
 ###### 📢: The events shown would be until the end of the calendar year, starting from the beginning of the current day.
