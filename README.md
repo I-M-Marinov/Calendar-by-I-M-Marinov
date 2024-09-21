@@ -11,6 +11,7 @@
      - [Edit](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov?tab=readme-ov-file#%EF%B8%8F-edit-----edit-a-secondary-calendars-title-andor-description)
    - [Calendars --> Create a Calendar](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov?tab=readme-ov-file#large_blue_diamond-calendars----create-a-calendar)
    - [Events --> Events per Calendar](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov?tab=readme-ov-file#large_blue_diamond-events----events-per-calendar)
+     - [Copy To](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov/tree/master#%EF%B8%8F-copy-to-----copy-to-function-is-available-for-all-events-but-destination-calendars--where-the-event-will-be-copied-to--can-only-be-ones-with-access-role-owner-or-writer-this-function-creates-a-copy-of-the-event-the-user-designated-to-one-of-the-calendars-from-the-drop-down-menu-after-it-is-created-the-user-can-navigate-easily-to-the-destination-calendar-to-see-the-newly-copied-event)
      - [Edit](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov?tab=readme-ov-file#%EF%B8%8F-edit-----edit-an-event-and-save-it-back-to-your-google-calendar)
      - [Delete](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov?tab=readme-ov-file#%EF%B8%8F-delete-----delete-an-event-from-your-google-calendar)
      - [Duplicate Event](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov?tab=readme-ov-file#%EF%B8%8F-duplicate-----creates-a-duplicate-of-the-event-saved-in-the-primary-calendar-of-the-user-adds-duplicate-to-the-name)
