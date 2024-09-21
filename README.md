@@ -69,6 +69,7 @@
 - Add an Event adds a new Event to the primary calendar of the user.
   ###### 📢:  User can add a title, location and a description for their new event. It can be saved as public or a private event (visibility).  Event type can be single, annual or all day event. 
   ###### 📢:  New Events can now add atendees to the event using the email input field available. If more than one attendee needs to be added, user uses the "Add" button to add a field ( and use "Remove" button to remove any fields that are not needed )
+  ###### 📢:  Added a back button that would take the user back to the Calendars List 
 #### :large_blue_diamond: Events --> Search Events
 - Search Events lets the user search through all events that editable ( Access Role in the calendar the event is saved in must be "owner" ) and edit them all at the same time.
   ###### 📢:  Search Events actually opens for edit all events that match the search keyword ( case-insensitive ). 
