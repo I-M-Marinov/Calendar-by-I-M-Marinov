@@ -163,13 +163,7 @@ public class GoogleCalendarService : IGoogleCalendarService
 
 		return requestedEvent;
 	}
-	/* The three methods below are used for Adding and Editing events respectively */
-	public async Task<Event> AddEventAsync(Event newEvent)
-	{
-		var insertRequest = _calendarService.Events.Insert(newEvent, "primary");
-        var createdEvent = await insertRequest.ExecuteAsync();
-		return createdEvent;
-	}
+	/* The two methods below are used for Adding and Editing events respectively */
     public async Task<Event> AddEventAsync(string calendarId, Event newEvent, EventsResource.InsertRequest.SendUpdatesEnum sendUpdates)
     {
         var insertRequest = _calendarService.Events.Insert(newEvent, calendarId);
@@ -203,28 +197,6 @@ public class GoogleCalendarService : IGoogleCalendarService
 		var insertRequest = _calendarService.Events.Insert(newEvent, calendarId);
 		return await insertRequest.ExecuteAsync();
 	}
-    public async Task DeleteEventAsync(string eventId)
-
-	{
-		var request = _calendarService.Events.Delete("primary", eventId);
-		await request.ExecuteAsync();
-	}
-    public async Task DeleteEventAsync(string calendarId, string eventId)
-    {
-        try
-        {
-            var request = _calendarService.Events.Delete(calendarId, eventId);
-            await request.ExecuteAsync();
-        }
-        catch (Google.GoogleApiException ex) when (ex.HttpStatusCode == System.Net.HttpStatusCode.NotFound)
-        {
-            Console.WriteLine($"The event with ID '{eventId}' in calendar '{calendarId}' was not found.");
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"An error occurred while trying to delete the event: {ex.Message}");
-        }
-    }
     public async Task<int> DeleteEventAsync(string calendarId, string eventId, bool deleteSeries = false)
     {
         int deletedInstancesCount = 0;
