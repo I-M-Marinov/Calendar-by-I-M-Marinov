@@ -8,6 +8,8 @@
         public DateTime? Start { get; set; }
         public DateTime? End { get; set; }
         public string Location { get; set; }
+        public string Description { get; set; }
+
         public bool IsUpdated { get; set; } 
         public string ErrorMessage { get; set; } // Holds error message if any
     }
