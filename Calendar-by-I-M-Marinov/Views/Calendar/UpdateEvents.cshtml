@@ -1,4 +1,6 @@
-﻿@model IEnumerable<Calendar_by_I_M_Marinov.Models.UpdatedEventViewModel>
+﻿@using Calendar_by_I_M_Marinov.Services.Contracts
+@model IEnumerable<Calendar_by_I_M_Marinov.Models.UpdatedEventViewModel>
+
 
 <h2>Update Events Status</h2>
 
@@ -10,21 +12,20 @@
             <div class="card mb-3">
                 <div class="card-header">
                     <h3>Event ID: @eventModel.EventId</h3>
+                    <h3>Calendar ID: @eventModel.CalendarId</h3>
                 </div>
                 <div class="card-body">
                     <p><strong>Summary:</strong> @eventModel.Summary</p>
-                    <p><strong>Start:</strong> @(eventModel.Start.HasValue ? eventModel.Start.Value.ToString("MMMM dd, yyyy HH:mm") : "N/A")</p>
-                    <p><strong>End:</strong> @(eventModel.End.HasValue ? eventModel.End.Value.ToString("MMMM dd, yyyy HH:mm") : "N/A")</p>
-                    <p><strong>Location:</strong> @eventModel.Location</p>
+                    <p><strong>Start:</strong> @eventModel.Start</p>
+                    <p><strong>End:</strong> @eventModel.End</p>
 
-                    @if (eventModel.IsUpdated)
+                    @if (eventModel.Description != null)
                     {
-                        <p class="text-success">Update successful.</p>
+	                    <p><strong>Description:</strong> @eventModel.Description</p>
                     }
-                    else
-                    {
-                        <p class="text-danger">Update failed: @eventModel.ErrorMessage</p>
-                    }
+                    <p><strong>Location:</strong> @eventModel.Location</p>
+                    
+
                 </div>
             </div>
         }
