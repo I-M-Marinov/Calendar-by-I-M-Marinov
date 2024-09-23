@@ -6,7 +6,6 @@ using Google.Apis.Calendar.v3;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Calendar_by_I_M_Marinov.Common;
 using Calendar = Google.Apis.Calendar.v3.Data.Calendar;
-using System.Globalization;
 
 public class CalendarController : Controller
 {
@@ -16,7 +15,6 @@ public class CalendarController : Controller
     {
         _googleCalendarService = googleCalendarService;
 	}
-
 
     public async Task<IActionResult> ListCalendars()
     {
@@ -853,11 +851,12 @@ public class CalendarController : Controller
         foreach (var eventEntry in events)
         {
             var eventId = eventEntry.Key;
+            var calendarId = eventEntry.Value.CalendarId;
             var eventModel = eventEntry.Value;
             var updatedEventViewModel = new UpdatedEventViewModel
             {
                 EventId = eventId,
-                CalendarId = eventModel.CalendarId,
+                CalendarId = calendarId,
                 Summary = eventModel.Summary,
                 Start = eventModel.Start,
                 End = eventModel.End,
@@ -866,6 +865,11 @@ public class CalendarController : Controller
 
             try
             {
+
+                var requestedCalendar = await _googleCalendarService.GetCalendarByIdAsync(calendarId);
+                var calendarName = requestedCalendar.Summary;
+                ViewBag.CalendarName = calendarName;
+
                 var updatedEvent = new Event
                 {
                     Id = eventId,
@@ -1396,6 +1400,5 @@ public class CalendarController : Controller
 
 	    return View("ViewCopiedEvent", eventToPassToTheView);
     }
-
 
 }
