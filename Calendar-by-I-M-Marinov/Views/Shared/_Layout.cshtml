@@ -21,7 +21,7 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">G Easy Calendar</a>
+				<a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index"><span style="color: #4285F4;">G</span> <span style="color: #EA4335;">E</span><span style="color: #FBBC05;">a</span><span style="color: #34A853;">s</span><span style="color: #4285F4;">y</span> Calendar</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
 	                <span class="navbar-toggler-icon"></span>
@@ -54,10 +54,22 @@
 			                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" data-bs-toggle="dropdown" data-bs-target="navbarDropdown" aria-haspopup="true" aria-expanded="false">
 				                Events
 			                </a>
-			                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+			                <div class="dropdown-menu" aria-labelledby="navbarDropdown 2">
 				                <a class="nav-link text-dark" asp-area="" asp-controller="Calendar" asp-action="ListCalendarsAndEvents">Events per calendar</a>
 				                <a class="nav-link text-dark" asp-area="" asp-controller="Calendar" asp-action="CreateEvent">Add an Event</a>
 				                <a class="nav-link text-dark" asp-area="" asp-controller="Calendar" asp-action="SearchEventByName">Search Events</a>
+			                </div>
+		                </li>
+	                </ul>
+					
+	                <ul class="navbar-nav">
+		                <li class="nav-item dropdown">
+			                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown 3" data-bs-toggle="dropdown" data-bs-target="navbarDropdown" aria-haspopup="true" aria-expanded="false">
+				                Contacts
+			                </a>
+			                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+				                <a class="nav-link text-dark" asp-area="" asp-controller="People" asp-action="GetAllContacts">Show Contacts</a>
+
 			                </div>
 		                </li>
 	                </ul>
