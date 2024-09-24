@@ -1,11 +1,13 @@
-﻿using Calendar_by_I_M_Marinov.Services.Contracts;
+﻿using Calendar_by_I_M_Marinov.Models.People;
+using Calendar_by_I_M_Marinov.Services.Contracts;
+using Google.Apis.PeopleService.v1.Data;
 
 namespace Calendar_by_I_M_Marinov.Services
 {
-    using Google.Apis.Auth.OAuth2;
+	using Google.Apis.Auth.OAuth2;
     using Google.Apis.PeopleService.v1;
-    using Google.Apis.Services;
-    using Google.Apis.Util.Store;
+	using Google.Apis.Services;
+	using Google.Apis.Util.Store;
     using Microsoft.Extensions.Configuration;
     using System.Threading;
     using System.Threading.Tasks;
@@ -101,6 +103,49 @@ namespace Calendar_by_I_M_Marinov.Services
 				Console.WriteLine($"Error fetching display name: {ex.Message}");
 				return null;
 			}
+		}
+
+		public async Task<List<ContactViewModel>> GetAllContactsAsync()
+		{
+			List<ContactViewModel> contactViewModels = new List<ContactViewModel>();
+			string nextPageToken = null;
+
+			do
+			{
+				PeopleResource.ConnectionsResource.ListRequest request = _peopleService.People.Connections.List("people/me");
+				request.PersonFields = "names,birthdays,emailAddresses,phoneNumbers,coverPhotos"; // Include the new fields
+				request.PageSize = 1000;
+				request.PageToken = nextPageToken; // Use the page token to fetch the next set of contacts
+
+				ListConnectionsResponse response = await request.ExecuteAsync();
+
+				if (response.Connections != null && response.Connections.Count > 0)
+				{
+					foreach (var person in response.Connections)
+					{
+						var name = person.Names?.FirstOrDefault()?.DisplayName ?? "No Name";
+						var email = person.EmailAddresses?.FirstOrDefault()?.Value ?? "No Email";
+						var phone = person.PhoneNumbers?.FirstOrDefault()?.Value ?? "No Phone Number";
+						var birthday = person.Birthdays?.FirstOrDefault()?.Date != null
+							? $"{person.Birthdays.FirstOrDefault().Date.Month}/{person.Birthdays.FirstOrDefault().Date.Day}/{person.Birthdays.FirstOrDefault().Date.Year}"
+							: "No Birthday";
+
+
+						contactViewModels.Add(new ContactViewModel
+						{
+							Name = name,
+							Email = email,
+							PhoneNumber = phone,
+							Birthday = birthday
+						});
+					}
+				}
+
+				nextPageToken = response.NextPageToken;
+
+			} while (!string.IsNullOrEmpty(nextPageToken));
+
+			return contactViewModels;
 		}
 
 	}
