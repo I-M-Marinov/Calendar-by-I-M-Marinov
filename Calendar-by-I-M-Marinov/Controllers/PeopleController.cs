@@ -23,6 +23,7 @@ namespace Calendar_by_I_M_Marinov.Controllers
 			try
 			{
 				var contacts = await _peopleGoogleService.GetAllContactsAsync();
+				var sortedContacts = contacts.OrderBy(c => c.Name).ToList();
 
 				if (contacts.Count == 0)
 				{
@@ -31,7 +32,7 @@ namespace Calendar_by_I_M_Marinov.Controllers
 				
 				ViewBag.ContactsCount = contacts.Count;
 
-				return View(contacts);
+				return View(sortedContacts);
 			}
 			catch (System.Exception ex)
 			{
