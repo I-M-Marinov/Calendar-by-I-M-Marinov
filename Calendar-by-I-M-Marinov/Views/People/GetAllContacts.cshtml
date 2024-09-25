@@ -1,4 +1,4 @@
-﻿@model List<Calendar_by_I_M_Marinov.Models.People.ContactViewModel>
+﻿@model List<IGrouping<char, Calendar_by_I_M_Marinov.Models.People.ContactViewModel>>
 
 @{
 	ViewData["Title"] = "Contacts List";
@@ -13,33 +13,56 @@
 }
 else
 {
-	<table class="table table-striped">
-		<thead>
-		<tr>
-			<th>Name</th>
-			<th>Email</th>
-			<th>Birthday</th>
-			<th>Phone Number</th>
-		</tr>
-		</thead>
-		<tbody>
-		@foreach (var contact in Model)
+	<div>
+		<!-- Latin Alphabetical Index as Cards -->
+		<div class="alphabet-index-container">
+			@foreach (var group in Model.Where(g => char.IsLetter(g.Key) && (g.Key < 'А' || g.Key > 'я')))
+			{
+				<a href="#letter-@group.Key">
+					<div class="alphabet-card">
+						<p>@group.Key</p>
+					</div>
+				</a>
+			}
+		</div>
+
+		<!-- Cyrillic Alphabetical Index as Cards -->
+		<div class="alphabet-index-container">
+			@foreach (var group in Model.Where(g => char.IsLetter(g.Key) && (g.Key >= 'А' && g.Key <= 'я')))
+			{
+				<a href="#letter-@group.Key">
+					<div class="alphabet-card">
+						<p>@group.Key</p>
+					</div>
+				</a>
+			}
+		</div>
+
+		<!-- Grouped Contacts by First Letter -->
+		@foreach (var group in Model)
 		{
-			<tr>
-				<td>@contact.Name</td>
-				@if (contact.Email != null)
+			<h3 id="letter-@group.Key">@group.Key</h3>
+			<table class="table table-striped">
+				<thead>
+				<tr>
+					<th>Name</th>
+					<th>Email</th>
+					<th>Birthday</th>
+					<th>Phone Number</th>
+				</tr>
+				</thead>
+				<tbody>
+				@foreach (var contact in group)
 				{
+					<tr>
+						<td>@contact.Name</td>
 						<td>@contact.Email</td>
-				}
-				@if (contact.Birthday != null)
-				{
 						<td>@contact.Birthday</td>
+						<td>@contact.PhoneNumber</td>
+					</tr>
 				}
-				<td>@contact.PhoneNumber</td>
-
-
-			</tr>
+				</tbody>
+			</table>
 		}
-		</tbody>
-	</table>
+	</div>
 }
