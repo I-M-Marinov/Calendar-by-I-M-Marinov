@@ -447,7 +447,9 @@ h4{
 
 /* GetAllContacts HTML STYLING */
 
-
+.pb-3 {
+    font-family: 'Rubik', sans-serif;
+}
 
 .alphabet-index-containers {
     display: flex;
@@ -468,8 +470,21 @@ h4{
 }
 
 .alphabet-index-container:nth-of-type(2) {
-    margin-left: 50px;
+    margin-left: 2.5em;
 }
+
+/*a.alphabet-card:hover {
+    text-decoration: none;
+}*/
+
+a {
+    text-decoration: none !important;
+}
+
+    a:hover {
+        text-decoration: none !important;
+    }
+
 
 .alphabet-card {
     background: #f0f0f0;
@@ -489,20 +504,28 @@ h4{
     color: black; 
 
 }
+.alphabet-card span:hover {
+    text-decoration: none;
+}
 
 .alphabet-card:hover {
     transform: scale(1.25);
     z-index: 1;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
     background-color: #4489cf;
+    text-decoration: none;
 }
 
-.alphabet-card span:hover {
+.alphabet-card:hover span {
     color: white;
+    text-decoration: none;
 }
+
 
 .letter-group-header{
     text-align: center;
+
+    width: 25%;
 }
 
 #goToTop-button1 {
