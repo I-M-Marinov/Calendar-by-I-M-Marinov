@@ -124,11 +124,11 @@ namespace Calendar_by_I_M_Marinov.Services
 					foreach (var person in response.Connections)
 					{
 						var name = person.Names?.FirstOrDefault()?.DisplayName ?? "No Name";
-						var email = person.EmailAddresses?.FirstOrDefault()?.Value ?? "No Email";
-						var phone = person.PhoneNumbers?.FirstOrDefault()?.Value ?? "No Phone Number";
+						var email = person.EmailAddresses?.FirstOrDefault()?.Value ?? "N/A";
+						var phone = person.PhoneNumbers?.FirstOrDefault()?.Value ?? "N/A";
 						var birthday = person.Birthdays?.FirstOrDefault()?.Date != null
 							? $"{person.Birthdays.FirstOrDefault().Date.Month}/{person.Birthdays.FirstOrDefault().Date.Day}/{person.Birthdays.FirstOrDefault().Date.Year}"
-							: "No Birthday";
+							: "N/A";
 
 
 						contactViewModels.Add(new ContactViewModel
