@@ -14,34 +14,37 @@
 else
 {
 	<div>
-		<!-- Latin Alphabetical Index as Cards -->
-		<div class="alphabet-index-container">
-			@foreach (var group in Model.Where(g => char.IsLetter(g.Key) && (g.Key < 'А' || g.Key > 'я')))
-			{
-				<a href="#letter-@group.Key">
-					<div class="alphabet-card">
-						<p>@group.Key</p>
-					</div>
-				</a>
-			}
-		</div>
 
-		<!-- Cyrillic Alphabetical Index as Cards -->
-		<div class="alphabet-index-container">
-			@foreach (var group in Model.Where(g => char.IsLetter(g.Key) && (g.Key >= 'А' && g.Key <= 'я')))
-			{
-				<a href="#letter-@group.Key">
-					<div class="alphabet-card">
-						<p>@group.Key</p>
-					</div>
-				</a>
-			}
+		<div class="alphabet-index-containers">
+			<!-- Latin Alphabetical Index as Cards -->
+			<div class="alphabet-index-container">
+				@foreach (var group in Model.Where(g => char.IsLetter(g.Key) && (g.Key < 'А' || g.Key > 'я')))
+				{
+					<a href="#letter-@group.Key">
+						<div class="alphabet-card">
+							<span>@group.Key</span>
+						</div>
+					</a>
+				}
+			</div>
+
+			<!-- Cyrillic Alphabetical Index as Cards -->
+			<div class="alphabet-index-container">
+				@foreach (var group in Model.Where(g => char.IsLetter(g.Key) && (g.Key >= 'А' && g.Key <= 'я')))
+				{
+					<a href="#letter-@group.Key">
+						<div class="alphabet-card">
+							<span>@group.Key</span>
+						</div>
+					</a>
+				}
+			</div>
 		</div>
 
 		<!-- Grouped Contacts by First Letter -->
 		@foreach (var group in Model)
 		{
-			<h3 id="letter-@group.Key">@group.Key</h3>
+			<h3 class="letter-group-header"  id="letter-@group.Key">@group.Key</h3>
 			<table class="table table-striped">
 				<thead>
 				<tr>
@@ -64,5 +67,15 @@ else
 				</tbody>
 			</table>
 		}
+		<a href="#">
+			<button id="goToTop-button1">
+				&#8593 Go to Top &#8593
+			</button>
+		</a>
+		<a href="#">
+			<button id="goToTop-button2">
+				&#8593 Go to Top &#8593
+			</button>
+		</a>
 	</div>
 }
