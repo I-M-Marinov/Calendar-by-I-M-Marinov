@@ -447,35 +447,109 @@ h4{
 
 /* GetAllContacts HTML STYLING */
 
+
+
+.alphabet-index-containers {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin-top: 2em;
+}
+
 .alphabet-index-container {
-    display: flex; 
+    display: flex;
     flex-wrap: wrap;
     gap: 10px;
-    justify-content: center; 
-    margin-bottom: 20px; 
-    width: 500px;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+ 
+}
+
+.alphabet-index-container:nth-of-type(2) {
+    margin-left: 50px;
 }
 
 .alphabet-card {
     background: #f0f0f0;
-    border-radius: 8px; 
-    padding: 8px; 
-    text-align: center; 
-    width: 28px; 
-    height: auto; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    transition: transform 0.4s, box-shadow 0.4s; 
+    border-radius: 8px;
+    padding: 8px;
+    text-align: center;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s, box-shadow 0.3s;
 }
 
-    .alphabet-card a {
-        text-decoration: none;
-        color: black; 
-    }
+.alphabet-card span {
+    text-decoration: none;
+    color: black; 
 
-    .alphabet-card:hover {
-        transform: scale(1.3); 
-        z-index: 1; 
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-    }
+}
+
+.alphabet-card:hover {
+    transform: scale(1.25);
+    z-index: 1;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    background-color: #4489cf;
+}
+
+.alphabet-card span:hover {
+    color: white;
+}
+
+.letter-group-header{
+    text-align: center;
+}
+
+#goToTop-button1 {
+    position: fixed;
+    bottom: 1em; 
+    left: 14em; 
+    padding: 5px 10px;
+    background-color: #007bff;
+    color: white;
+    font-size: 15px;
+    border: none;
+    border-radius: 0.5em;
+    cursor: pointer;
+    z-index: 1000; 
+    text-align: center;
+    text-decoration: none;
+}
+
+#goToTop-button2 {
+    position: fixed;
+    bottom: 1em;
+    right: 14em;
+    padding: 5px 10px;
+    background-color: #007bff;
+    color: white;
+    font-size: 15px;
+    border: none;
+    border-radius: 0.5em;
+    cursor: pointer;
+    z-index: 1000;
+    text-align: center;
+    text-decoration: none;
+}
+
+#goToTop-button1:hover,
+#goToTop-button2:hover {
+    background-color: #0056b3;
+}
+
+#goToTop-button1 a,
+#goToTop-button2 a {
+    color: black;
+    text-decoration: none;
+}
+
+#goToTop-button1 a:hover,
+#goToTop-button2 a:hover {
+    color: white;
+    text-decoration: none;
+}
