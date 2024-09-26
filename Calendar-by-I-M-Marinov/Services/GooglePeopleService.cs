@@ -32,7 +32,7 @@ namespace Calendar_by_I_M_Marinov.Services
 
             UserCredential credential = GoogleWebAuthorizationBroker.AuthorizeAsync(
                 clientSecrets,
-                new[] { PeopleServiceService.Scope.ContactsReadonly }, // Use the required scope
+                new[] { PeopleServiceService.Scope.Contacts }, // Use the required scope
                 "user",
                 CancellationToken.None,
                 new FileDataStore("people_token.json", true)).Result;
@@ -43,7 +43,6 @@ namespace Calendar_by_I_M_Marinov.Services
                 ApplicationName = _applicationName,
             });
         }
-
 		public async Task<string> FetchDisplayNameByEmailAsync(string email)
 		{
 			if (_emailDisplayNameMap.TryGetValue(email, out var cachedDisplayName))
@@ -104,50 +103,89 @@ namespace Calendar_by_I_M_Marinov.Services
 				return null;
 			}
 		}
+        public async Task<List<ContactViewModel>> GetAllContactsAsync()
+        {
+            List<ContactViewModel> contactViewModels = new List<ContactViewModel>();
 
-		public async Task<List<ContactViewModel>> GetAllContactsAsync()
-		{
-			List<ContactViewModel> contactViewModels = new List<ContactViewModel>();
-			string nextPageToken = null;
+            var contactGroups = await GetContactGroupsAsync();
 
-			do
-			{
-				PeopleResource.ConnectionsResource.ListRequest request = _peopleService.People.Connections.List("people/me");
-				request.PersonFields = "names,birthdays,emailAddresses,phoneNumbers,coverPhotos"; // Include the new fields
-				request.PageSize = 1000;
-				request.PageToken = nextPageToken; // Use the page token to fetch the next set of contacts
+            var groupLookup = contactGroups.ToDictionary(g => g.ResourceName, g => g.Name);
 
-				ListConnectionsResponse response = await request.ExecuteAsync();
+            string nextPageToken = null;
 
-				if (response.Connections != null && response.Connections.Count > 0)
-				{
-					foreach (var person in response.Connections)
-					{
-						var name = person.Names?.FirstOrDefault()?.DisplayName ?? "No Name";
-						var email = person.EmailAddresses?.FirstOrDefault()?.Value ?? "N/A";
-						var phone = person.PhoneNumbers?.FirstOrDefault()?.Value ?? "N/A";
-						var birthday = person.Birthdays?.FirstOrDefault()?.Date != null
-							? $"{person.Birthdays.FirstOrDefault().Date.Month}/{person.Birthdays.FirstOrDefault().Date.Day}/{person.Birthdays.FirstOrDefault().Date.Year}"
-							: "N/A";
+            do
+            {
+                // Fetch all contacts
+                var request = _peopleService.People.Connections.List("people/me");
+                request.PersonFields = "names,emailAddresses,phoneNumbers,birthdays,memberships"; 
+                request.PageSize = 1000;
+                request.PageToken = nextPageToken; // Use the page token to fetch the next set of contacts
 
+                ListConnectionsResponse response = await request.ExecuteAsync();
 
-						contactViewModels.Add(new ContactViewModel
-						{
-							Name = name,
-							Email = email,
-							PhoneNumber = phone,
-							Birthday = birthday
-						});
-					}
-				}
+                if (response.Connections != null && response.Connections.Count > 0)
+                { 
+                    foreach (var person in response.Connections)
+                    {
+                        var name = person.Names?.FirstOrDefault()?.DisplayName ?? "No Name";
+                        var email = person.EmailAddresses?.FirstOrDefault()?.Value ?? "N/A";
+                        var phone = person.PhoneNumbers?.FirstOrDefault()?.Value ?? "N/A";
+                        var birthday = person.Birthdays?.FirstOrDefault()?.Date != null
+                            ? $"{person.Birthdays.FirstOrDefault().Date.Month}/{person.Birthdays.FirstOrDefault().Date.Day}/{person.Birthdays.FirstOrDefault().Date.Year}"
+                            : "N/A";
 
-				nextPageToken = response.NextPageToken;
+                        var labels = new List<string>();
+                        if (person.Memberships != null)
+                        {
+                            foreach (var membership in person.Memberships)
+                            {
+                                if (groupLookup.TryGetValue(membership.ContactGroupMembership.ContactGroupResourceName, out var groupName))
+                                {
+                                    labels.Add(groupName);
+                                }
+                            }
+                        }
 
-			} while (!string.IsNullOrEmpty(nextPageToken));
+                        contactViewModels.Add(new ContactViewModel
+                        {
+                            Name = name,
+                            Email = email,
+                            PhoneNumber = phone,
+                            Birthday = birthday,
+                            Labels = labels 
+                        });
+                    }
+                }
 
-			return contactViewModels;
-		}
+                nextPageToken = response.NextPageToken;
 
-	}
+            } while (!string.IsNullOrEmpty(nextPageToken));
+
+            return contactViewModels;
+        }
+        /* Get all the groups ( assuming all are up to 100 ) */
+        public async Task<List<ContactGroup>> GetContactGroupsAsync()
+        {
+            var request = _peopleService.ContactGroups.List();
+            request.PageSize = 100;
+            request.GroupFields = "name,memberCount"; 
+            var response = await request.ExecuteAsync();
+
+            return response.ContactGroups.ToList();
+        }
+        /* Get the Contact Group based on the groupResourceName*/
+        public async Task<ContactGroup> GetContactGroupAsync(string groupResourceName)
+        {
+            return await _peopleService.ContactGroups.Get(groupResourceName).ExecuteAsync();
+        }
+        /* Get the Person based on the groupResourceName*/
+        public async Task<Person> GetPersonAsync(string personResourceName)
+        {
+            var request = _peopleService.People.Get(personResourceName);
+            request.PersonFields = "names,emailAddresses,phoneNumbers,birthdays";
+            return await request.ExecuteAsync();
+        }
+
+    }
 
 }
