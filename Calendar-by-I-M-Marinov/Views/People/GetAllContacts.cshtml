@@ -39,20 +39,17 @@ else
                 }
             </div>
         </div>
-        
-       @{
-	       // TODO: resolve the issue with visualizing the ContactGroups 
-       }
 
-        @if (ViewBag.ContactGroups != null && ViewBag.ContactGroups.Any())
+
+        @if (ViewBag.ContactGroups != null)
         {
 	        <div class="contact-groups-container">
 		        <h4>Contact Groups</h4>
-		        <form method="get" action="@Url.Action("Index", "People")">
+                <form method="get" action="@Url.Action("GetContactsFromAGroup", "People")">
 			        <div class="contact-groups">
 				        @foreach (var contactGroup in ViewBag.ContactGroups)
 				        {
-					        <button type="submit" name="selectedGroup" value="@contactGroup.ResourceName" class="btn btn-info group-button">
+                            <button type="submit" name="selectedGroup" value="@contactGroup.Name" class="btn btn-info group-button " id="group-button">
 						        @contactGroup.Name
 					        </button>
 				        }
@@ -64,10 +61,7 @@ else
         {
 	        <p>No contact groups available.</p>
         }
-        
-        @{
-	        // TODO: resolve the issue with visualizing the ContactGroups 
-        }
+
 
         <!-- Grouped Contacts by First Letter -->
         @foreach (var group in Model)
@@ -127,3 +121,5 @@ else
         </a>
     </div>
 }
+
+
