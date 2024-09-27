@@ -1,0 +1,104 @@
+﻿@model List<IGrouping<char, Calendar_by_I_M_Marinov.Models.People.ContactViewModel>>
+
+@{
+    ViewData["Title"] = "Contacts List";
+}
+
+<h2>Contacts List</h2>
+<h4>There are <strong>@ViewBag.ContactsCount</strong> contacts in group "@ViewBag.ContactGroupSelected"</h4>
+
+
+@if (Model.Count == 0)
+{
+    <p>No contacts available.</p>
+}
+else
+{
+	<div>
+		<div class="alphabet-index-containers">
+			<!-- Latin Alphabetical Index as Cards -->
+			<div class="alphabet-index-container">
+				@foreach (var group in Model.Where(g => char.IsLetter(g.Key) && (g.Key < 'А' || g.Key > 'я')))
+				{
+					<a href="#letter-@group.Key">
+						<div class="alphabet-card">
+							<span>@group.Key</span>
+						</div>
+					</a>
+				}
+			</div>
+
+			<!-- Cyrillic Alphabetical Index as Cards -->
+			<div class="alphabet-index-container">
+				@foreach (var group in Model.Where(g => char.IsLetter(g.Key) && (g.Key >= 'А' && g.Key <= 'я')))
+				{
+					<a href="#letter-@group.Key">
+						<div class="alphabet-card">
+							<span>@group.Key</span>
+						</div>
+					</a>
+				}
+			</div>
+		</div>
+
+		@if (ViewBag.ContactGroups != null)
+		{
+			<div class="contact-groups-container">
+				<h4>Contact Groups</h4>
+				<form method="get" action="@Url.Action("GetContactsFromAGroup", "People")">
+					<div class="contact-groups">
+						@foreach (var contactGroup in ViewBag.ContactGroups)
+						{
+							<button type="submit" name="selectedGroup" value="@contactGroup.Name" class="btn btn-info group-button" id="group-button">
+								@contactGroup.Name
+							</button>
+						}
+					</div>
+				</form>
+			</div>
+		}
+		else
+		{
+			<p>No contact groups available.</p>
+		}
+
+		<!-- Grouped Contacts by First Letter -->
+		@foreach (var group in Model)
+		{
+			<h3 class="letter-group-header" id="letter-@group.Key">@group.Key</h3>
+			<table class="table table-striped">
+				<thead>
+				<tr>
+					<th>Name</th>
+					<th>Email</th>
+					<th>Birthday</th>
+					<th>Phone Number</th>
+				</tr>
+				</thead>
+				<tbody>
+				@foreach (var contact in group)
+				{
+					<tr>
+						<td>@contact.Name</td>
+						<td>@contact.Email</td>
+						<td>@contact.Birthday</td>
+						<td>@contact.PhoneNumber</td>
+					</tr>
+				}
+				</tbody>
+			</table>
+		}
+
+		<!-- Go to Top Buttons -->
+		<a href="#">
+			<button id="goToTop-button1">
+				&#8593 Go to Top &#8593
+			</button>
+		</a>
+		<a href="#">
+			<button id="goToTop-button2">
+				&#8593 Go to Top &#8593
+			</button>
+		</a>
+	</div>
+}
