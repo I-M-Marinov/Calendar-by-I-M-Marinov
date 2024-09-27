@@ -163,6 +163,75 @@ namespace Calendar_by_I_M_Marinov.Services
 
             return contactViewModels;
         }
+        public async Task<List<ContactViewModel>> GetAllContactsAsync(string selectedGroup)
+        {
+            List<ContactViewModel> contactViewModels = new List<ContactViewModel>();
+
+            var contactGroups = await GetContactGroupsAsync();
+
+            var groupLookup = contactGroups.ToDictionary(g => g.ResourceName, g => g.Name);
+
+            string nextPageToken = null;
+
+            do
+            {
+                // Fetch all contacts
+                var request = _peopleService.People.Connections.List("people/me");
+                request.PersonFields = "names,emailAddresses,phoneNumbers,birthdays,memberships";
+                request.PageSize = 1000;
+                request.PageToken = nextPageToken; // Use the page token to fetch the next set of contacts
+
+                ListConnectionsResponse response = await request.ExecuteAsync();
+
+                if (response.Connections != null && response.Connections.Count > 0)
+                {
+                    foreach (var person in response.Connections)
+                    {
+                        var name = person.Names?.FirstOrDefault()?.DisplayName ?? "No Name";
+                        var email = person.EmailAddresses?.FirstOrDefault()?.Value ?? "N/A";
+                        var phone = person.PhoneNumbers?.FirstOrDefault()?.Value ?? "N/A";
+                        var birthday = person.Birthdays?.FirstOrDefault()?.Date != null
+                            ? $"{person.Birthdays.FirstOrDefault().Date.Month}/{person.Birthdays.FirstOrDefault().Date.Day}/{person.Birthdays.FirstOrDefault().Date.Year}"
+                            : "N/A";
+
+                        var labels = new List<string>();
+                        if (person.Memberships != null)
+                        {
+                            foreach (var membership in person.Memberships)
+                            {
+                                // Assuming ResourceName is what you need
+                                if (groupLookup.TryGetValue(membership.ContactGroupMembership.ContactGroupResourceName, out var groupName))
+                                {
+                                    labels.Add(groupName);
+                                }
+                            }
+                        }
+
+                        // Add only contacts that belong to the selected group
+                        if (labels.Contains(selectedGroup))
+                        {
+                            contactViewModels.Add(new ContactViewModel
+                            {
+                                Name = name,
+                                Email = email,
+                                PhoneNumber = phone,
+                                Birthday = birthday,
+                                Labels = labels
+                            });
+                        }
+                    }
+                }
+
+                nextPageToken = response.NextPageToken;
+
+            } while (!string.IsNullOrEmpty(nextPageToken));
+
+            // Debugging: Check the number of contacts found for the selected group
+            Console.WriteLine($"Total contacts in group '{selectedGroup}': {contactViewModels.Count}");
+
+            return contactViewModels;
+        }
+
         /* Get all the groups ( assuming all are up to 100 ) */
         public async Task<List<ContactGroup>> GetContactGroupsAsync()
         {
