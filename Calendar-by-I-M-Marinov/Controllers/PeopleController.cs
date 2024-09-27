@@ -38,7 +38,17 @@ namespace Calendar_by_I_M_Marinov.Controllers
 				
 				ViewBag.ContactsCount = contacts.Count;
 
-				return View(groupedContacts);
+                var contactGroupList = await _peopleGoogleService.GetContactGroupsAsync();
+
+                if (contactGroupList == null || !contactGroupList.Any())
+                {
+                    return StatusCode(500, "No contact groups returned from the service.");
+                }
+
+                ViewBag.ContactGroups = contactGroupList;
+                ViewBag.ContactsCount = contacts.Count;
+
+                return View(groupedContacts);
 			}
 			catch (System.Exception ex)
 			{
@@ -48,77 +58,37 @@ namespace Calendar_by_I_M_Marinov.Controllers
 
 		}
         [HttpGet]
-        public async Task<ActionResult> Index()
+        [Route("contacts/group")] 
+        public async Task<ActionResult> GetContactsFromAGroup(string selectedGroup)
         {
             try
             {
-                var contacts = await _peopleGoogleService.GetAllContactsAsync();
+                var contacts = await _peopleGoogleService.GetAllContactsAsync(selectedGroup);
 
                 var groupedContacts = contacts
-                    .Where(c => c.Labels != null && c.Labels.Count > 0) 
-                    .GroupBy(c => c.Labels.First()) 
-                    .OrderBy(g => g.Key) 
+                    .Where(c => !string.IsNullOrEmpty(c.Name))
+                    .GroupBy(c => char.ToUpper(c.Name[0]))
+                    .OrderBy(g => g.Key)
                     .ToList();
 
-                ViewBag.ContactsCount = contacts.Count; 
-                ViewBag.ContactGroups = await _peopleGoogleService.GetContactGroupsAsync(); 
-
-                return View(groupedContacts); 
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}"); 
-            }
-        }
-
-        [HttpPost]
-        public async Task<ActionResult> Index(string selectedGroup)
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(selectedGroup))
+                var contactGroupList = await _peopleGoogleService.GetContactGroupsAsync();
+                if (contactGroupList == null || !contactGroupList.Any())
                 {
-                    ModelState.AddModelError("", "Please select a contact group.");
-                    ViewBag.ContactGroups = await _peopleGoogleService.GetContactGroupsAsync();
-                    return View(new List<IGrouping<char, Person>>());
+                    return StatusCode(500, "No contact groups returned from the service.");
                 }
 
-                var contactGroup = await _peopleGoogleService.GetContactGroupAsync(selectedGroup);
+                ViewBag.ContactGroups = contactGroupList; // Set groups in ViewBag
+                ViewBag.ContactsCount = contacts.Count; // Total contacts count
+                ViewBag.ContactGroupSelected = selectedGroup; // Save the name of the group to use it in the next View
 
-                var contacts = new List<Person>();
 
-                if (contactGroup.MemberResourceNames != null && contactGroup.MemberResourceNames.Count > 0)
-                {
-                    foreach (var memberResourceName in contactGroup.MemberResourceNames)
-                    {
-                        var person = await _peopleGoogleService.GetPersonAsync(memberResourceName);
-                        if (person != null)
-                        {
-                            contacts.Add(person);
-                        }
-                    }
-                }
-
-                var groupedContacts = contacts
-                    .Where(c => c.Names != null && c.Names.Count > 0) 
-                    .GroupBy(c => char.ToUpper(c.Names[0].DisplayName[0])) 
-                    .OrderBy(g => g.Key) 
-                    .ToList();
-
-                ViewBag.ContactsCount = contacts.Count; 
-                ViewBag.ContactGroups = await _peopleGoogleService.GetContactGroupsAsync(); 
-
-                return View(groupedContacts);
+				return View(groupedContacts);
             }
             catch (Exception ex)
             {
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
-
-
-
-
 
     }
 
