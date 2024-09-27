@@ -481,6 +481,11 @@ a:hover {
     text-decoration: none !important;
 }
 
+#group-button {
+    padding: 0.358em;
+    margin: 0.3em 0.3em;
+}
+
 
 .alphabet-card {
     background: #f0f0f0;
@@ -520,8 +525,8 @@ a:hover {
 
 .letter-group-header{
     text-align: center;
-
-    width: 25%;
+    border: 2px solid black;
+    background-color: lightblue;
 }
 
 #goToTop-button1 {
