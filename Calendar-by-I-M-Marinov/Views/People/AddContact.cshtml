@@ -1,0 +1,39 @@
+﻿<form asp-action="AddContact" method="post">
+	<div>
+		<label for="name">First Name</label>
+		<input type="text" id="firstName" name="FirstName" required />
+	</div>
+	
+	<div>
+		<label for="name">Last Name</label>
+		<input type="text" id="lastName" name="LastName" required />
+	</div>
+
+	<div>
+		<label for="email">Email</label>
+		<input type="email" id="email" name="Email"/>
+	</div>
+
+	<div>
+		<label for="phoneNumber">Phone Number</label>
+		<input type="tel" id="phoneNumber" name="PhoneNumber" />
+	</div>
+
+	<div>
+		<label for="birthday">Birthday</label>
+		<input type="date" id="birthday" name="Birthday" />
+	</div>
+
+	<div>
+		<label for="contactGroup">Select Group (Optional)</label>
+		<select id="contactGroup" name="SelectedGroup">
+			<option value="">-- No Group (will be added to myContacts) --</option>
+			@foreach (var group in ViewBag.ContactGroups)
+			{
+				<option value="@group.ResourceName">@group.Name</option>
+			}
+		</select>
+	</div>
+
+	<button type="submit">Add Contact</button>
+</form>
