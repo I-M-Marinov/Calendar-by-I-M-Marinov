@@ -26,8 +26,8 @@ namespace Calendar_by_I_M_Marinov.Controllers
 				var contacts = await _peopleGoogleService.GetAllContactsAsync();
 
 				var groupedContacts = contacts
-					.Where(c => !string.IsNullOrEmpty(c.Name)) 
-					.GroupBy(c => char.ToUpper(c.Name[0])) 
+					.Where(c => !string.IsNullOrEmpty(c.FullName)) 
+					.GroupBy(c => char.ToUpper(c.FullName[0])) 
 					.OrderBy(g => g.Key) 
 					.ToList();
 
@@ -66,8 +66,8 @@ namespace Calendar_by_I_M_Marinov.Controllers
                 var contacts = await _peopleGoogleService.GetAllContactsAsync(selectedGroup);
 
                 var groupedContacts = contacts
-                    .Where(c => !string.IsNullOrEmpty(c.Name))
-                    .GroupBy(c => char.ToUpper(c.Name[0]))
+                    .Where(c => !string.IsNullOrEmpty(c.FullName))
+                    .GroupBy(c => char.ToUpper(c.FullName[0]))
                     .OrderBy(g => g.Key)
                     .ToList();
 
@@ -87,6 +87,55 @@ namespace Calendar_by_I_M_Marinov.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        [HttpGet]
+        [Route("/add-contact")]
+        public async Task<ActionResult> AddContact()
+        {
+            var contactGroups = await _peopleGoogleService.GetContactGroupsAsync();
+            ViewBag.ContactGroups = contactGroups; 
+
+            return View();
+        }
+        [HttpPost]
+        [Route("/add-contact")]
+        public async Task<IActionResult> AddContact(ContactViewModel newContact, string selectedGroup)
+        {
+            newContact.Labels = newContact.Labels ?? new List<string>();
+
+            var contactGroups = await _peopleGoogleService.GetContactGroupsAsync();
+            var myContactsGroup = contactGroups.FirstOrDefault(g => g.Name == "myContacts");
+
+            if (string.IsNullOrEmpty(selectedGroup) && myContactsGroup != null)
+            {
+                selectedGroup = myContactsGroup.ResourceName; 
+            }
+
+            if (string.IsNullOrEmpty(selectedGroup))
+            {
+                newContact.Labels.Add(myContactsGroup.ResourceName); 
+            }
+            else
+            {
+                newContact.Labels.Add(selectedGroup); 
+            }
+
+            
+            if (string.IsNullOrEmpty(newContact.FirstName))
+            {
+                return BadRequest("Name is required.");
+            }
+
+            try
+            {
+                string resourceId = await _peopleGoogleService.AddContactAsync(newContact, selectedGroup);
+                return Ok($"Contact added successfully. Resource ID: {resourceId}");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error: {ex.Message}");
             }
         }
 
