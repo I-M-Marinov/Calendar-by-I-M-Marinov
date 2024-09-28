@@ -11,6 +11,8 @@ namespace Calendar_by_I_M_Marinov.Services.Contracts
         Task<List<ContactGroup>> GetContactGroupsAsync();
         Task<ContactGroup> GetContactGroupAsync(string groupResourceName);
         Task<Person> GetPersonAsync(string personResourceName);
+        Task<string> AddContactAsync(ContactViewModel newContact, string selectedGroup);
+
 
     }
 }
