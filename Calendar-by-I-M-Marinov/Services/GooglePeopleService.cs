@@ -127,7 +127,8 @@ namespace Calendar_by_I_M_Marinov.Services
                 { 
                     foreach (var person in response.Connections)
                     {
-                        var name = person.Names?.FirstOrDefault()?.DisplayName ?? "No Name";
+                        var firstName = person.Names?.FirstOrDefault()?.GivenName ?? null;
+                        var lastName = person.Names?.FirstOrDefault()?.FamilyName ?? null;
                         var email = person.EmailAddresses?.FirstOrDefault()?.Value ?? "N/A";
                         var phone = person.PhoneNumbers?.FirstOrDefault()?.Value ?? "N/A";
                         var birthday = person.Birthdays?.FirstOrDefault()?.Date != null
@@ -148,7 +149,8 @@ namespace Calendar_by_I_M_Marinov.Services
 
                         contactViewModels.Add(new ContactViewModel
                         {
-                            Name = name,
+                            FirstName = firstName,
+                            LastName = lastName,
                             Email = email,
                             PhoneNumber = phone,
                             Birthday = birthday,
@@ -187,8 +189,9 @@ namespace Calendar_by_I_M_Marinov.Services
                 {
                     foreach (var person in response.Connections)
                     {
-                        var name = person.Names?.FirstOrDefault()?.DisplayName ?? "No Name";
-                        var email = person.EmailAddresses?.FirstOrDefault()?.Value ?? "N/A";
+	                    var firstName = person.Names?.FirstOrDefault()?.GivenName ?? "N/A";
+	                    var lastName = person.Names?.FirstOrDefault()?.FamilyName ?? "N/A";
+						var email = person.EmailAddresses?.FirstOrDefault()?.Value ?? "N/A";
                         var phone = person.PhoneNumbers?.FirstOrDefault()?.Value ?? "N/A";
                         var birthday = person.Birthdays?.FirstOrDefault()?.Date != null
                             ? $"{person.Birthdays.FirstOrDefault().Date.Month}/{person.Birthdays.FirstOrDefault().Date.Day}/{person.Birthdays.FirstOrDefault().Date.Year}"
@@ -199,7 +202,6 @@ namespace Calendar_by_I_M_Marinov.Services
                         {
                             foreach (var membership in person.Memberships)
                             {
-                                // Assuming ResourceName is what you need
                                 if (groupLookup.TryGetValue(membership.ContactGroupMembership.ContactGroupResourceName, out var groupName))
                                 {
                                     labels.Add(groupName);
@@ -207,12 +209,12 @@ namespace Calendar_by_I_M_Marinov.Services
                             }
                         }
 
-                        // Add only contacts that belong to the selected group
                         if (labels.Contains(selectedGroup))
                         {
                             contactViewModels.Add(new ContactViewModel
                             {
-                                Name = name,
+                                FirstName = firstName,
+                                LastName = lastName,
                                 Email = email,
                                 PhoneNumber = phone,
                                 Birthday = birthday,
@@ -254,6 +256,79 @@ namespace Calendar_by_I_M_Marinov.Services
             request.PersonFields = "names,emailAddresses,phoneNumbers,birthdays";
             return await request.ExecuteAsync();
         }
+
+        public async Task<string> AddContactAsync(ContactViewModel newContact, string selectedGroup)
+        {
+            // Ensure Labels is initialized if null
+            if (newContact.Labels == null)
+            {
+                newContact.Labels = new List<string>();
+            }
+
+            // Retrieve contact groups
+            var contactGroups = await GetContactGroupsAsync();
+            var myContactsGroup = contactGroups.FirstOrDefault(g => g.Name == "myContacts");
+
+            // If the user didn't select a group, use the myContacts group ID
+            if (string.IsNullOrEmpty(selectedGroup) && myContactsGroup != null)
+            {
+                selectedGroup = myContactsGroup.ResourceName; // Use the resource name
+            }
+            else if (string.IsNullOrEmpty(selectedGroup))
+            {
+                throw new Exception("No valid contact group selected and 'myContacts' group not found.");
+            }
+
+            // Create a new Person object to send to the API (Google API example)
+            var contactToCreate = new Person
+            {
+				Names = new List<Name>
+				{
+					new Name
+					{
+						DisplayName = $"{newContact.FirstName} {newContact.LastName}", // Full Name for display
+						GivenName = newContact.FirstName, // First Name
+						FamilyName = newContact.LastName  // Last Name
+					}
+				},
+				EmailAddresses = string.IsNullOrEmpty(newContact.Email)
+                    ? null
+                    : new List<EmailAddress> { new EmailAddress { Value = newContact.Email } },
+                PhoneNumbers = string.IsNullOrEmpty(newContact.PhoneNumber)
+                    ? null
+                    : new List<PhoneNumber> { new PhoneNumber { Value = newContact.PhoneNumber } },
+                Birthdays = string.IsNullOrEmpty(newContact.Birthday)
+                    ? null
+                    : new List<Birthday>
+                    {
+                        new Birthday
+                        {
+                            Date = new Date
+                            {
+                                Day = int.Parse(newContact.Birthday.Split('/')[1]),
+                                Month = int.Parse(newContact.Birthday.Split('/')[0]),
+                                Year = int.Parse(newContact.Birthday.Split('/')[2])
+                            }
+                        }
+                    },
+                Memberships = newContact.Labels.Select(label => new Membership
+                {
+                    ContactGroupMembership = new ContactGroupMembership
+                    {
+                        ContactGroupResourceName = label
+                    }
+                }).ToList()
+            };
+
+            // Add the contact via Google People API (or another service)
+            var request = _peopleService.People.CreateContact(contactToCreate);
+            var response = await request.ExecuteAsync();
+
+            return response.ResourceName; // Return the ID of the newly created contact
+        }
+
+
+
 
     }
 
