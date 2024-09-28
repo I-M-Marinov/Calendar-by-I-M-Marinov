@@ -62,15 +62,19 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllerRoute(
-	name: "default",
-	pattern: "{controller=Home}/{action=Index}/{id?}");
-
 app.UseEndpoints(endpoints =>
 {
+	// Default route configuration
+	endpoints.MapControllerRoute(
+		name: "default",
+		pattern: "{controller=Home}/{action=Index}/{id?}");
+
+    // If you want a custom route for PeopleController, add it like this
     endpoints.MapControllerRoute(
-        name: "default",
-        pattern: "{controller=People}/{action=Index}/{id?}");
+        name: "add-contact",
+        pattern: "add-contact",
+        defaults: new { controller = "People", action = "AddContact" });
 });
+
 
 app.Run();
