@@ -189,8 +189,8 @@ namespace Calendar_by_I_M_Marinov.Services
                 {
                     foreach (var person in response.Connections)
                     {
-	                    var firstName = person.Names?.FirstOrDefault()?.GivenName ?? "N/A";
-	                    var lastName = person.Names?.FirstOrDefault()?.FamilyName ?? "N/A";
+	                    var firstName = person.Names?.FirstOrDefault()?.GivenName ?? null;
+	                    var lastName = person.Names?.FirstOrDefault()?.FamilyName ?? null;
 						var email = person.EmailAddresses?.FirstOrDefault()?.Value ?? "N/A";
                         var phone = person.PhoneNumbers?.FirstOrDefault()?.Value ?? "N/A";
                         var birthday = person.Birthdays?.FirstOrDefault()?.Date != null
@@ -279,7 +279,6 @@ namespace Calendar_by_I_M_Marinov.Services
                 throw new Exception("No valid contact group selected and 'myContacts' group not found.");
             }
 
-            // Create a new Person object to send to the API (Google API example)
             var contactToCreate = new Person
             {
 				Names = new List<Name>
