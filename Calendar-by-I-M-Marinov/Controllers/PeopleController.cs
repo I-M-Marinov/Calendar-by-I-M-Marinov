@@ -119,7 +119,8 @@ namespace Calendar_by_I_M_Marinov.Controllers
             }
             else
             {
-                newContact.Labels.Add(selectedGroup); 
+                newContact.Labels.Add(selectedGroup);
+                newContact.Labels.Add(myContactsGroup.ResourceName);
             }
 
             
@@ -130,8 +131,21 @@ namespace Calendar_by_I_M_Marinov.Controllers
 
             try
             {
+                ViewBag.ContactGroups = contactGroups;
+                ViewBag.NewContactFirstName = newContact.FirstName;
+	            ViewBag.NewContactLastName = newContact.LastName;
+	            ViewBag.NewContactEmail = string.IsNullOrWhiteSpace(newContact.Email) ? "N/A" : newContact.Email;
+				ViewBag.NewContactPhoneNumber = string.IsNullOrWhiteSpace(newContact.PhoneNumber) ? "N/A" : newContact.PhoneNumber;
+				ViewBag.NewContactBirthday = string.IsNullOrWhiteSpace(newContact.Birthday) ? "N/A" : newContact.Birthday;
+				ViewBag.NewContactLabels = newContact.Labels;
+
+                ViewBag.ShowSuccessMessage = true;
+
                 string resourceId = await _peopleGoogleService.AddContactAsync(newContact, selectedGroup);
-                return Ok($"Contact added successfully. Resource ID: {resourceId}");
+                // Ok($"Contact added successfully. Resource ID: {resourceId}");
+                return View();
+
+
             }
             catch (Exception ex)
             {
