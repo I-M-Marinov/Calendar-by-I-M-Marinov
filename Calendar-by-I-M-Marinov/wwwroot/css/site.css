@@ -483,7 +483,7 @@ a:hover {
 
 #group-button {
     padding: 0.358em;
-    margin: 0.3em 0.3em;
+    margin: 0.3em 0.30em;
 }
 
 
@@ -576,4 +576,20 @@ a:hover {
 #goToTop-button2 a:hover {
     color: white;
     text-decoration: none;
+}
+
+
+/* GetContactsFromAGroup CSS */
+
+.btn-selected-group {
+    background-color: #21900b !important;
+    color: white !important;
+    transform: scale(1.19);
+    margin: 0.3em 1em !important;
+}
+
+.btn-selected-group:hover {
+    color: black !important;
+    opacity: 75%;
+
 }
