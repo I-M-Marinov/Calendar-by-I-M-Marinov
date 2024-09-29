@@ -69,39 +69,48 @@ else
             <h3 class="letter-group-header" id="letter-@group.Key">@group.Key</h3>
             <table class="table table-striped">
                 <thead>
-                    <tr>
-                        <th>Full Name</th>
-                        <th>Email</th>
-                        <th>Birthday</th>
-                        <th>Phone Number</th>
-                        <th>Label/Group</th>
+                <tr>
 
-                    </tr>
+	                @if (group.Any(contact => !string.IsNullOrEmpty(contact.FirstName) || !string.IsNullOrEmpty(contact.LastName)))
+	                {
+		                <th>Full Name</th>
+	                }
+	                <th>Email</th>
+	                <th>Birthday</th>
+	                <th>Phone Number</th>
+	                <th>Label/Group</th>
+
+                </tr>
                 </thead>
                 <tbody>
                     @foreach (var contact in group)
                     {
 	                    <tr>
-		                    <td>@contact.FullName</td>
+
+		                    @if (group.Any(contact => !string.IsNullOrEmpty(contact.FirstName) || !string.IsNullOrEmpty(contact.LastName)))
+		                    {
+			                    <td>@contact.FullName</td>
+		                    }
+
 		                    <td>@contact.Email</td>
 		                    <td>@contact.Birthday</td>
 		                    <td>@contact.PhoneNumber</td>
 		                    <td>
-                                @if (contact.Labels != null && contact.Labels.Count > 0)
+			                    @if (contact.Labels != null && contact.Labels.Count > 0)
 			                    {
 				                    foreach (var label in contact.Labels)
 				                    {
 					                    if (label != "myContacts") // print all other label but the myContacts label ( visually more pleasing )
 					                    {
-						                    <span class="badge badge-info">@label</span> 
+						                    <span class="badge badge-info">@label</span>
 					                    }
 				                    }
 			                    }
 			                    else
 			                    {
-				                    <span>-None-</span> 
+				                    <span>-None-</span>
 			                    }
-		                    </td> 
+		                    </td>
 	                    </tr>
                     }
                 </tbody>
