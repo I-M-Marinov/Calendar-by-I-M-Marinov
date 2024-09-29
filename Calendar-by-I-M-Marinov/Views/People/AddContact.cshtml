@@ -1,4 +1,4 @@
-﻿<form asp-action="AddContact" method="post">
+﻿<form asp-action="AddContact" method="POST">
 	<div>
 		<label for="name">First Name</label>
 		<input type="text" id="firstName" name="FirstName" required />
@@ -30,10 +30,41 @@
 			<option value="">-- No Group (will be added to myContacts) --</option>
 			@foreach (var group in ViewBag.ContactGroups)
 			{
-				<option value="@group.ResourceName">@group.Name</option>
+				if (group.Name != "chatBuddies" && group.Name != "all" && group.Name != "blocked")
+				{
+					<option value="@group.ResourceName">@group.FormattedName</option>
+				}
+
 			}
 		</select>
 	</div>
 
 	<button type="submit">Add Contact</button>
 </form>
+
+@if (ViewBag.ShowSuccessMessage != null && ViewBag.ShowSuccessMessage)
+{
+	<div class="alert alert-success" role="alert">
+		<strong>New contact created!</strong>
+		<br /><br />
+		Name: @ViewBag.NewContactFirstName @ViewBag.NewContactLastName <br />
+		Email: @ViewBag.NewContactEmail <br />
+		Phone Number: @ViewBag.NewContactPhoneNumber <br />
+		Birthday: @ViewBag.NewContactBirthday <br />
+
+		@if (ViewBag.NewContactLabels != null && ((List<string>)ViewBag.NewContactLabels).Count > 0)
+		{
+			<p>
+				Labels:
+				@foreach (var label in ViewBag.NewContactLabels as List<string>)
+				{
+					<span class="badge badge-info">@label</span> 
+				}
+			</p>
+		}
+		else
+		{
+			<p>No labels available.</p>
+		}
+	</div>
+}
