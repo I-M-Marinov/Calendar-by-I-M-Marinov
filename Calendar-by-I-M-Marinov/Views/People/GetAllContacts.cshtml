@@ -49,9 +49,13 @@ else
 			        <div class="contact-groups">
 				        @foreach (var contactGroup in ViewBag.ContactGroups)
 				        {
-                            <button type="submit" name="selectedGroup" value="@contactGroup.Name" class="btn btn-info group-button " id="group-button">
-						        @contactGroup.Name
-					        </button>
+
+                            if (contactGroup.Name != "chatBuddies" && contactGroup.Name != "all" && contactGroup.Name != "blocked")
+					        {
+						        <button type="submit" name="selectedGroup" value="@contactGroup.Name" class="btn btn-info group-button " id="group-button">
+                                    @contactGroup.FormattedName
+						        </button>
+					        }
 				        }
 			        </div>
 		        </form>
@@ -66,6 +70,8 @@ else
         <!-- Grouped Contacts by First Letter -->
         @foreach (var group in Model)
         {
+	        var sortedGroup = group.OrderBy(contact => contact.FirstName).ToList();
+
             <h3 class="letter-group-header" id="letter-@group.Key">@group.Key</h3>
             <table class="table table-striped">
                 <thead>
@@ -83,7 +89,7 @@ else
                 </tr>
                 </thead>
                 <tbody>
-                    @foreach (var contact in group)
+                    @foreach (var contact in sortedGroup)
                     {
 	                    <tr>
 
