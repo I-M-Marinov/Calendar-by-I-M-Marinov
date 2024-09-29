@@ -69,7 +69,10 @@ else
 			<table class="table table-striped">
 				<thead>
 				<tr>
-					<th>Full Name</th>
+					@if (group.Any(contact => !string.IsNullOrEmpty(contact.FirstName) || !string.IsNullOrEmpty(contact.LastName)))
+					{
+						<th>Full Name</th>
+					}
 					<th>Email</th>
 					<th>Birthday</th>
 					<th>Phone Number</th>
@@ -79,7 +82,10 @@ else
 				@foreach (var contact in group)
 				{
 					<tr>
-						<td>@contact.FullName</td>
+						@if (group.Any(contact => !string.IsNullOrEmpty(contact.FirstName) || !string.IsNullOrEmpty(contact.LastName)))
+						{
+							<td>@contact.FullName</td>
+						}
 						<td>@contact.Email</td>
 						<td>@contact.Birthday</td>
 						<td>@contact.PhoneNumber</td>
