@@ -49,7 +49,11 @@ else
 					<div class="contact-groups">
 						@foreach (var contactGroup in ViewBag.ContactGroups)
 						{
-							<button type="submit" name="selectedGroup" value="@contactGroup.Name" class="btn btn-info group-button" id="group-button">
+							<button type="submit"
+							        name="selectedGroup"
+							        value="@contactGroup.Name"
+							        class="btn group-button @(ViewBag.ContactGroupSelected == contactGroup.Name ? "btn-selected-group" : "btn-info")"
+							        id="group-button">
 								@contactGroup.Name
 							</button>
 						}
