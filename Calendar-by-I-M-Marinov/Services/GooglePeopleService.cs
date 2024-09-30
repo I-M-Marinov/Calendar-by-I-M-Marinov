@@ -233,7 +233,6 @@ namespace Calendar_by_I_M_Marinov.Services
 
             return contactViewModels;
         }
-
         /* Get all the groups ( assuming all are up to 100 ) */
         public async Task<List<ContactGroup>> GetContactGroupsAsync()
         {
@@ -256,7 +255,6 @@ namespace Calendar_by_I_M_Marinov.Services
             request.PersonFields = "names,emailAddresses,phoneNumbers,birthdays";
             return await request.ExecuteAsync();
         }
-
         public async Task<string> AddContactAsync(ContactViewModel newContact, string selectedGroup)
         {
             // Ensure Labels is initialized if null
