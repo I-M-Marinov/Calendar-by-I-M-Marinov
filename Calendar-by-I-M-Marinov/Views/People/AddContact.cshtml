@@ -1,46 +1,54 @@
-﻿<form asp-action="AddContact" method="POST">
-	<div>
-		<label for="name">First Name</label>
-		<input type="text" id="firstName" name="FirstName" required />
-	</div>
+﻿<h2>Add a new contact</h2>
+
+
+<div class="add-contact-div">
+	<form asp-action="AddContact" method="POST">
+		<div class="contact-firstname">
+			<input type="text" id="firstName" name="FirstName" placeholder=" " required />
+			<label for="firstName">First name</label>
+
+		</div>
 	
-	<div>
-		<label for="name">Last Name</label>
-		<input type="text" id="lastName" name="LastName" required />
-	</div>
+		<div class="contact-lastname">
+			<input type="text" id="lastName" name="LastName" placeholder=" "  required />
+			<label for="lastName">Last name</label>
+		</div>
 
-	<div>
-		<label for="email">Email</label>
-		<input type="email" id="email" name="Email"/>
-	</div>
+		<div class="contact-email">
+			<input type="email" id="email" name="Email" placeholder=" " />
+			<label for="email">Email</label>
+		</div>
 
-	<div>
-		<label for="phoneNumber">Phone Number</label>
-		<input type="tel" id="phoneNumber" name="PhoneNumber" />
-	</div>
+		<div class="contact-phoneNumber">
+			<input type="tel" id="phoneNumber" name="PhoneNumber" placeholder=" " />
+			<label for="phoneNumber">Phone number</label>
+		</div>
 
-	<div>
-		<label for="birthday">Birthday</label>
-		<input type="date" id="birthday" name="Birthday" />
-	</div>
+		<div class="contact-birthday">
+			<label for="birthday">Birthday</label>
+			<input type="date" id="birthday" name="Birthday" />
+		</div>
 
-	<div>
-		<label for="contactGroup">Select Group (Optional)</label>
-		<select id="contactGroup" name="SelectedGroup">
-			<option value="">-- No Group (will be added to myContacts) --</option>
-			@foreach (var group in ViewBag.ContactGroups)
-			{
-				if (group.Name != "chatBuddies" && group.Name != "all" && group.Name != "blocked")
+		<div class="contact-group">
+			<label for="contactGroup">Label/Group</label>
+			<select id="contactGroup" name="SelectedGroup">
+				<option value="">--No Label--</option>
+				@foreach (var group in ViewBag.ContactGroups)
 				{
-					<option value="@group.ResourceName">@group.FormattedName</option>
+					if (group.Name != "chatBuddies" && group.Name != "all" && group.Name != "blocked")
+					{
+						<option value="@group.ResourceName">@group.FormattedName</option>
+					}
+
 				}
+			</select>
+		</div>
 
-			}
-		</select>
-	</div>
-
-	<button type="submit">Add Contact</button>
-</form>
+		<div class="add-contact-button">
+			<button type="submit">Add Contact</button>
+		</div>
+	</form>
+</div>
 
 @if (ViewBag.ShowSuccessMessage != null && ViewBag.ShowSuccessMessage)
 {
