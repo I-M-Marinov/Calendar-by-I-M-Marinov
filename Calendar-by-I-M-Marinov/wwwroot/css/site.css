@@ -593,3 +593,151 @@ a:hover {
     opacity: 75%;
 
 }
+
+/* AddContact CSS */
+
+.add-contact-div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.contact-phoneNumber {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.contact-firstname,
+.contact-lastname,
+.contact-email,
+.contact-phoneNumber,
+.contact-birthday,
+.contact-group {
+    margin: 0.5em;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.contact-firstname input,
+.contact-lastname input,
+.contact-email input,
+.contact-phoneNumber input,
+.contact-birthday input,
+.contact-group select{
+    display: flex;
+    width: 350px;
+    border-radius: 6px;
+    padding: 5px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+}
+
+.contact-phoneNumber input {
+    width: 250px;
+}
+
+.contact-firstname label,
+.contact-lastname label,
+.contact-email label,
+.contact-phoneNumber label {
+    position: absolute;
+    left: 135px;
+    top: 14px;
+    font-size: 16px;
+    opacity: 0.75;
+    transition: all 0.28s ease; 
+    pointer-events: none; 
+}
+
+.contact-email label {
+    left: 155px;
+}
+
+.contact-phoneNumber label {
+    left: 125px;
+
+}
+
+.contact-firstname input:focus + label,
+.contact-firstname input:not(:placeholder-shown) + label,
+.contact-lastname input:focus + label,
+.contact-lastname input:not(:placeholder-shown) + label,
+.contact-email input:focus + label,
+.contact-email input:not(:placeholder-shown) + label,
+.contact-phoneNumber input:focus + label,
+.contact-phoneNumber input:not(:placeholder-shown) + label {
+    top: -10px;
+    font-size: 12px;
+    color: #333;
+    background-color: #007bff;
+    color: white;
+    opacity: 1;
+}
+
+.contact-firstname input:focus,
+.contact-lastname input:focus,
+.contact-email input:focus,
+.contact-phoneNumber input:focus,
+.contact-birthday input:focus,
+.contact-group select:focus {
+    border: 2px solid #007bff; /* Change to 2px or more to make it stand out */
+    outline: none;
+}
+
+
+.contact-birthday {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.contact-birthday label,
+.contact-group label{
+    opacity: 0.75;
+}
+
+
+.contact-birthday input {
+    display: flex;
+    width: 150px;
+    align-items: center;
+    justify-content: center;
+}
+
+
+.contact-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.contact-group select {
+    display: flex;
+    width: 200px;
+    align-items: center;
+    justify-content: center;
+}
+
+.add-contact-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.add-contact-button button{
+    border-radius: 6px;
+    color: black;
+    background-color: #007bff;
+    font-size: 16px;
+}
+
+.add-contact-button button:hover {
+    background-color: #0167d4;
+    opacity: 90%;
+    color: white;
+}
