@@ -1,4 +1,5 @@
-﻿using Calendar_by_I_M_Marinov.Models.People;
+﻿using Calendar_by_I_M_Marinov.Common;
+using Calendar_by_I_M_Marinov.Models.People;
 using Calendar_by_I_M_Marinov.Services.Contracts;
 using Google.Apis.PeopleService.v1.Data;
 
@@ -11,6 +12,7 @@ namespace Calendar_by_I_M_Marinov.Services
     using Microsoft.Extensions.Configuration;
     using System.Threading;
     using System.Threading.Tasks;
+    using static DateTimeExtensions;
 
     public class GooglePeopleService: IGooglePeopleService
     {
@@ -296,18 +298,7 @@ namespace Calendar_by_I_M_Marinov.Services
                     : new List<PhoneNumber> { new PhoneNumber { Value = newContact.PhoneNumber } },
                 Birthdays = string.IsNullOrEmpty(newContact.Birthday)
                     ? null
-                    : new List<Birthday>
-                    {
-                        new Birthday
-                        {
-                            Date = new Date
-                            {
-                                Day = int.Parse(newContact.Birthday.Split('/')[1]),
-                                Month = int.Parse(newContact.Birthday.Split('/')[0]),
-                                Year = int.Parse(newContact.Birthday.Split('/')[2])
-                            }
-                        }
-                    },
+                    : ParseBirthday(newContact.Birthday),  // Use the parsing method from the DateTimeExtension class to parse the date 
                 Memberships = newContact.Labels.Select(label => new Membership
                 {
                     ContactGroupMembership = new ContactGroupMembership
@@ -323,6 +314,8 @@ namespace Calendar_by_I_M_Marinov.Services
 
             return response.ResourceName; // Return the ID of the newly created contact
         }
+
+
 
 
 
