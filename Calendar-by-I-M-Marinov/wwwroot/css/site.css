@@ -447,6 +447,21 @@ h4{
 
 /* GetAllContacts HTML STYLING */
 
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1em;
+}
+
+th,
+td {
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    text-align: center !important;
+}
+
+
 .pb-3 {
     font-family: 'Rubik', sans-serif;
 }
