@@ -1,4 +1,5 @@
-﻿@model List<IGrouping<char, Calendar_by_I_M_Marinov.Models.People.ContactViewModel>>
+﻿@using System.Globalization
+@model List<IGrouping<char, Calendar_by_I_M_Marinov.Models.People.ContactViewModel>>
 
 @{
     ViewData["Title"] = "Contacts List";
@@ -77,27 +78,72 @@ else
 			<h3 class="letter-group-header" id="letter-@group.Key">@group.Key</h3>
 			<table class="table table-striped">
 				<thead>
-				<tr>
-					@if (group.Any(contact => !string.IsNullOrEmpty(contact.FirstName) || !string.IsNullOrEmpty(contact.LastName)))
-					{
-						<th>Full Name</th>
-					}
-					<th>Email</th>
-					<th>Birthday</th>
-					<th>Phone Number</th>
-				</tr>
+					<tr>
+						@if (group.Any(contact => !string.IsNullOrEmpty(contact.FirstName) || !string.IsNullOrEmpty(contact.LastName)))
+						{
+							<th>Full Name</th>
+						}
+
+						@if (group.Any(contact => contact.Email != "N/A"))
+						{
+							<th>Email</th>
+						}
+
+						@if (group.Any(contact => contact.Birthday != "N/A"))
+						{
+							<th>Birthday</th>
+						}
+
+						@if (group.Any(contact => contact.PhoneNumber != "N/A"))
+						{
+							<th>Phone Number</th>
+						}
+
+					</tr>
 				</thead>
 				<tbody>
 					@foreach (var contact in sortedGroup)
 				{
 					<tr>
+
+						@{
+							DateTime parsedDate;
+								string[] formats = { "MM/dd/yyyy", "dd/MM/yyyy", "yyyy-MM-dd", "M/d/yyyy" };
+							string formattedBirthday = "";
+
+							if (!string.IsNullOrEmpty(contact.Birthday) &&
+							    DateTime.TryParseExact(contact.Birthday, formats, CultureInfo.InvariantCulture, DateTimeStyles.None, out parsedDate))
+							{
+								formattedBirthday = parsedDate.ToString("MMMM dd, yyyy");
+							}
+							else
+							{
+								formattedBirthday = "N/A";
+							}
+						}
+
+
+						
 						@if (group.Any(contact => !string.IsNullOrEmpty(contact.FirstName) || !string.IsNullOrEmpty(contact.LastName)))
 						{
 							<td>@contact.FullName</td>
 						}
-						<td>@contact.Email</td>
-						<td>@contact.Birthday</td>
-						<td>@contact.PhoneNumber</td>
+                            
+						@if (group.Any(contact => contact.Email != "N/A"))
+						{
+							<td>@contact.Email</td>
+						}
+
+						@if (group.Any(contact => contact.Birthday != "N/A"))
+						{
+							<td>@formattedBirthday</td>
+						}
+
+						@if (group.Any(contact => contact.PhoneNumber != "N/A"))
+						{
+							<td>@contact.PhoneNumber</td>
+						}
+
 					</tr>
 				}
 				</tbody>
