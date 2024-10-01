@@ -18,7 +18,7 @@
    - [Events --> Add an Event](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov?tab=readme-ov-file#large_blue_diamond-events----add-an-event)
    - [Events --> Search Events](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov?tab=readme-ov-file#large_blue_diamond-events----search-events)
    - [Contacts --> Show Contacts](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov/blob/master/README.md#large_orange_diamond-contacts----show-contacts)
-   - Contacts --> Add a contact
+   - [Contacts --> Add a contact](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov/blob/master/README.md#large_orange_diamond-contacts----add-a-contact)
 4. [Screenshots](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov?tab=readme-ov-file#-screenshots)
 5. [If You Would Like to Try This Web App Yourself](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov?tab=readme-ov-file#-if-you-would-like-to-try-this-web-app-yourself)
 
