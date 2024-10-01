@@ -17,6 +17,8 @@
      - [Duplicate Event](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov?tab=readme-ov-file#%EF%B8%8F-duplicate-----creates-a-duplicate-of-the-event-saved-in-the-primary-calendar-of-the-user-adds-duplicate-to-the-name)
    - [Events --> Add an Event](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov?tab=readme-ov-file#large_blue_diamond-events----add-an-event)
    - [Events --> Search Events](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov?tab=readme-ov-file#large_blue_diamond-events----search-events)
+   - Contacts --> Show Contacts
+   - Contacts --> Add a contact
 4. [Screenshots](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov?tab=readme-ov-file#-screenshots)
 5. [If You Would Like to Try This Web App Yourself](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov?tab=readme-ov-file#-if-you-would-like-to-try-this-web-app-yourself)
 
@@ -75,7 +77,12 @@
 #### :large_blue_diamond: Events --> Search Events
 - Search Events lets the user search through all events that editable ( Access Role in the calendar the event is saved in must be "owner" ) and edit them all at the same time.
   ###### 📢:  Search Events actually opens for edit all events that match the search keyword ( case-insensitive ). 
-
+#### :large_orange_diamond: Contacts --> Show Contacts
+- Show all contacts from the user's Google Contacts List.
+###### 📢:  User can choose label/group to visualize all the contacts only in that group or search through the contact list using the letter cards on top ( Latin and Cyrilic script ) to find a name. 
+#### :large_orange_diamond: Contacts --> Add a contact
+- Adds a contact to the user's Google Contacts List.
+###### 📢:  As of now the user can add the First name, Last name, Email, Phone Number, Birthday and add the new contact in a group at the time of creation. 
 <h2 align="center">
  Screenshots:
 </h2>
