@@ -2,6 +2,8 @@
 
 @{
     ViewData["Title"] = "Contacts List";
+
+
 }
 
 <h2>Contacts List</h2>
@@ -81,10 +83,24 @@ else
 	                {
 		                <th>Full Name</th>
 	                }
-	                <th>Email</th>
-	                <th>Birthday</th>
-	                <th>Phone Number</th>
+
+	                @if (group.Any(contact => contact.Email != "N/A"))
+	                {
+		                <th>Email</th>
+	                }
+
+	                @if (group.Any(contact => contact.Birthday != "N/A"))
+	                {
+		                <th>Birthday</th>
+	                }
+
+	                @if (group.Any(contact => contact.PhoneNumber != "N/A"))
+	                {
+		                <th>Phone Number</th>
+	                }
+
 	                <th>Label/Group</th>
+
 
                 </tr>
                 </thead>
@@ -92,15 +108,43 @@ else
                     @foreach (var contact in sortedGroup)
                     {
 	                    <tr>
+                            
+		                    @{ 
+			                    DateTime parsedDate;
+                                string[] formats = { "MM/dd/yyyy", "dd/MM/yyyy", "yyyy-MM-dd", "M/d/yyyy" }; // Supported formats
+			                    string formattedBirthday = "";
+
+			                    if (!string.IsNullOrEmpty(contact.Birthday) && 
+			                        DateTime.TryParseExact(contact.Birthday, formats, null, System.Globalization.DateTimeStyles.None, out parsedDate))
+			                    {
+				                    formattedBirthday = parsedDate.ToString("MMMM dd, yyyy");
+			                    }
+			                    else
+			                    {
+				                    formattedBirthday = "N/A";
+			                    }
+		                    }
 
 		                    @if (group.Any(contact => !string.IsNullOrEmpty(contact.FirstName) || !string.IsNullOrEmpty(contact.LastName)))
 		                    {
 			                    <td>@contact.FullName</td>
 		                    }
+                            
+		                    @if (group.Any(contact => contact.Email != "N/A"))
+		                    {
+			                    <td>@contact.Email</td>
+		                    }
 
-		                    <td>@contact.Email</td>
-		                    <td>@contact.Birthday</td>
-		                    <td>@contact.PhoneNumber</td>
+							@if (group.Any(contact => contact.Birthday != "N/A"))
+		                    {
+			                    <td>@formattedBirthday</td>
+		                    }
+
+		                    @if (group.Any(contact => contact.PhoneNumber != "N/A"))
+		                    {
+			                    <td>@contact.PhoneNumber</td>
+		                    }
+
 		                    <td>
 			                    @if (contact.Labels != null && contact.Labels.Count > 0)
 			                    {
@@ -108,7 +152,7 @@ else
 				                    {
 					                    if (label != "myContacts") // print all other label but the myContacts label ( visually more pleasing )
 					                    {
-						                    <span class="badge badge-info">@label</span>
+						                    <span class="badge badge-info">@label.ToUpperInvariant()</span>
 					                    }
 				                    }
 			                    }
