@@ -17,7 +17,7 @@
      - [Duplicate Event](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov?tab=readme-ov-file#%EF%B8%8F-duplicate-----creates-a-duplicate-of-the-event-saved-in-the-primary-calendar-of-the-user-adds-duplicate-to-the-name)
    - [Events --> Add an Event](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov?tab=readme-ov-file#large_blue_diamond-events----add-an-event)
    - [Events --> Search Events](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov?tab=readme-ov-file#large_blue_diamond-events----search-events)
-   - Contacts --> Show Contacts
+   - [Contacts --> Show Contacts](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov/blob/master/README.md#large_orange_diamond-contacts----show-contacts)
    - Contacts --> Add a contact
 4. [Screenshots](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov?tab=readme-ov-file#-screenshots)
 5. [If You Would Like to Try This Web App Yourself](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov?tab=readme-ov-file#-if-you-would-like-to-try-this-web-app-yourself)
