@@ -67,13 +67,18 @@ app.UseEndpoints(endpoints =>
 	// Default route configuration
 	endpoints.MapControllerRoute(
 		name: "default",
-		pattern: "{controller=Home}/{action=Index}/{id?}");
+		pattern: "{controller=Home}/{action=Index}/{resourceName?}");
 
     // If you want a custom route for PeopleController, add it like this
     endpoints.MapControllerRoute(
         name: "add-contact",
         pattern: "add-contact",
         defaults: new { controller = "People", action = "AddContact" });
+
+    endpoints.MapControllerRoute(
+	    name: "update-contact",
+	    pattern: "update-contact",
+	    defaults: new { controller = "People", action = "UpdateContact" });
 });
 
 
