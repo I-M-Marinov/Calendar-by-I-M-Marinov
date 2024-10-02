@@ -98,7 +98,7 @@ else
 						{
 							<th>Phone Number</th>
 						}
-
+						<th>Actions</th> <!-- Add an Update header -->
 					</tr>
 				</thead>
 				<tbody>
@@ -143,6 +143,14 @@ else
 						{
 							<td>@contact.PhoneNumber</td>
 						}
+						
+						<td>
+							<!-- Update button linking to the UpdateContact action -->
+							<form asp-controller="People" asp-action="UpdateContact" method="get">
+								<input type="hidden" name="resourceName" value="@contact.ResourceName" />
+								<button type="submit" class="btn btn-primary">Update</button>
+							</form>
+						</td>
 
 					</tr>
 				}
