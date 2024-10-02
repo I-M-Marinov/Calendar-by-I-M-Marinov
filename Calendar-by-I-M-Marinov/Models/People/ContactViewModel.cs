@@ -3,10 +3,13 @@
 namespace Calendar_by_I_M_Marinov.Models.People
 {
 	public class ContactViewModel
-    {
-        [Required(ErrorMessage = "First Name is required.")]
+	{
+		public string ResourceName { get; set; } = null!; 
+
+		[Required(ErrorMessage = "First Name is required.")]
         public string FirstName { get; set; } = null!;
-        [Required(ErrorMessage = "Last Name is required.")]
+
+		[Required(ErrorMessage = "Last Name is required.")]
         public string LastName { get; set; } = null!;
 		public string FullName => $"{FirstName} {LastName}";
 
@@ -18,7 +21,7 @@ namespace Calendar_by_I_M_Marinov.Models.People
 
         public string? Birthday { get; set; }  // Optional
 
-        public List<string>? Labels { get; set; }  // Optional
-    }
+        public List<string> Labels { get; set; } = new List<string>(); 
+	}
 
 }
