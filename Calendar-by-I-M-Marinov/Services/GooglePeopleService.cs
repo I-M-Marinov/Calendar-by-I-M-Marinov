@@ -105,7 +105,90 @@ namespace Calendar_by_I_M_Marinov.Services
 				return null;
 			}
 		}
-        public async Task<List<ContactViewModel>> GetAllContactsAsync()
+		public async Task<Person> GetContactByIdAsync(string resourceName)
+		{
+			if (string.IsNullOrEmpty(resourceName))
+				throw new ArgumentException("Resource name cannot be null or empty.", nameof(resourceName));
+
+			try
+			{
+				var contact = await GetPersonAsync(resourceName);
+				return contact;  
+			}
+			catch (Google.GoogleApiException ex)
+			{
+				if (ex.HttpStatusCode == System.Net.HttpStatusCode.NotFound)
+				{
+					return null;  
+				}
+				throw;  // Re-throw 
+			}
+		}
+
+		public async Task<Person> UpdateContactAsync(string resourceName, ContactViewModel updatedContact)
+		{
+			if (string.IsNullOrEmpty(resourceName))
+				throw new ArgumentException("Resource name cannot be null or empty.", nameof(resourceName));
+
+			var personToUpdate = await GetContactByIdAsync(resourceName);
+
+			if (personToUpdate == null)
+			{
+				throw new Exception("Contact not found.");
+			}
+
+			// Step 2: Update the contact's fields with the new values
+			personToUpdate.Names = new List<Name>
+	{
+		new Name
+		{
+			GivenName = updatedContact.FirstName,
+			FamilyName = updatedContact.LastName,
+			DisplayName = $"{updatedContact.FirstName} {updatedContact.LastName}"
+		}
+	};
+
+			personToUpdate.EmailAddresses = string.IsNullOrEmpty(updatedContact.Email)
+				? null
+				: new List<EmailAddress> { new EmailAddress { Value = updatedContact.Email } };
+
+			personToUpdate.PhoneNumbers = string.IsNullOrEmpty(updatedContact.PhoneNumber)
+				? null
+				: new List<PhoneNumber> { new PhoneNumber { Value = updatedContact.PhoneNumber } };
+
+			// Updating the birthday if provided
+			if (!string.IsNullOrEmpty(updatedContact.Birthday))
+			{
+				var birthDateParts = updatedContact.Birthday.Split('/');
+				personToUpdate.Birthdays = new List<Birthday>
+		{
+			new Birthday
+			{
+				Date = new Date
+				{
+					Day = int.Parse(birthDateParts[1]),  // Day
+                    Month = int.Parse(birthDateParts[0]), // Month
+                    Year = int.Parse(birthDateParts[2])   // Year
+                }
+			}
+		};
+			}
+			else
+			{
+				personToUpdate.Birthdays = null;
+			}
+
+			// Step 3: Send the updated contact back to the API for saving
+			var updateMask = "names,emailAddresses,phoneNumbers,birthdays"; // Specify fields to update
+			var request = _peopleService.People.UpdateContact(personToUpdate, resourceName);
+			request.UpdatePersonFields = updateMask;
+
+			var updatedPerson = await request.ExecuteAsync();
+			return updatedPerson;  // Return the updated contact
+		}
+
+
+		public async Task<List<ContactViewModel>> GetAllContactsAsync()
         {
             List<ContactViewModel> contactViewModels = new List<ContactViewModel>();
 
@@ -151,7 +234,8 @@ namespace Calendar_by_I_M_Marinov.Services
 
                         contactViewModels.Add(new ContactViewModel
                         {
-                            FirstName = firstName,
+	                        ResourceName = person.ResourceName,
+							FirstName = firstName,
                             LastName = lastName,
                             Email = email,
                             PhoneNumber = phone,
@@ -215,7 +299,8 @@ namespace Calendar_by_I_M_Marinov.Services
                         {
                             contactViewModels.Add(new ContactViewModel
                             {
-                                FirstName = firstName,
+	                            ResourceName = person.ResourceName,
+								FirstName = firstName,
                                 LastName = lastName,
                                 Email = email,
                                 PhoneNumber = phone,
@@ -251,9 +336,9 @@ namespace Calendar_by_I_M_Marinov.Services
             return await _peopleService.ContactGroups.Get(groupResourceName).ExecuteAsync();
         }
         /* Get the Person based on the groupResourceName*/
-        public async Task<Person> GetPersonAsync(string personResourceName)
+        public async Task<Person> GetPersonAsync(string resourceName)
         {
-            var request = _peopleService.People.Get(personResourceName);
+            var request = _peopleService.People.Get(resourceName);
             request.PersonFields = "names,emailAddresses,phoneNumbers,birthdays";
             return await request.ExecuteAsync();
         }
@@ -315,7 +400,7 @@ namespace Calendar_by_I_M_Marinov.Services
             return response.ResourceName; // Return the ID of the newly created contact
         }
 
-
+       
 
 
 
