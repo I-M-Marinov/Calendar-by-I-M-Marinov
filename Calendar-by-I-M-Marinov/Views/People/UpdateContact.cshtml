@@ -1,0 +1,83 @@
+﻿<h2>Update a contact</h2>
+
+<div class="add-contact-div">
+	<form asp-controller="People" asp-action="UpdateContact" method="post">
+		<input type="hidden" name="ResourceName" value="@Model.ResourceName" />
+
+		<div class="contact-firstname">
+			<input type="text" id="firstName" name="FirstName" placeholder=" " value="@Model.FirstName" required/>
+			<label for="firstName">First name</label>
+		</div>
+
+		<div class="contact-lastname">
+			<input type="text" id="lastName" name="LastName" placeholder=" " value="@Model.LastName" required/>
+			<label for="lastName">Last name</label>
+		</div>
+
+		<div class="contact-email">
+			<input type="email" id="email" name="Email" placeholder=" " value="@Model.Email"/>
+			<label for="email">Email</label>
+		</div>
+
+		<div class="contact-phoneNumber">
+			<input type="tel" id="phoneNumber" name="PhoneNumber" placeholder=" " value="@Model.PhoneNumber"/>
+			<label for="phoneNumber">Phone number</label>
+		</div>
+
+		<div class="contact-birthday">
+			<label for="birthday">Birthday</label>
+			<input type="date" id="birthday" name="Birthday" value="@Model.Birthday"/>
+		</div>
+
+		<div class="contact-group">
+			<label for="contactGroup">Label/Group</label>
+			<select id="contactGroup" name="SelectedGroup">
+				<option value="">--No Label--</option>
+				@foreach (var group in ViewBag.ContactGroups)
+				{
+					var isSelected = Model.Labels != null && Model.Labels.Contains(group.ResourceName);
+
+					if (isSelected)
+					{
+						<option value="@group.ResourceName" selected>@group.FormattedName</option>
+					}
+					else
+					{
+						<option value="@group.ResourceName">@group.FormattedName</option>
+					}
+				}
+
+			</select>
+		</div>
+
+		<div class="add-contact-button">
+			<button type="submit">Update Contact</button>
+		</div>
+	</form>
+</div>
+
+@if (ViewBag.ShowSuccessMessage != null && ViewBag.ShowSuccessMessage)
+{
+    <div class="alert alert-success" role="alert">
+        <strong>Contact updated!</strong>
+        <br /><br />
+        Name: @ViewBag.NewContactFirstName @ViewBag.NewContactLastName <br />
+        Email: @ViewBag.NewContactEmail <br />
+        Phone Number: @ViewBag.NewContactPhoneNumber <br />
+        Birthday: @ViewBag.NewContactBirthday <br />
+        @if (ViewBag.NewContactLabels != null && ((List<string>)ViewBag.NewContactLabels).Count > 0)
+        {
+            <p>
+                Labels:
+                @foreach (var label in ViewBag.NewContactLabels as List<string>)
+                {
+                    <span class="badge badge-info">@label</span>
+                }
+            </p>
+        }
+        else
+        {
+            <p>No labels added.</p>
+        }
+    </div>
+}
