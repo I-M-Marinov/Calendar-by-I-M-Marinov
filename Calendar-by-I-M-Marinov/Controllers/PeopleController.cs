@@ -1,7 +1,6 @@
 ﻿using Calendar_by_I_M_Marinov.Services.Contracts;
 using Microsoft.AspNetCore.Mvc;
 using Calendar_by_I_M_Marinov.Models.People;
-using Google.Apis.PeopleService.v1.Data;
 
 
 namespace Calendar_by_I_M_Marinov.Controllers
@@ -103,7 +102,7 @@ namespace Calendar_by_I_M_Marinov.Controllers
         [Route("/add-contact")]
         public async Task<IActionResult> AddContact(ContactViewModel newContact, string selectedGroup)
         {
-            newContact.Labels = newContact.Labels ?? new List<string>();
+            //newContact.Labels = newContact.Labels ?? new List<string>();
 
             var contactGroups = await _peopleGoogleService.GetContactGroupsAsync();
             var myContactsGroup = contactGroups.FirstOrDefault(g => g.Name == "myContacts");
@@ -153,7 +152,82 @@ namespace Calendar_by_I_M_Marinov.Controllers
             }
         }
 
-    }
+        [HttpGet]
+        [Route("/update-contact")]
+		public async Task<IActionResult> UpdateContact(string resourceName)
+		{
+
+			Console.WriteLine($"Received ID: {resourceName}");
+			
+
+			var contact = await _peopleGoogleService.GetContactByIdAsync(resourceName);
+
+			if (contact == null)
+			{
+				return NotFound(); // Return 404 if contact not found
+			}
+
+			try
+			{
+				var contactViewModel = new ContactViewModel
+				{
+					ResourceName = contact.ResourceName,
+					FirstName = contact.Names?.FirstOrDefault()?.GivenName ?? string.Empty,
+					LastName = contact.Names?.FirstOrDefault()?.FamilyName ?? string.Empty,
+					Email = contact.EmailAddresses?.FirstOrDefault()?.Value ?? string.Empty,
+					PhoneNumber = contact.PhoneNumbers?.FirstOrDefault()?.Value ?? string.Empty,
+					Birthday = contact.Birthdays?.FirstOrDefault()?.Date.ToString(), // Format accordingly
+					Labels = contact.Memberships?.Select(m => m.ContactGroupMembership?.ContactGroupResourceName).Where(resourceName => resourceName != null).ToList() ?? new List<string>()
+				};
+
+				var contactGroups = await _peopleGoogleService.GetContactGroupsAsync();
+				ViewBag.ContactGroups = contactGroups;
+
+				return View(contactViewModel); 
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine(e);
+				throw;
+			}
+
+			
+		}
+
+		[HttpPost]
+		[Route("/update-contact")]
+		public async Task<IActionResult> UpdateContact(ContactViewModel updatedContact, string resourceName)
+		{
+			if (!ModelState.IsValid)
+			{
+				return View(updatedContact); 
+			}
+
+			try
+			{
+				var contactGroups = await _peopleGoogleService.GetContactGroupsAsync(); // get the groups 
+				ViewBag.ContactGroups = contactGroups; // pass the groups to the View
+
+				var updatedPerson = await _peopleGoogleService.UpdateContactAsync(resourceName, updatedContact);
+
+				ViewBag.ShowSuccessMessage = true;
+				ViewBag.NewContactFirstName = updatedContact.FirstName;
+				ViewBag.NewContactLastName = updatedContact.LastName;
+				ViewBag.NewContactEmail = updatedContact.Email;
+				ViewBag.NewContactPhoneNumber = updatedContact.PhoneNumber;
+				ViewBag.NewContactBirthday = updatedContact.Birthday;
+				ViewBag.NewContactLabels = updatedContact.Labels;
+
+				return View(updatedContact); // Return updated contact to the view
+			}
+			catch (Exception ex)
+			{
+				ModelState.AddModelError("", $"Error updating contact: {ex.Message}");
+				return View(updatedContact); // Return to the view with error message
+			}
+		}
+
+	}
 
 }
 
