@@ -618,11 +618,35 @@ a:hover {
     justify-content: center;
 }
 
+.update-contact-div {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.update-contact-div p{
+    text-align: center;
+}
+
 .contact-phoneNumber {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+}
+
+.contact-firstname label,
+.contact-lastname label,
+.contact-email label,
+.contact-phoneNumber label {
+    position: absolute;
+    left: 135px;
+    top: 14px;
+    font-size: 15px;
+    opacity: 0.75;
+    transition: all 0.28s ease;
+    pointer-events: none;
 }
 
 .contact-firstname,
@@ -631,8 +655,7 @@ a:hover {
 .contact-phoneNumber,
 .contact-birthday,
 .contact-group {
-    margin: 0.5em;
-    margin-bottom: 20px;
+    margin: 15px;
     position: relative;
 }
 
@@ -654,19 +677,6 @@ a:hover {
     width: 250px;
 }
 
-.contact-firstname label,
-.contact-lastname label,
-.contact-email label,
-.contact-phoneNumber label {
-    position: absolute;
-    left: 135px;
-    top: 14px;
-    font-size: 16px;
-    opacity: 0.75;
-    transition: all 0.28s ease; 
-    pointer-events: none; 
-}
-
 .contact-email label {
     left: 155px;
 }
@@ -676,21 +686,21 @@ a:hover {
 
 }
 
-.contact-firstname input:focus + label,
-.contact-firstname input:not(:placeholder-shown) + label,
-.contact-lastname input:focus + label,
-.contact-lastname input:not(:placeholder-shown) + label,
-.contact-email input:focus + label,
-.contact-email input:not(:placeholder-shown) + label,
-.contact-phoneNumber input:focus + label,
-.contact-phoneNumber input:not(:placeholder-shown) + label {
-    top: -10px;
-    font-size: 12px;
-    color: #333;
-    background-color: #007bff;
-    color: white;
-    opacity: 1;
-}
+    .contact-firstname input:focus + label,
+    .contact-firstname input:not(:placeholder-shown) + label,
+    .contact-lastname input:focus + label,
+    .contact-lastname input:not(:placeholder-shown) + label,
+    .contact-email input:focus + label,
+    .contact-email input:not(:placeholder-shown) + label,
+    .contact-phoneNumber input:focus + label,
+    .contact-phoneNumber input:not(:placeholder-shown) + label{
+        top: -10px;
+        font-size: 0.65em;
+        color: #333;
+        background-color: #007bff;
+        color: white;
+        opacity: 1;
+    }
 
 .contact-firstname input:focus,
 .contact-lastname input:focus,
@@ -715,7 +725,6 @@ a:hover {
     opacity: 0.75;
 }
 
-
 .contact-birthday input {
     display: flex;
     width: 150px;
@@ -723,12 +732,43 @@ a:hover {
     justify-content: center;
 }
 
-
 .contact-group {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
+    gap: 2.5em;
+}
+
+#groupsList {
+    display: flex;
+    gap: 0.5em;
     align-items: center;
     justify-content: center;
+    flex-wrap: wrap;
+    width: 350px;
+}
+
+.group-item {
+    cursor: pointer;
+    padding: 6px;
+    border: 1px solid #ccc;
+    margin: 4px 0;
+    border-radius: 6px;
+    list-style-type: none;
+    font-size: 0.70em;
+}
+
+.group-item:hover {
+    background-color: #007bff; /* Bootstrap primary color */
+    color: white;
+    border-color: white;
+}
+
+.group-item.selected {
+    background-color: #007bff; /* Bootstrap primary color */
+    color: white;
+    border-color: #0056b3;
 }
 
 .contact-group select {
