@@ -10,7 +10,7 @@ namespace Calendar_by_I_M_Marinov.Services
 	using Google.Apis.Services;
 	using Google.Apis.Util.Store;
     using Microsoft.Extensions.Configuration;
-    using System.Threading;
+	using System.Threading;
     using System.Threading.Tasks;
     using static DateTimeExtensions;
 
@@ -124,7 +124,6 @@ namespace Calendar_by_I_M_Marinov.Services
 				throw;  // Re-throw 
 			}
 		}
-
 		public async Task<Person> UpdateContactAsync(string resourceName, ContactViewModel updatedContact)
 		{
 			if (string.IsNullOrEmpty(resourceName))
@@ -137,16 +136,15 @@ namespace Calendar_by_I_M_Marinov.Services
 				throw new Exception("Contact not found.");
 			}
 
-			// Step 2: Update the contact's fields with the new values
 			personToUpdate.Names = new List<Name>
-	{
-		new Name
-		{
-			GivenName = updatedContact.FirstName,
-			FamilyName = updatedContact.LastName,
-			DisplayName = $"{updatedContact.FirstName} {updatedContact.LastName}"
-		}
-	};
+			{
+				new Name
+				{
+					GivenName = updatedContact.FirstName,
+					FamilyName = updatedContact.LastName,
+					DisplayName = $"{updatedContact.FirstName} {updatedContact.LastName}"
+				}
+			};
 
 			personToUpdate.EmailAddresses = string.IsNullOrEmpty(updatedContact.Email)
 				? null
@@ -171,23 +169,64 @@ namespace Calendar_by_I_M_Marinov.Services
                     Year = int.Parse(birthDateParts[2])   // Year
                 }
 			}
+            
 		};
+				
 			}
 			else
 			{
 				personToUpdate.Birthdays = null;
 			}
 
-			// Step 3: Send the updated contact back to the API for saving
-			var updateMask = "names,emailAddresses,phoneNumbers,birthdays"; // Specify fields to update
+			// Update memberships (contact groups/labels)
+			if (updatedContact.Labels != null && updatedContact.Labels.Count > 0)
+			{
+				if (personToUpdate.Memberships == null)
+				{
+					personToUpdate.Memberships = new List<Membership>();
+				}
+
+				// Update user-defined memberships to match updatedContact.Labels
+				personToUpdate.Memberships = updatedContact.Labels
+					.Select(label => new Membership
+					{
+						ContactGroupMembership = new ContactGroupMembership
+						{
+							ContactGroupResourceName = label
+						}
+					})
+					.ToList();
+
+			}
+
+			// Ensure 'myContacts' is included in the memberships
+			if (!personToUpdate.Memberships.Any(m => m.ContactGroupMembership.ContactGroupResourceName == "contactGroups/myContacts"))
+			{
+				personToUpdate.Memberships.Add(new Membership
+				{
+					ContactGroupMembership = new ContactGroupMembership
+					{
+						ContactGroupResourceName = "contactGroups/myContacts"
+					}
+				});
+			}
+
+			var updateMask = "names,emailAddresses,phoneNumbers,birthdays,memberships"; // Specify fields to update
 			var request = _peopleService.People.UpdateContact(personToUpdate, resourceName);
 			request.UpdatePersonFields = updateMask;
 
-			var updatedPerson = await request.ExecuteAsync();
-			return updatedPerson;  // Return the updated contact
+			try
+			{
+				var updatedPerson = await request.ExecuteAsync();
+				return updatedPerson;
+			}
+			catch (Exception ex)
+			{
+				// Log the error and provide a detailed message
+				Console.WriteLine($"Error updating contact: {ex.Message}");
+				throw;
+			}
 		}
-
-
 		public async Task<List<ContactViewModel>> GetAllContactsAsync()
         {
             List<ContactViewModel> contactViewModels = new List<ContactViewModel>();
@@ -325,10 +364,11 @@ namespace Calendar_by_I_M_Marinov.Services
         {
             var request = _peopleService.ContactGroups.List();
             request.PageSize = 100;
-            request.GroupFields = "name,memberCount"; 
-            var response = await request.ExecuteAsync();
+            request.GroupFields = "name,memberCount,groupType";
 
-            return response.ContactGroups.ToList();
+			var response = await request.ExecuteAsync();
+
+			return response.ContactGroups.ToList();
         }
         /* Get the Contact Group based on the groupResourceName*/
         public async Task<ContactGroup> GetContactGroupAsync(string groupResourceName)
@@ -339,7 +379,7 @@ namespace Calendar_by_I_M_Marinov.Services
         public async Task<Person> GetPersonAsync(string resourceName)
         {
             var request = _peopleService.People.Get(resourceName);
-            request.PersonFields = "names,emailAddresses,phoneNumbers,birthdays";
+            request.PersonFields = "names,emailAddresses,phoneNumbers,birthdays,memberships";
             return await request.ExecuteAsync();
         }
         public async Task<string> AddContactAsync(ContactViewModel newContact, string selectedGroup)
@@ -399,11 +439,6 @@ namespace Calendar_by_I_M_Marinov.Services
 
             return response.ResourceName; // Return the ID of the newly created contact
         }
-
-       
-
-
-
 
     }
 
