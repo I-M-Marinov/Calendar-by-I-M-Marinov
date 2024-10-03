@@ -27,7 +27,7 @@
    Description:
 </h2>
 
-- Web application that works with Google API and helps the user control their Google Calendar
+- Web application that works with Google API and helps the user control their Google Calendar and Google Contacts all in one place.
 
 <h2 align="center">
   Technology stack:
