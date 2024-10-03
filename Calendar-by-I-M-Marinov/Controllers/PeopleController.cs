@@ -1,6 +1,7 @@
 ﻿using Calendar_by_I_M_Marinov.Services.Contracts;
 using Microsoft.AspNetCore.Mvc;
 using Calendar_by_I_M_Marinov.Models.People;
+using System.Reflection;
 
 
 namespace Calendar_by_I_M_Marinov.Controllers
@@ -176,7 +177,7 @@ namespace Calendar_by_I_M_Marinov.Controllers
 					LastName = contact.Names?.FirstOrDefault()?.FamilyName ?? string.Empty,
 					Email = contact.EmailAddresses?.FirstOrDefault()?.Value ?? string.Empty,
 					PhoneNumber = contact.PhoneNumbers?.FirstOrDefault()?.Value ?? string.Empty,
-					Birthday = contact.Birthdays?.FirstOrDefault()?.Date.ToString(), // Format accordingly
+					Birthday = contact.Birthdays?.FirstOrDefault()?.Date.ToString(), 
 					Labels = contact.Memberships?.Select(m => m.ContactGroupMembership?.ContactGroupResourceName).Where(resourceName => resourceName != null).ToList() ?? new List<string>()
 				};
 
@@ -198,6 +199,7 @@ namespace Calendar_by_I_M_Marinov.Controllers
 		[Route("/update-contact")]
 		public async Task<IActionResult> UpdateContact(ContactViewModel updatedContact, string resourceName)
 		{
+
 			if (!ModelState.IsValid)
 			{
 				return View(updatedContact); 
@@ -208,7 +210,10 @@ namespace Calendar_by_I_M_Marinov.Controllers
 				var contactGroups = await _peopleGoogleService.GetContactGroupsAsync(); // get the groups 
 				ViewBag.ContactGroups = contactGroups; // pass the groups to the View
 
+
 				var updatedPerson = await _peopleGoogleService.UpdateContactAsync(resourceName, updatedContact);
+				var groupMapping = contactGroups.ToDictionary(g => g.ResourceName, g => g.FormattedName); // dictionary storing the ResourceName as key and value FormattedName of each group
+
 
 				ViewBag.ShowSuccessMessage = true;
 				ViewBag.NewContactFirstName = updatedContact.FirstName;
@@ -216,7 +221,9 @@ namespace Calendar_by_I_M_Marinov.Controllers
 				ViewBag.NewContactEmail = updatedContact.Email;
 				ViewBag.NewContactPhoneNumber = updatedContact.PhoneNumber;
 				ViewBag.NewContactBirthday = updatedContact.Birthday;
-				ViewBag.NewContactLabels = updatedContact.Labels;
+				ViewBag.NewContactLabels = updatedPerson.Memberships?
+					.Select(m => groupMapping.TryGetValue(m.ContactGroupMembership.ContactGroupResourceName, out var groupName) ? groupName : "Unknown")
+					.ToList();
 
 				return View(updatedContact); // Return updated contact to the view
 			}
