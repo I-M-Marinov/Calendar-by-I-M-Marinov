@@ -1,6 +1,8 @@
-﻿<h2>Update a contact</h2>
+﻿@model Calendar_by_I_M_Marinov.Models.People.ContactViewModel;
 
-<div class="add-contact-div">
+<h2>Update a contact</h2>
+
+<div class="update-contact-div">
 	<form asp-controller="People" asp-action="UpdateContact" method="post">
 		<input type="hidden" name="ResourceName" value="@Model.ResourceName" />
 
@@ -29,26 +31,32 @@
 			<input type="date" id="birthday" name="Birthday" value="@Model.Birthday"/>
 		</div>
 
-		<div class="contact-group">
-			<label for="contactGroup">Label/Group</label>
-			<select id="contactGroup" name="SelectedGroup">
-				<option value="">--No Label--</option>
-				@foreach (var group in ViewBag.ContactGroups)
-				{
-					var isSelected = Model.Labels != null && Model.Labels.Contains(group.ResourceName);
+		<div>
+			<div><p>Labels</p></div>
 
-					if (isSelected)
+			<div id="selectedLabelsContainer">
+				@if (Model.Labels != null && Model.Labels.Count > 0)
+				{
+					foreach (var label in Model.Labels)
 					{
-						<option value="@group.ResourceName" selected>@group.FormattedName</option>
-					}
-					else
-					{
-						<option value="@group.ResourceName">@group.FormattedName</option>
+						<input type="hidden" name="Labels" id="label-@label" value="@label" />
 					}
 				}
+			</div>
+			<ul id="groupsList">
+				@foreach (var group in ViewBag.ContactGroups)
+				{
+					if (group.GroupType == "USER_CONTACT_GROUP")
+					{
+						<li class="group-item" data-value="@group.ResourceName">@group.FormattedName</li>
+					}
+				}
+			</ul>
+			<div id="selectedLabelsContainer"></div>
 
-			</select>
+			<input type="hidden" name="Labels" id="hiddenLabelsInput" />
 		</div>
+
 
 		<div class="add-contact-button">
 			<button type="submit">Update Contact</button>
@@ -81,3 +89,5 @@
         }
     </div>
 }
+
+
