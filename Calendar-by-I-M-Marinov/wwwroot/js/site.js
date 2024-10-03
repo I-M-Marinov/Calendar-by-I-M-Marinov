@@ -110,3 +110,47 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
+// FUNCTION TO HANDLE THE GROUPS WHEN UPDATING A GROUP FOR A CONTACT ( ADDING OR REMOVING )
+
+document.addEventListener('DOMContentLoaded', function () {
+    const groupItems = document.querySelectorAll('.group-item');
+    const selectedLabels = new Set();
+    const selectedLabelsContainer = document.getElementById('selectedLabelsContainer');
+
+    const existingLabels = selectedLabelsContainer.querySelectorAll('input[type="hidden"]');
+    existingLabels.forEach(hiddenInput => {
+        const value = hiddenInput.value;
+        selectedLabels.add(value); // Add existing labels to the set
+        const item = Array.from(groupItems).find(i => i.getAttribute('data-value') === value);
+        if (item) {
+            item.classList.add('selected'); // mark existing selected groups
+        }
+    });
+
+    groupItems.forEach(item => {
+        item.addEventListener('click', function () {
+            const value = this.getAttribute('data-value');
+            this.classList.toggle('selected'); 
+
+            if (selectedLabels.has(value)) {
+
+                selectedLabels.delete(value); // Remove from the set
+                const hiddenInput = document.getElementById(`label-${value}`);
+                if (hiddenInput) {
+                    selectedLabelsContainer.removeChild(hiddenInput); 
+                }
+            } else {
+
+                selectedLabels.add(value); // Add to the set
+
+                const hiddenInput = document.createElement('input');
+                hiddenInput.type = 'hidden';
+                hiddenInput.name = 'Labels'; 
+                hiddenInput.id = `label-${value}`; 
+                hiddenInput.value = value; 
+                selectedLabelsContainer.appendChild(hiddenInput); 
+            }
+        });
+    });
+});
