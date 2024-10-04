@@ -42,25 +42,45 @@ else
             </div>
         </div>
 
-
         @if (ViewBag.ContactGroups != null)
         {
 	        <div class="contact-groups-container">
 		        <h4>Contact Groups</h4>
-                <form method="get" action="@Url.Action("GetContactsFromAGroup", "People")">
+		        <form method="get" action="@Url.Action("GetContactsFromAGroup", "People")">
 			        <div class="contact-groups">
 				        @foreach (var contactGroup in ViewBag.ContactGroups)
 				        {
 
-                            if (contactGroup.Name != "chatBuddies" && contactGroup.Name != "all" && contactGroup.Name != "blocked")
+					        if (contactGroup.Name != "chatBuddies" && contactGroup.Name != "all" && contactGroup.Name != "blocked")
 					        {
 						        <button type="submit" name="selectedGroup" value="@contactGroup.Name" class="btn btn-info group-button " id="group-button">
-                                    @contactGroup.FormattedName
+							        @contactGroup.FormattedName
 						        </button>
 					        }
 				        }
 			        </div>
 		        </form>
+		        <!-- Add Label Button -->
+		        <div class="add-label-container" style="margin: 0.2em;">
+			        <button id="addLabelButton" class="btn btn-success">+Group</button>
+		        </div>
+				
+				
+		        <!-- Modal Pop-up for adding a new label -->
+		        <div id="addLabelModal" class="modal">
+			        <div class="modal-content">
+				        <h4>Add a new group/label</h4>
+				        <form id="addLabelForm" method="post" action="@Url.Action("CreateContactGroup", "People")">
+					        <input type="text" id="labelName" name="labelName" class="form-control" required />
+
+					        <div class="modal-footer">
+						        <button type="button" class="btn btn-warning" onclick="closePopup()">Cancel</button>
+						        <button type="submit" class="btn btn-primary">Create</button>
+					        </div>
+
+				        </form>
+			        </div>
+		        </div>
 	        </div>
         }
         else
