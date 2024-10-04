@@ -63,6 +63,27 @@ else
 						}
 					</div>
 				</form>
+				<!-- Add Label Button -->
+				<div class="add-label-container" style="margin: 0.2em;">
+					<button id="addLabelButton" class="btn btn-success">+Group</button>
+				</div>
+				
+				
+				<!-- Modal Pop-up for adding a new label -->
+				<div id="addLabelModal" class="modal">
+					<div class="modal-content">
+						<h4>Add a new group/label</h4>
+						<form id="addLabelForm" method="post" action="@Url.Action("CreateContactGroup", "People")">
+							<input type="text" id="labelName" name="labelName" class="form-control" required />
+
+							<div class="modal-footer">
+								<button type="button" class="btn btn-warning" onclick="closePopup()">Cancel</button>
+								<button type="submit" class="btn btn-primary">Create</button>
+							</div>
+
+						</form>
+					</div>
+				</div>
 			</div>
 		}
 		else
