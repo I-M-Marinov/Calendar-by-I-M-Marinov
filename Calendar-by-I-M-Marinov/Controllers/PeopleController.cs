@@ -1,7 +1,6 @@
 ﻿using Calendar_by_I_M_Marinov.Services.Contracts;
 using Microsoft.AspNetCore.Mvc;
 using Calendar_by_I_M_Marinov.Models.People;
-using System.Reflection;
 
 
 namespace Calendar_by_I_M_Marinov.Controllers
@@ -36,11 +35,9 @@ namespace Calendar_by_I_M_Marinov.Controllers
 					return NotFound("No contacts found.");
 				}
 				
-				ViewBag.ContactsCount = contacts.Count;
-
                 var contactGroupList = await _peopleGoogleService.GetContactGroupsAsync();
 
-                if (contactGroupList == null || !contactGroupList.Any())
+				if (contactGroupList == null || !contactGroupList.Any())
                 {
                     return StatusCode(500, "No contact groups returned from the service.");
                 }
@@ -50,7 +47,7 @@ namespace Calendar_by_I_M_Marinov.Controllers
 
                 return View(groupedContacts);
 			}
-			catch (System.Exception ex)
+			catch (Exception ex)
 			{
 				return StatusCode(500, $"Internal server error: {ex.Message}");
 			}
@@ -255,7 +252,22 @@ namespace Calendar_by_I_M_Marinov.Controllers
             return RedirectToAction(nameof(GetAllContacts));
         }
 
-    }
+        [HttpPost]
+        public async Task<IActionResult> RemoveContactGroup(string labelName)
+        {
+	        try
+	        {
+		        await _peopleGoogleService.RemoveContactGroupAsync(labelName);
+	        }
+	        catch (Exception ex)
+	        {
+		        TempData["ErrorMessage"] = $"Error deleting group: {ex.Message}";
+	        }
+
+	        return RedirectToAction(nameof(GetAllContacts));
+        }
+
+	}
 
 }
 
