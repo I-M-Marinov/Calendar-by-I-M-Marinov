@@ -178,7 +178,6 @@ namespace Calendar_by_I_M_Marinov.Services
 				personToUpdate.Birthdays = null;
 			}
 
-			// Update memberships (contact groups/labels)
 			if (updatedContact.Labels != null && updatedContact.Labels.Count > 0)
 			{
 				if (personToUpdate.Memberships == null)
@@ -186,7 +185,6 @@ namespace Calendar_by_I_M_Marinov.Services
 					personToUpdate.Memberships = new List<Membership>();
 				}
 
-				// Update user-defined memberships to match updatedContact.Labels
 				personToUpdate.Memberships = updatedContact.Labels
 					.Select(label => new Membership
 					{
@@ -199,7 +197,6 @@ namespace Calendar_by_I_M_Marinov.Services
 
 			}
 
-			// Ensure 'myContacts' is included in the memberships
 			if (!personToUpdate.Memberships.Any(m => m.ContactGroupMembership.ContactGroupResourceName == "contactGroups/myContacts"))
 			{
 				personToUpdate.Memberships.Add(new Membership
@@ -365,7 +362,6 @@ namespace Calendar_by_I_M_Marinov.Services
             var request = _peopleService.ContactGroups.List();
             request.PageSize = 100;
             request.GroupFields = "name,memberCount,groupType";
-
 			var response = await request.ExecuteAsync();
 
 			return response.ContactGroups.ToList();
@@ -439,7 +435,31 @@ namespace Calendar_by_I_M_Marinov.Services
 
             return response.ResourceName; // Return the ID of the newly created contact
         }
+        public async Task<ContactGroup> CreateContactGroupAsync(string labelName)
+        {
+	        var contactGroup = new ContactGroup
+	        {
+		        Name = labelName
+	        };
 
+	        var requestBody = new CreateContactGroupRequest
+	        {
+		        ContactGroup = contactGroup
+	        };
+
+			try
+	        {
+		        var request = _peopleService.ContactGroups.Create(requestBody);
+		        var createdGroup = await request.ExecuteAsync();
+		        return createdGroup;
+	        }
+	        catch (Exception ex)
+	        {
+		        Console.WriteLine($"Error creating contact group: {ex.Message}");
+		        throw;
+	        }
+        }
     }
-
 }
+
+
