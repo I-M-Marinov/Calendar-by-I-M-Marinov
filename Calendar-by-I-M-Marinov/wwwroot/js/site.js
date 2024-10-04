@@ -154,3 +154,23 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 });
+
+
+// FUNCTION TO HANDLE THE POP-UP WHEN CREATING A NEW LABEL / CONTACT GROUP
+
+var modal = document.getElementById("addLabelModal");
+var btn = document.getElementById("addLabelButton");
+
+btn.onclick = function () {
+    modal.style.display = "block";
+}
+window.onclick = function (event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+}
+
+function closePopup() {
+
+    document.getElementById('addLabelModal').style.display = 'none';
+}
