@@ -156,21 +156,31 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 
-// FUNCTION TO HANDLE THE POP-UP WHEN CREATING A NEW LABEL / CONTACT GROUP
+// FUNCTIONS TO HANDLE THE POP-UP WHEN CREATING OR REMOVING A NEW LABEL / CONTACT GROUP
 
-var modal = document.getElementById("addLabelModal");
-var btn = document.getElementById("addLabelButton");
+// For adding Label Modal
+var addLabelModal = document.getElementById("addLabelModal");
+var addLabelBtn = document.getElementById("addLabelButton");
 
-btn.onclick = function () {
-    modal.style.display = "block";
+addLabelBtn.onclick = function () {
+    addLabelModal.style.display = "block";
+}
+
+// For removing Label Modal
+var removeLabelModal = document.getElementById("removeLabelModal");
+var removeLabelBtn = document.getElementById("removeLabelButton");
+
+removeLabelBtn.onclick = function () {
+    removeLabelModal.style.display = "block";
 }
 window.onclick = function (event) {
-    if (event.target == modal) {
-        modal.style.display = "none";
+    if (event.target == addLabelModal) {
+        addLabelModal.style.display = "none";
+    } else if (event.target == removeLabelModal) {
+        removeLabelModal.style.display = "none";
     }
 }
-
 function closePopup() {
-
-    document.getElementById('addLabelModal').style.display = 'none';
+    addLabelModal.style.display = 'none';
+    removeLabelModal.style.display = 'none';
 }
