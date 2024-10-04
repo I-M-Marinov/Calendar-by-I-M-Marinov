@@ -796,3 +796,56 @@ a:hover {
     opacity: 90%;
     color: white;
 }
+
+/* Specific CSS that is for the pop-up window for creating a new label / contact group */
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    padding-top: 17em;
+    left: 0;
+    top: 0;
+    width: 50%;
+    height: 50%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.65);
+}
+
+.modal-content {
+    background-color: #d1d1d1;
+    margin: auto;
+    padding: 15px;
+    border: 1px solid #888;
+    width: 20% !important;
+    
+}
+
+
+.modal-footer {
+    margin-top: 20px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center !important;
+}
+
+.modal-footer button{
+    width: 6em;
+    font-size: 0.75em;
+    margin-bottom: 0.1em;
+}
+
+.add-label-container {
+    margin-bottom: 20px;
+}
+
+#addLabelButton {
+    width: 6em;
+    font-size: 11px;
+    color: black;
+}
+
+#labelName:focus {
+    border: 2px solid #007bff;
+}
