@@ -234,7 +234,28 @@ namespace Calendar_by_I_M_Marinov.Controllers
 			}
 		}
 
-	}
+        [HttpPost]
+        public async Task<IActionResult> CreateContactGroup(string labelName)
+        {
+            if (string.IsNullOrEmpty(labelName))
+            {
+                return BadRequest("Label name cannot be empty");
+            }
+
+            try
+            {
+                var createdGroup = await _peopleGoogleService.CreateContactGroupAsync(labelName);
+                TempData["SuccessMessage"] = $"Label '{createdGroup.FormattedName}' created successfully!";
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error creating label: {ex.Message}";
+            }
+
+            return RedirectToAction(nameof(GetAllContacts));
+        }
+
+    }
 
 }
 
