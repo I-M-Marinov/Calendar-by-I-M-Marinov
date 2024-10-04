@@ -459,7 +459,22 @@ namespace Calendar_by_I_M_Marinov.Services
 		        throw;
 	        }
         }
-    }
+        public async Task<string> RemoveContactGroupAsync(string labelName)
+        {
+			try
+			{
+				var request = _peopleService.ContactGroups.Delete(labelName);
+		        var groupToRemove = await request.ExecuteAsync();
+
+		        return $"{groupToRemove} was successfully removed.";
+	        }
+	        catch (Exception ex)
+	        {
+		        Console.WriteLine($"Error deleting contact group: {ex.Message}");
+		        throw;
+	        }
+        }
+	}
 }
 
 
