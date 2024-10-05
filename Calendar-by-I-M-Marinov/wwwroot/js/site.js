@@ -184,3 +184,26 @@ function closePopup() {
     addLabelModal.style.display = 'none';
     removeLabelModal.style.display = 'none';
 }
+
+
+// FUNCTION TO SET THE RETURN URL 
+function setReturnUrl() {
+    document.getElementById('returnUrl').value = window.location.href; // Set the current URL as the return URL
+}
+
+
+// FUNCTION TO HIDE THE SUCCESS MESSAGE 
+document.addEventListener("DOMContentLoaded", function () {
+    var successMessage = document.getElementById('delete-success-message');
+
+    if (successMessage) {
+        setTimeout(function () {
+            successMessage.classList.add('fade-out');
+        }, 1000); 
+
+        
+        setTimeout(function () {
+            successMessage.style.display = 'none';
+        }, 3200); 
+    }
+});
