@@ -560,6 +560,7 @@ a:hover {
     text-decoration: none;
 }
 
+
 #goToTop-button2 {
     position: fixed;
     bottom: 1em;
@@ -576,26 +577,65 @@ a:hover {
     text-decoration: none;
 }
 
-#goToTop-button1:hover,
-#goToTop-button2:hover {
-    background-color: #0056b3;
-}
+    #goToTop-button1:hover,
+    #goToTop-button2:hover {
+        background-color: white;
+        border: 1px solid #007bff;
+        color: #007bff;
+        transform: scale(1.20);
+        transition: transform 0.5s, box-shadow 0.3s !important;
+    }
 
-#goToTop-button1 a,
-#goToTop-button2 a {
-    color: black;
-    text-decoration: none;
-}
+    #goToTop-button1 a,
+    #goToTop-button2 a {
+        color: #007bff;
+        text-decoration: none;
+    }
 
 #goToTop-button1 a:hover,
 #goToTop-button2 a:hover {
-    color: white;
     text-decoration: none;
 }
 
+.action-buttons {
+    display: flex;
+    gap: 0.5em;
+    align-items: center;
+    justify-content: center;
+}
+
+.action-button {
+    width: 3.5em;
+    height: 2em;
+    font-size: 0.70em !important;
+    padding: 0.20em !important;
+    text-align: center !important;
+    vertical-align: central !important;
+}
+
+#delete-btn:hover,
+#edit-btn:hover {
+    transform: scale(1.20);
+    transition: transform 0.4s, box-shadow 0.3s !important;
+}
+#delete-btn:hover {
+    border: 1px red solid !important;
+    background-color: white !important;
+    color: red !important;
+}
+
+#edit-btn:hover {
+    border: 1px #007bff solid !important;
+    background-color: white !important;
+    color: #007bff !important; 
+}
+
+.fade-out {
+    opacity: 0;
+    transition: opacity 2s ease-out; 
+}
 
 /* GetContactsFromAGroup CSS */
-
 .btn-selected-group {
     background-color: #21900b !important;
     color: white !important;
@@ -609,8 +649,8 @@ a:hover {
 
 }
 
-/* AddContact CSS */
 
+/* AddContact CSS */
 .add-contact-div {
     display: flex;
     flex-direction: column;
@@ -842,12 +882,31 @@ a:hover {
 
 #addLabelButton,
 #removeLabelButton {
-    width: 2.5em;
-    height: 2.5em;
+    width: 2.2em;
+    height: 2.2em;
     font-size: 10px;
     color: white;
     padding: 0.1em;
-    border-radius: 50%;
+}
+
+#addLabelButton {
+    background-color: #07601f;
+}
+
+#removeLabelButton:hover {
+    color: #dc3545 !important;
+}
+
+
+#addLabelButton:hover {
+    color: #07601f !important;
+}
+
+#addLabelButton:hover,
+#removeLabelButton:hover {
+    background-color: white;
+    transform: scale(1.20);
+    transition: transform 0.4s, box-shadow 0.3s !important;
 }
 
 #labelName:focus{
