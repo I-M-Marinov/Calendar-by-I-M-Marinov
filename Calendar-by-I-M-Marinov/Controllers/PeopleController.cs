@@ -235,12 +235,12 @@ namespace Calendar_by_I_M_Marinov.Controllers
 		public async Task<IActionResult> DeleteContact(string resourceName, string returnUrl)
 		{
 			var contact = await _peopleGoogleService.GetContactByIdAsync(resourceName);
-			var names = contact.Names;
+			var displayName = contact.Names?.Select(n => n.DisplayName).FirstOrDefault();
 
-			if (names != null)
+
+			if (!string.IsNullOrEmpty(displayName))
 			{
-				var name = names.FirstOrDefault();
-				TempData["ContactName"] = name;
+				TempData["ContactName"] = displayName;
 			}
 			else
 			{
