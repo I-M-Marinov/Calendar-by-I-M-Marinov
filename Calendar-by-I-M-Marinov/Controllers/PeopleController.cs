@@ -231,6 +231,33 @@ namespace Calendar_by_I_M_Marinov.Controllers
 			}
 		}
 
+		[HttpPost]
+		public async Task<IActionResult> DeleteContact(string resourceName, string returnUrl)
+		{
+			var contact = await _peopleGoogleService.GetContactByIdAsync(resourceName);
+			var names = contact.Names;
+
+			if (names != null)
+			{
+				var name = names.FirstOrDefault();
+				TempData["ContactName"] = name;
+			}
+			else
+			{
+				TempData["ContactName"] = "Contact";
+			}
+
+			TempData["ShowSuccessMessage"] = true;
+			await _peopleGoogleService.DeleteContactAsync(resourceName);
+
+			if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+			{
+				return Redirect(returnUrl);
+			}
+
+			return RedirectToAction(nameof(GetAllContacts));
+		}
+
         [HttpPost]
         public async Task<IActionResult> CreateContactGroup(string labelName)
         {
@@ -258,7 +285,8 @@ namespace Calendar_by_I_M_Marinov.Controllers
 	        try
 	        {
 		        await _peopleGoogleService.RemoveContactGroupAsync(labelName);
-	        }
+
+			}
 	        catch (Exception ex)
 	        {
 		        TempData["ErrorMessage"] = $"Error deleting group: {ex.Message}";
