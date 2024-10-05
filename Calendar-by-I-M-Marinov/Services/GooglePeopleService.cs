@@ -1,10 +1,12 @@
 ﻿using Calendar_by_I_M_Marinov.Common;
 using Calendar_by_I_M_Marinov.Models.People;
 using Calendar_by_I_M_Marinov.Services.Contracts;
-using Google.Apis.PeopleService.v1.Data;
+
 
 namespace Calendar_by_I_M_Marinov.Services
 {
+	using Google;
+	using Google.Apis.PeopleService.v1.Data;
 	using Google.Apis.Auth.OAuth2;
     using Google.Apis.PeopleService.v1;
 	using Google.Apis.Services;
@@ -108,8 +110,10 @@ namespace Calendar_by_I_M_Marinov.Services
 		public async Task<Person> GetContactByIdAsync(string resourceName)
 		{
 			if (string.IsNullOrEmpty(resourceName))
+			{
 				throw new ArgumentException("Resource name cannot be null or empty.", nameof(resourceName));
-
+			}
+			
 			try
 			{
 				var contact = await GetPersonAsync(resourceName);
@@ -472,6 +476,34 @@ namespace Calendar_by_I_M_Marinov.Services
 	        {
 		        Console.WriteLine($"Error deleting contact group: {ex.Message}");
 		        throw;
+	        }
+        }
+        public async Task<string> DeleteContactAsync(string resourceName)
+        {
+	        var personToDelete = await GetPersonAsync(resourceName);
+
+	        if (personToDelete == null)
+	        {
+		        throw new Exception("Contact not found.");
+	        }
+
+	        try
+	        {
+		        var request = _peopleService.People.DeleteContact(resourceName);
+		        await request.ExecuteAsync();
+		        var displayName = personToDelete.Names?.FirstOrDefault()?.DisplayName ?? "Unnamed Contact";
+
+				return $"{displayName} was removed from the contact list successfully!";
+	        }
+	        catch (GoogleApiException ex)
+	        {
+		        Console.WriteLine($"Failed to delete contact: {ex.Message}");
+		        throw new ApplicationException("Error occurred while deleting the contact.", ex);
+	        }
+	        catch (Exception ex)
+	        {
+		        Console.WriteLine($"Unexpected error: {ex.Message}");
+		        throw new ApplicationException("An unexpected error occurred.", ex);
 	        }
         }
 	}
