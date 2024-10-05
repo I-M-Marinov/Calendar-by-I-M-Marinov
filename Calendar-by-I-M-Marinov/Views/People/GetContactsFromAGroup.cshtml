@@ -41,6 +41,13 @@ else
 				}
 			</div>
 		</div>
+		
+		@if (TempData["ShowSuccessMessage"] != null)
+		{
+			<div class="alert alert-success" id="delete-success-message" role="alert">
+				<strong>@TempData["ContactName"] was deleted successfully!</strong></div>
+		}
+
 
 		@if (ViewBag.ContactGroups != null)
 		{
@@ -48,9 +55,9 @@ else
 				<h4>Contact Groups 
 					<div class="add-label-container" style="margin: 0.2em;">
 						<!-- Add Label Button -->
-						<button id="addLabelButton" class="btn btn-success">➕</button>
+						<button id="addLabelButton" class="btn btn-success">+</button>
 						<!-- Remove Label Button -->
-						<button id="removeLabelButton" class="btn btn-danger btn-sm">➖</button>
+						<button id="removeLabelButton" class="btn btn-danger btn-sm">-</button>
 					</div>
 				</h4>
 				<form method="get" action="@Url.Action("GetContactsFromAGroup", "People")">
@@ -80,7 +87,7 @@ else
 
 							<div class="modal-footer">
 								<button type="button" class="btn btn-warning" onclick="closePopup()">Cancel</button>
-								<button type="submit" class="btn btn-primary">Create</button>
+								<button type="submit" class="btn btn-primary">Add</button>
 							</div>
 
 						</form>
@@ -193,11 +200,17 @@ else
 							<td>@contact.PhoneNumber</td>
 						}
 						
-						<td>
+						<td class="action-buttons">
 							<!-- Update button linking to the UpdateContact action -->
 							<form asp-controller="People" asp-action="UpdateContact" method="get">
 								<input type="hidden" name="resourceName" value="@contact.ResourceName" />
-								<button type="submit" class="btn btn-primary">Edit</button>
+								<button type="submit" class="btn btn-primary action-button" id="edit-btn">Edit</button>
+							</form>
+							<!-- Delete button linking to the DeleteContact action -->
+							<form asp-controller="People" asp-action="DeleteContact" method="post">
+								<input type="hidden" name="resourceName" value="@contact.ResourceName" />
+								<input type="hidden" id="returnUrl" name="returnUrl" />
+								<button type="submit" class="btn btn-danger action-button" id="delete-btn" onclick="setReturnUrl()">Delete</button>
 							</form>
 						</td>
 
