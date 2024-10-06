@@ -17,6 +17,7 @@ namespace Calendar_by_I_M_Marinov.Services.Contracts
         Task<Person> GetContactByIdAsync(string resourceName);
         Task<Person> UpdateContactAsync(string resourceName, ContactViewModel updatedContact);
         Task<string> DeleteContactAsync(string resourceName);
+        Task<List<ContactViewModel>> SearchContactsAsync(string name, int pageNumber);
 
 
     }

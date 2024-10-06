@@ -35,6 +35,7 @@
   <ItemGroup>
     <None Include="Views\Calendar\ViewCopiedEvent.cshtml" />
     <None Include="Views\People\GetAllContacts.cshtml" />
+    <None Include="Views\People\SearchContacts.cshtml" />
     <None Include="wwwroot\Icons\all-day.png" />
   </ItemGroup>
 
