@@ -1,6 +1,8 @@
 ﻿using Calendar_by_I_M_Marinov.Services.Contracts;
 using Microsoft.AspNetCore.Mvc;
 using Calendar_by_I_M_Marinov.Models.People;
+using Google.Apis.PeopleService.v1.Data;
+using System.Xml.Linq;
 
 
 namespace Calendar_by_I_M_Marinov.Controllers
@@ -295,6 +297,57 @@ namespace Calendar_by_I_M_Marinov.Controllers
 	        return RedirectToAction(nameof(GetAllContacts));
         }
 
+        [HttpGet]
+        [Route("/search-contact")]
+		public IActionResult SearchContacts()
+		{
+			return View();
+		}
+
+		[HttpPost]
+        [Route("/search-contact")]
+
+        public async Task<IActionResult> SearchContacts(string text, int pageNumber = 1)
+        {
+	        const int pageSize = 15; // Default page size
+
+			if (string.IsNullOrWhiteSpace(text))
+	        {
+		        TempData["ErrorMessage"] = "Please enter a name to search.";
+		        return View(new List<ContactViewModel>());
+	        }
+
+			try
+			{
+				var foundContacts = await _peopleGoogleService.SearchContactsAsync(text, pageNumber);
+
+
+				if (foundContacts == null || !foundContacts.Any())
+				{
+					TempData["ErrorMessage"] = "No contacts found.";
+					return View("SearchContacts", new List<ContactViewModel>());
+				}
+
+				ViewBag.TotalPages = (int)Math.Ceiling((double)foundContacts.Count / pageSize);
+				ViewBag.CurrentPage = pageNumber;
+				TempData["SearchTerm"] = text;
+
+				var pagedContacts = foundContacts
+					.Skip((pageNumber - 1) * pageSize)
+					.Take(pageSize)
+					.ToList();
+
+
+                return View(pagedContacts);
+			}
+			catch (Exception ex)
+			{
+				TempData["ErrorMessage"] = $"Error searching for contacts: {ex.Message}";
+
+				return View("SearchContacts", new List<ContactViewModel>());
+			}
+
+		}
 	}
 
 }
