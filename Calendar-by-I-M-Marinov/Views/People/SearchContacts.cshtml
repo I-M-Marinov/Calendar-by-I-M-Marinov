@@ -1,0 +1,163 @@
+﻿@model List<Calendar_by_I_M_Marinov.Models.People.ContactViewModel>
+
+@{
+    ViewBag.Title = "Search Contacts";
+}
+
+<div class="container">
+    <h2>Search Contacts</h2>
+
+    <!-- Success and Error Messages -->
+    @if (TempData["ErrorMessage"] != null)
+    {
+		<div class="alert alert-danger" id="error-message" role="alert">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+    <!-- Search Form -->
+    <div id="search-contacts">
+	    <form method="post" asp-action="SearchContacts">
+		    <div class="form-group">
+			    <label for="contactSearch">Enter a name to search</label>
+			    <input type="text" class="form-control" id="contactSearch" name="text" placeholder="Search for a contact..." required>
+		    </div>
+		    <button type="submit" class="btn btn-primary">Search</button>
+	    </form>
+    </div>
+
+    <!-- If no contacts are found -->
+    @if (Model != null && Model.Any())
+	{
+	    bool showFirstName = Model.Any(c => !string.IsNullOrEmpty(c.FirstName));
+	    bool showLastName = Model.Any(c => !string.IsNullOrEmpty(c.LastName));
+	    bool showEmail = Model.Any(c => !string.IsNullOrEmpty(c.Email));
+	    bool showPhoneNumber = Model.Any(c => !string.IsNullOrEmpty(c.PhoneNumber));
+	    bool showBirthday = Model.Any(c => !string.IsNullOrEmpty(c.Birthday));
+	    bool showLabels = Model.Any(c => c.Labels != null && c.Labels.Any());
+
+        <!-- Display found contacts -->
+        <div class="mt-3">
+            <h3>Search Results</h3>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+
+						@if (showFirstName && showLastName)
+	                    {
+		                    <th>Name</th>
+	                    }
+						else if (showFirstName)
+	                    {
+		                    <th>First Name</th>
+	                    }
+						else if (showLastName)
+	                    {
+		                    <th>Last Name</th>
+	                    }
+						
+	                    @if (showEmail)
+	                    {
+		                    <th>Email</th>
+	                    }
+	                    @if (showPhoneNumber)
+	                    {
+		                    <th>Phone Number</th>
+	                    }
+	                    @if (showBirthday)
+	                    {
+		                    <th>Birthday</th>
+	                    }
+	                    @if (showLabels)
+	                    {
+		                    <th>Labels</th>
+	                    }
+	                    <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var contact in Model)
+                    {
+                        <tr>
+
+	                        @if (showFirstName && showLastName)
+	                        {
+								@if (@contact.FirstName == "" && @contact.LastName == ""){
+									<td>N/A</td>
+								}
+								else
+								{
+									<td>@contact.FirstName @contact.LastName</td>
+								}
+	                        }
+	                        else if (showFirstName)
+	                        {
+		                        <td>@contact.FirstName</td>
+	                        }
+	                        else if (showLastName)
+	                        {
+								<td>@contact.LastName</td>
+	                        }
+
+	                        @if (showEmail)
+	                        {
+		                        <td>@contact.Email</td>
+	                        }
+	                        @if (showPhoneNumber)
+	                        {
+		                        <td>@contact.PhoneNumber</td>
+	                        }
+	                        @if (showBirthday)
+	                        {
+		                        <td>@contact.Birthday</td>
+	                        }
+	                        <td>
+		                        @if (contact.Labels != null && contact.Labels.Count > 0)
+		                        {
+			                        @foreach (var label in contact.Labels)
+			                        {
+										<span class="badge badge-info">@label</span>
+			                        }
+		                        }
+		                        else
+		                        {
+			                        <span>N/A</span>
+		                        }
+	                        </td>
+
+	                        <td class="action-buttons">
+		                        <!-- Update button linking to the UpdateContact action -->
+		                        <form asp-controller="People" asp-action="UpdateContact" method="get">
+			                        <input type="hidden" name="resourceName" value="@contact.ResourceName" />
+			                        <button type="submit" class="btn btn-primary action-button" id="edit-btn">Edit</button>
+		                        </form>
+		                        <!-- Delete button linking to the DeleteContact action -->
+		                        <form asp-controller="People" asp-action="DeleteContact" method="post">
+			                        <input type="hidden" name="resourceName" value="@contact.ResourceName" />
+			                        <input type="hidden" id="returnUrl" name="returnUrl" />
+			                        <button type="submit" class="btn btn-danger action-button" id="delete-btn" onclick="setReturnUrl()">Delete</button>
+		                        </form>
+	                        </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination Controls -->
+        <nav aria-label="Page navigation">
+	        <ul class="pagination">
+		        @for (int i = 1; i <= ViewBag.TotalPages; i++)
+		        {
+			        <li class="page-item @(ViewBag.CurrentPage == i ? "active" : "")">
+				        <form method="post" asp-action="SearchContacts" style="display:inline;">
+							<input type="hidden" name="name" value="@TempData["SearchTerm"]"/>
+					<input type="hidden" name="pageNumber" value="@i" />
+					        <button type="submit" class="page-link">@i</button>
+				        </form>
+			        </li>
+		        }
+	        </ul>
+        </nav>
+    }
+</div>
