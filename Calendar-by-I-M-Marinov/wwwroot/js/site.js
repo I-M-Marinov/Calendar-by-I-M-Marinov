@@ -192,18 +192,29 @@ function setReturnUrl() {
 }
 
 
-// FUNCTION TO HIDE THE SUCCESS MESSAGE 
+// FUNCTION TO HIDE THE SUCCESS / ERROR MESSAGE 
 document.addEventListener("DOMContentLoaded", function () {
-    var successMessage = document.getElementById('delete-success-message');
-
+    // Success Message
+    var successMessage = document.getElementById('success-message');
     if (successMessage) {
         setTimeout(function () {
             successMessage.classList.add('fade-out');
-        }, 1000); 
+        }, 1000);
 
-        
         setTimeout(function () {
             successMessage.style.display = 'none';
-        }, 3200); 
+        }, 3200);
+    }
+
+    // Error Message
+    var errorMessage = document.getElementById('error-message');
+    if (errorMessage) {
+        setTimeout(function () {
+            errorMessage.classList.add('fade-out');
+        }, 1000);
+
+        setTimeout(function () {
+            errorMessage.style.display = 'none';
+        }, 3200);
     }
 });
