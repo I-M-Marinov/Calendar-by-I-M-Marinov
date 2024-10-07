@@ -309,7 +309,7 @@ namespace Calendar_by_I_M_Marinov.Controllers
 
         public async Task<IActionResult> SearchContacts(string text, int pageNumber = 1)
         {
-	        const int pageSize = 15; // Default page size
+	        const int pageSize = 20; // Default page size
 
 			if (string.IsNullOrWhiteSpace(text))
 	        {
@@ -321,6 +321,9 @@ namespace Calendar_by_I_M_Marinov.Controllers
 			{
 				var foundContacts = await _peopleGoogleService.SearchContactsAsync(text, pageNumber);
 
+				var totalContacts = foundContacts.Count; 
+				var totalPages = (int)Math.Ceiling((double)totalContacts / pageSize);
+
 
 				if (foundContacts == null || !foundContacts.Any())
 				{
@@ -328,8 +331,14 @@ namespace Calendar_by_I_M_Marinov.Controllers
 					return View("SearchContacts", new List<ContactViewModel>());
 				}
 
-				ViewBag.TotalPages = (int)Math.Ceiling((double)foundContacts.Count / pageSize);
+				// Ensure the page number is valid
+				if (pageNumber < 1) pageNumber = 1;
+				if (pageNumber > totalPages) pageNumber = totalPages;
+
+				ViewBag.TotalPages = totalPages;
+				ViewBag.TotalContacts = totalContacts;
 				ViewBag.CurrentPage = pageNumber;
+
 				TempData["SearchTerm"] = text;
 
 				var pagedContacts = foundContacts
