@@ -23,7 +23,7 @@ else
 			    {
 				    <a href="#letter-@group.Key">
 					    <div class="alphabet-card">
-						    <span>@group.Key</span>
+							<span>@group.Key</span>
 					    </div>
 				    </a>
 			    }
@@ -132,7 +132,8 @@ else
         {
 	        var sortedGroup = group.OrderBy(contact => contact.FirstName).ToList();
 
-            <h3 class="letter-group-header" id="letter-@group.Key">@group.Key</h3>
+	        <h3 class="letter-group-header" id="letter-@group.Key">@group.Key</h3>
+	        <div id="number-of-contacts">@group.Count() contacts</div>
             <table class="table table-striped">
                 <thead>
                 <tr>
