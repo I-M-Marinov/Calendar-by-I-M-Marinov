@@ -506,57 +506,27 @@ namespace Calendar_by_I_M_Marinov.Services
 		        throw new ApplicationException("An unexpected error occurred.", ex);
 	        }
         }
-
-		public async Task<List<ContactViewModel>> SearchContactsAsync(string text, int pageNumber = 1)
+		private List<ContactViewModel> SearchContactsInMemory(string searchTerm, List<ContactViewModel> allContacts)
 		{
-			const int pageSize = 30;
+			searchTerm = searchTerm.ToLower(); // case-insensitive comparison
 
-			try
-			{
-				var request = _peopleService.People.SearchContacts();
-				request.Query = text;
-				request.ReadMask = "names,emailAddresses,phoneNumbers,memberships";
-				request.PageSize = 30; // Limit is 30 inclusive per the Google People API 
+			var searchResults = allContacts.Where(contact =>
+				(!string.IsNullOrEmpty(contact.FirstName) && contact.FirstName.ToLower().Contains(searchTerm)) ||
+				(!string.IsNullOrEmpty(contact.LastName) && contact.LastName.ToLower().Contains(searchTerm)) ||
+				(!string.IsNullOrEmpty(contact.Email) && contact.Email.ToLower().Contains(searchTerm)) ||
+				(!string.IsNullOrEmpty(contact.PhoneNumber) && contact.PhoneNumber.Contains(searchTerm))
+			).ToList(); 
 
-				var response = await request.ExecuteAsync();
-
-				if (response.Results == null || response.Results.Count == 0)
-				{
-					return new List<ContactViewModel>();
-				}
-
-				var contactGroups = await GetContactGroupsAsync();
-				var groupMapping = contactGroups.ToDictionary(g => g.ResourceName, g => g.FormattedName);
-
-				var allContacts = response.Results.Select(person => new ContactViewModel
-				{
-					ResourceName = person.Person.ResourceName ?? "N/A",
-					FirstName = person.Person.Names?.FirstOrDefault()?.GivenName ?? "N/A",
-					LastName = person.Person.Names?.FirstOrDefault()?.FamilyName ?? "N/A",
-					Email = person.Person.EmailAddresses?.FirstOrDefault()?.Value ?? "N/A",
-					PhoneNumber = person.Person.PhoneNumbers?.FirstOrDefault()?.Value ?? "N/A",
-					Birthday = person.Person.Birthdays?.FirstOrDefault()?.Date != null
-						? $"{person.Person.Birthdays.First().Date.Month}/{person.Person.Birthdays.First().Date.Day}/{person.Person.Birthdays.First().Date.Year}"
-						: null,
-					Labels = person.Person.Memberships?
-						.Select(m => groupMapping.TryGetValue(m.ContactGroupMembership.ContactGroupResourceName, out var groupName) ? groupName : "Unknown")
-						.ToList() ?? new List<string>()
-				}).ToList();
-
-				var pagedContacts = allContacts.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
-
-				return pagedContacts;
-			}
-			catch (Exception ex)
-			{
-				Console.WriteLine($"Error searching contacts: {ex.Message}");
-				throw;
-			}
+			return searchResults;
 		}
+		public async Task<List<ContactViewModel>> SearchContactsAsync(string text, int page = 1)
+		{
+			var allContacts = await GetAllContactsAsync();
 
+			var searchResults = SearchContactsInMemory(text, allContacts);
 
-
-
+			return searchResults;
+		}
 	}
 }
 
