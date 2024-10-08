@@ -242,14 +242,15 @@ namespace Calendar_by_I_M_Marinov.Controllers
 
 			if (!string.IsNullOrEmpty(displayName))
 			{
-				TempData["ContactName"] = displayName;
+				TempData["Message"] = $"{displayName} was successfully removed!";
 			}
 			else
 			{
-				TempData["ContactName"] = "Contact";
+				TempData["Message"] = "Contact was successfully removed!";
 			}
 
 			TempData["ShowSuccessMessage"] = true;
+
 			await _peopleGoogleService.DeleteContactAsync(resourceName);
 
 			if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
