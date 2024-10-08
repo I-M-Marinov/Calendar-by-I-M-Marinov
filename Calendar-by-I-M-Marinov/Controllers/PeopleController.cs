@@ -271,7 +271,9 @@ namespace Calendar_by_I_M_Marinov.Controllers
             try
             {
                 var createdGroup = await _peopleGoogleService.CreateContactGroupAsync(labelName);
-                TempData["SuccessMessage"] = $"Label '{createdGroup.FormattedName}' created successfully!";
+
+                TempData["ShowSuccessMessage"] = true;
+                TempData["Message"] = $"Label '{createdGroup.FormattedName}' created successfully!";
             }
             catch (Exception ex)
             {
@@ -286,8 +288,10 @@ namespace Calendar_by_I_M_Marinov.Controllers
         {
 	        try
 	        {
-		        await _peopleGoogleService.RemoveContactGroupAsync(labelName);
+		        var message = await _peopleGoogleService.RemoveContactGroupAsync(labelName);
 
+		        TempData["ShowSuccessMessage"] = true;
+		        TempData["Message"] = message;
 			}
 	        catch (Exception ex)
 	        {
@@ -297,7 +301,32 @@ namespace Calendar_by_I_M_Marinov.Controllers
 	        return RedirectToAction(nameof(GetAllContacts));
         }
 
-        [HttpGet]
+        [HttpPost]
+        public async Task<IActionResult> EditContactGroup(string groupResourceName, string newGroupName, string returnUrl)
+        {
+	        var oldAndNewNameDictTask = _peopleGoogleService.EditContactGroupAsync(groupResourceName, newGroupName);
+
+	        Dictionary<string, ContactGroup> oldAndNewNameDict = await oldAndNewNameDictTask;
+
+
+			if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+	        {
+		        return Redirect(returnUrl);
+	        }
+
+	        foreach (var entry in oldAndNewNameDict)
+	        {
+		        string oldName = entry.Key; 
+		        ContactGroup updatedGroup = entry.Value;
+
+		        TempData["ShowSuccessMessage"] = true;
+				TempData["Message"] = $"{oldName} was successfully renamed to {updatedGroup.FormattedName}.";
+	        }
+
+			return RedirectToAction(nameof(GetAllContacts));
+		}
+
+		[HttpGet]
         [Route("/search-contact")]
 		public IActionResult SearchContacts()
 		{
