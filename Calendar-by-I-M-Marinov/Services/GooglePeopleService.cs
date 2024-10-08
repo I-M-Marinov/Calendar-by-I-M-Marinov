@@ -1,6 +1,7 @@
 ﻿using Calendar_by_I_M_Marinov.Common;
 using Calendar_by_I_M_Marinov.Models.People;
 using Calendar_by_I_M_Marinov.Services.Contracts;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
 
 
 namespace Calendar_by_I_M_Marinov.Services
@@ -463,15 +464,48 @@ namespace Calendar_by_I_M_Marinov.Services
 		        throw;
 	        }
         }
-        public async Task<string> RemoveContactGroupAsync(string labelName)
+
+        public async Task<Dictionary<string, ContactGroup>> EditContactGroupAsync(string groupResourceName, string newGroupName)
+		{
+			try
+			{
+				var groupToEdit = await _peopleService.ContactGroups.Get(groupResourceName).ExecuteAsync(); // get the group you want to edit
+				var oldGroupName = groupToEdit.FormattedName;
+				groupToEdit.Name = newGroupName; // set the new name 
+
+				var updateContactGroupRequest = new UpdateContactGroupRequest // create the updateContactGroupRequest 
+				{
+					ContactGroup = groupToEdit
+				};
+
+				var updateRequest = _peopleService.ContactGroups.Update(updateContactGroupRequest, groupResourceName); // pass the updateContactGroupRequest and groupResourceName to the API's Update method
+				var updatedGroup = await updateRequest.ExecuteAsync();
+
+				var returnDictionary = new Dictionary<string, ContactGroup>
+				{
+					{ oldGroupName, updatedGroup } // Correctly pairing the key and value
+				};
+
+				return returnDictionary; // return the updated group
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine($"Error updating contact group: {ex.Message}");
+				throw;
+			}
+		}
+		public async Task<string> RemoveContactGroupAsync(string labelName)
         {
 			try
 			{
-				var request = _peopleService.ContactGroups.Delete(labelName);
-		        var groupToRemove = await request.ExecuteAsync();
+				var groupToDelete = await _peopleService.ContactGroups.Get(labelName).ExecuteAsync(); // get the group you want to delete
 
-		        return $"{groupToRemove} was successfully removed.";
+				var request = _peopleService.ContactGroups.Delete(labelName);
+		        await request.ExecuteAsync();
+
+				return $"{groupToDelete.FormattedName} was successfully removed.";
 	        }
+
 	        catch (Exception ex)
 	        {
 		        Console.WriteLine($"Error deleting contact group: {ex.Message}");
