@@ -173,17 +173,30 @@ var removeLabelBtn = document.getElementById("removeLabelButton");
 removeLabelBtn.onclick = function () {
     removeLabelModal.style.display = "block";
 }
+
+// For editing Label Modal
+
+var editLabelModal = document.getElementById("editLabelModal");
+var editLabelBtn = document.getElementById("editLabelButton");
+editLabelBtn.onclick = function () {
+    editLabelModal.style.display = "block";
+}
+
 window.onclick = function (event) {
     if (event.target == addLabelModal) {
         addLabelModal.style.display = "none";
     } else if (event.target == removeLabelModal) {
         removeLabelModal.style.display = "none";
+    } else if (event.target == editLabelModal) {
+        editLabelModal.style.display = "none";
     }
 }
 function closePopup() {
     addLabelModal.style.display = 'none';
     removeLabelModal.style.display = 'none';
+    editLabelModal.style.display = 'none';
 }
+
 
 
 // FUNCTION TO SET THE RETURN URL 
@@ -217,4 +230,5 @@ document.addEventListener("DOMContentLoaded", function () {
             errorMessage.style.display = 'none';
         }, 3200);
     }
+
 });
