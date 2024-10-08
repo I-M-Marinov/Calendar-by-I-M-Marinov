@@ -888,7 +888,8 @@ a:hover {
 }
 
 #addLabelButton,
-#removeLabelButton {
+#removeLabelButton,
+#editLabelButton{
     width: 2.2em;
     height: 2.2em;
     font-size: 10px;
@@ -909,8 +910,13 @@ a:hover {
     color: #07601f !important;
 }
 
+#editLabelButton:hover {
+    color: #ffc107 !important;
+}
+
 #addLabelButton:hover,
-#removeLabelButton:hover {
+#removeLabelButton:hover,
+#editLabelButton:hover {
     background-color: white;
     transform: scale(1.20);
     transition: transform 0.4s, box-shadow 0.3s !important;
