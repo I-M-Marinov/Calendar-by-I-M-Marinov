@@ -45,7 +45,7 @@ else
 		@if (TempData["ShowSuccessMessage"] != null)
 		{
 			<div class="alert alert-success" id="success-message" role="alert">
-				<strong>@TempData["ContactName"] was deleted successfully!</strong></div>
+				<strong>@TempData["Message"]</strong></div>
 		}
 
 
@@ -58,6 +58,8 @@ else
 						<button id="addLabelButton" class="btn btn-success">+</button>
 						<!-- Remove Label Button -->
 						<button id="removeLabelButton" class="btn btn-danger btn-sm">-</button>
+						<!-- Edit Label Button -->
+						<button id="editLabelButton" class="btn btn-warning btn-sm">=</button>
 					</div>
 				</h4>
 				<form method="get" action="@Url.Action("GetContactsFromAGroup", "People")">
@@ -86,8 +88,8 @@ else
 							<input type="text" id="labelName" name="labelName" class="form-control" required />
 
 							<div class="modal-footer">
-								<button type="button" class="btn btn-warning" onclick="closePopup()">Cancel</button>
-								<button type="submit" class="btn btn-primary">Add</button>
+								<button type="button" class="btn btn-danger" onclick="closePopup()">Cancel</button>
+								<button type="submit" class="btn btn-success">Add</button>
 							</div>
 
 						</form>
@@ -113,12 +115,41 @@ else
 							</div>
 
 							<div class="modal-footer">
-								<button type="button" class="btn btn-warning" onclick="closePopup()">Cancel</button>
+								<button type="button" class="btn btn-danger" onclick="closePopup()">Cancel</button>
 								<button type="submit" class="btn btn-primary">Remove</button>
 							</div>
 						</form>
 					</div>
 				</div>
+				
+				<!-- Modal Pop-up for editing a label name -->
+				<div id="editLabelModal" class="modal">
+					<div class="modal-content">
+						<h4>Edit a group/label</h4>
+						<form id="removeLabelForm" method="post" action="@Url.Action("EditContactGroup", "People")">
+							<div class="form-group">
+								<select id="labelSelect" name="groupResourceName" class="form-control" required>
+									<option value="" disabled selected>Select a label</option>
+									@foreach (var contactGroup in ViewBag.ContactGroups)
+									{
+										if (contactGroup.GroupType != "SYSTEM_CONTACT_GROUP")
+										{
+											<option value="@contactGroup.ResourceName">@contactGroup.FormattedName : @contactGroup.MemberCount contacts</option>
+										}
+									}
+								</select>
+								
+								<input type="text" id="newGroupName" name="newGroupName" class="form-control" placeholder="Enter a new group name" required />
+
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-danger" onclick="closePopup()">Cancel</button>
+								<button type="submit" class="btn btn-success">Update</button>
+							</div>
+						</form>
+					</div>
+				</div>
+
 			</div>
 		}
 		else
@@ -197,7 +228,7 @@ else
 
 						@if (group.Any(contact => contact.PhoneNumber != "N/A"))
 						{
-							<td>@contact.PhoneNumber</td>
+							<td style="font-size: 0.75em;">@contact.PhoneNumber</td>
 						}
 						
 						<td class="action-buttons">
