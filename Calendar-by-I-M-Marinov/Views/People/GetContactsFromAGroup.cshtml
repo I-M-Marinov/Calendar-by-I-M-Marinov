@@ -2,11 +2,12 @@
 @model List<IGrouping<char, Calendar_by_I_M_Marinov.Models.People.ContactViewModel>>
 
 @{
-    ViewData["Title"] = "Contacts List";
+
+	ViewData["Title"] = @ViewBag.ContactGroupSelected;
 }
 
-<h2>Contacts List</h2>
-<h4>There are <strong>@ViewBag.ContactsCount</strong> contacts in group "@ViewBag.ContactGroupSelected"</h4>
+<h2>@ViewData["Title"]</h2>
+<h4><strong>@ViewBag.ContactsCount</strong> contacts</h4>
 
 
 @if (Model.Count == 0)
@@ -228,7 +229,7 @@ else
 
 						@if (group.Any(contact => contact.PhoneNumber != "N/A"))
 						{
-							<td style="font-size: 0.75em;">@contact.PhoneNumber</td>
+							<td>@contact.PhoneNumber</td>
 						}
 						
 						<td class="action-buttons">
@@ -241,7 +242,7 @@ else
 							<form asp-controller="People" asp-action="DeleteContact" method="post">
 								<input type="hidden" name="resourceName" value="@contact.ResourceName" />
 								<input type="hidden" id="returnUrl" name="returnUrl" />
-								<button type="submit" class="btn btn-danger action-button" id="delete-btn" onclick="setReturnUrl()">Delete</button>
+									<button type="submit" class="btn btn-danger action-button" id="delete-btn" onclick="submitDeleteForm()">Delete</button>
 							</form>
 						</td>
 
