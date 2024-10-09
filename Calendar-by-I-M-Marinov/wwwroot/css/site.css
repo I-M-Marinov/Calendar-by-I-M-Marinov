@@ -733,21 +733,21 @@ a:hover {
 
 }
 
-    .contact-firstname input:focus + label,
-    .contact-firstname input:not(:placeholder-shown) + label,
-    .contact-lastname input:focus + label,
-    .contact-lastname input:not(:placeholder-shown) + label,
-    .contact-email input:focus + label,
-    .contact-email input:not(:placeholder-shown) + label,
-    .contact-phoneNumber input:focus + label,
-    .contact-phoneNumber input:not(:placeholder-shown) + label{
-        top: -10px;
-        font-size: 0.65em;
-        color: #333;
-        background-color: #007bff;
-        color: white;
-        opacity: 1;
-    }
+.contact-firstname input:focus + label,
+.contact-firstname input:not(:placeholder-shown) + label,
+.contact-lastname input:focus + label,
+.contact-lastname input:not(:placeholder-shown) + label,
+.contact-email input:focus + label,
+.contact-email input:not(:placeholder-shown) + label,
+.contact-phoneNumber input:focus + label,
+.contact-phoneNumber input:not(:placeholder-shown) + label{
+    top: -10px;
+    font-size: 0.65em;
+    color: #333;
+    background-color: #007bff;
+    color: white;
+    opacity: 1;
+}
 
 .contact-firstname input:focus,
 .contact-lastname input:focus,
@@ -844,8 +844,10 @@ a:hover {
     color: white;
 }
 
+.alert.alert-success p{
+    margin-bottom: 0.5em;
+}
 /* Specific CSS that is for the pop-up window for creating a new label / contact group */
-
 .modal {
     display: none;
     position: fixed;
