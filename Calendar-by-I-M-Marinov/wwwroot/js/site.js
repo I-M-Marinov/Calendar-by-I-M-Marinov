@@ -162,7 +162,7 @@ document.addEventListener('DOMContentLoaded', function () {
 var addLabelModal = document.getElementById("addLabelModal");
 var addLabelBtn = document.getElementById("addLabelButton");
 
-addLabelBtn.onclick = function () {
+addLabelBtn.onclick = function() {
     addLabelModal.style.display = "block";
 }
 
@@ -170,7 +170,7 @@ addLabelBtn.onclick = function () {
 var removeLabelModal = document.getElementById("removeLabelModal");
 var removeLabelBtn = document.getElementById("removeLabelButton");
 
-removeLabelBtn.onclick = function () {
+removeLabelBtn.onclick = function() {
     removeLabelModal.style.display = "block";
 }
 
@@ -178,7 +178,7 @@ removeLabelBtn.onclick = function () {
 
 var editLabelModal = document.getElementById("editLabelModal");
 var editLabelBtn = document.getElementById("editLabelButton");
-editLabelBtn.onclick = function () {
+editLabelBtn.onclick = function() {
     editLabelModal.style.display = "block";
 }
 
@@ -200,9 +200,11 @@ function closePopup() {
 
 
 // FUNCTION TO SET THE RETURN URL 
-function setReturnUrl() {
-    document.getElementById('returnUrl').value = window.location.href; // Set the current URL as the return URL
+function submitDeleteForm() {
+    document.getElementById('returnUrl').value = window.location.href; // Set returnUrl
+    document.getElementById('deleteContactForm').submit(); // Submit the form
 }
+
 
 
 // FUNCTION TO HIDE THE SUCCESS / ERROR MESSAGE 
@@ -210,25 +212,28 @@ document.addEventListener("DOMContentLoaded", function () {
     // Success Message
     var successMessage = document.getElementById('success-message');
     if (successMessage) {
-        setTimeout(function () {
+        setTimeout(function() {
             successMessage.classList.add('fade-out');
         }, 1000);
 
-        setTimeout(function () {
+        setTimeout(function() {
             successMessage.style.display = 'none';
         }, 3200);
+
     }
 
     // Error Message
+
     var errorMessage = document.getElementById('error-message');
     if (errorMessage) {
-        setTimeout(function () {
+        setTimeout(function() {
             errorMessage.classList.add('fade-out');
         }, 1000);
 
-        setTimeout(function () {
+        setTimeout(function() {
             errorMessage.style.display = 'none';
         }, 3200);
     }
+    
 
 });
