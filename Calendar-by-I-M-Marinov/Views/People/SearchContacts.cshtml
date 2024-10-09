@@ -22,15 +22,17 @@
 }
 
 
+
 <div class="search-container">
     <h2>Search Contacts</h2>
 
     <!-- Success and Error Messages -->
+    
     @if (TempData["ErrorMessage"] != null)
     {
-		<div class="alert alert-danger" id="error-message" role="alert">
-            @TempData["ErrorMessage"]
-        </div>
+	    <div class="alert alert-danger search-contacts" id="error-message" role="alert">
+		    @TempData["ErrorMessage"]
+	    </div>
     }
 
     <!-- Search Form -->
@@ -44,9 +46,6 @@
 	    </form>
     </div>
 	
-    
-
-    <!-- If no contacts are found -->
     @if (Model != null && Model.Any())
 	{
 	    bool showFirstName = Model.Any(c => !string.IsNullOrEmpty(c.FirstName));
@@ -186,7 +185,7 @@
 					        }
 					        else
 					        {
-						        <td style="font-size: 0.75em;">@contact.PhoneNumber</td>
+						        <td >@contact.PhoneNumber</td>
 					        }
 				        }
 				        @if (showBirthday && birthdayIsAvailable)
@@ -217,7 +216,7 @@
 					        <form asp-controller="People" asp-action="DeleteContact" method="post">
 						        <input type="hidden" name="resourceName" value="@contact.ResourceName"/>
 						        <input type="hidden" id="returnUrl" name="returnUrl"/>
-						        <button type="submit" class="btn btn-danger action-button" id="delete-btn" onclick="setReturnUrl()">Delete</button>
+									<button type="submit" class="btn btn-danger action-button" id="delete-btn" onclick="submitDeleteForm()">Delete</button>
 					        </form>
 				        </td>
 			        </tr>
