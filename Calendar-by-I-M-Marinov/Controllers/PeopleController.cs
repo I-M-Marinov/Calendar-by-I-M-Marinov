@@ -76,12 +76,21 @@ namespace Calendar_by_I_M_Marinov.Controllers
                     return StatusCode(500, "No contact groups returned from the service.");
                 }
 
-                ViewBag.ContactGroups = contactGroupList; // Set groups in ViewBag
+                var formattedNameSelectedGroup =
+	                contactGroupList.FirstOrDefault(g => g.Name == selectedGroup)?.FormattedName;
+
+
+				ViewBag.ContactGroups = contactGroupList; // Set groups in ViewBag
                 ViewBag.ContactsCount = contacts.Count; // Total contacts count
-                ViewBag.ContactGroupSelected = selectedGroup; // Save the name of the group to use it in the next View
+
+                if (formattedNameSelectedGroup != null)
+                {
+	                ViewBag.ContactGroupSelected = formattedNameSelectedGroup; // Save the name of the group to use it in the next View
+				}
 
 
-				return View(groupedContacts);
+
+                return View(groupedContacts);
             }
             catch (Exception ex)
             {
@@ -258,7 +267,7 @@ namespace Calendar_by_I_M_Marinov.Controllers
 
 			await _peopleGoogleService.DeleteContactAsync(resourceName);
 
-			if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+			if (!string.IsNullOrEmpty(returnUrl))
 			{
 				return Redirect(returnUrl);
 			}
@@ -354,7 +363,7 @@ namespace Calendar_by_I_M_Marinov.Controllers
 
 			try
 			{
-				var foundContacts = await _peopleGoogleService.SearchContactsAsync(text, pageNumber);
+				var foundContacts = await _peopleGoogleService.SearchContactsAsync(text.Trim(), pageNumber);
 
 				var totalContacts = foundContacts.Count; 
 				var totalPages = (int)Math.Ceiling((double)totalContacts / pageSize);
