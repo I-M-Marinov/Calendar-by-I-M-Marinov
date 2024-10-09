@@ -50,21 +50,37 @@
 	</form>
 </div>
 
+@{ 
+	DateTime parsedDate = DateTime.Now; // default value 
+	string[] formats = { "MM/dd/yyyy", "dd/MM/yyyy", "yyyy-MM-dd", "M/d/yyyy" }; // Supported formats
+	string formattedBirthday = "";
+
+	if (!string.IsNullOrEmpty(ViewBag.NewContactBirthday) &&
+		DateTime.TryParseExact(ViewBag.NewContactBirthday, formats, null, System.Globalization.DateTimeStyles.None, out parsedDate)) // reset the value when parsing 
+	{
+		formattedBirthday = parsedDate.ToString("MMMM dd, yyyy"); // format the value
+	}
+	else
+	{
+		formattedBirthday = "N/A";
+	}
+}
+
 @if (ViewBag.ShowSuccessMessage != null && ViewBag.ShowSuccessMessage)
 {
-	<div class="alert alert-success" role="alert">
+	<div class="alert alert-success" style="display: flex; flex-direction: column;" role="alert">
 		<strong>New contact created!</strong>
 		<br /><br />
-		Name: @ViewBag.NewContactFirstName @ViewBag.NewContactLastName <br />
-		Email: @ViewBag.NewContactEmail <br />
-		Phone Number: @ViewBag.NewContactPhoneNumber <br />
-		Birthday: @ViewBag.NewContactBirthday <br />
+		<p>Name: @ViewBag.NewContactFirstName @ViewBag.NewContactLastName</p>
+		<p>Email: @ViewBag.NewContactEmail</p>
+		<p>Phone Number: @ViewBag.NewContactPhoneNumber</p>
+		<p>Birthday: @formattedBirthday </p>
 
-		@if (ViewBag.NewContactLabels != null && ((List<string>)ViewBag.NewContactLabels).Count > 0)
+		@if (ViewBag.NewContactLabels != null && ViewBag.NewContactLabels.Count > 0)
 		{
 			<p>
 				Labels:
-				@foreach (var label in ViewBag.NewContactLabels as List<string>)
+				@foreach (var label in ViewBag.NewContactLabels)
 				{
 					<span class="badge badge-info">@label</span> 
 				}
