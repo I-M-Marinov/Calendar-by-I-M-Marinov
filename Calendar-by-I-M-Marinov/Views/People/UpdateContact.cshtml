@@ -57,8 +57,8 @@
 		</div>
 
 
-		<div class="add-contact-button">
-			<button type="submit">Update Contact</button>
+		<div class="update-contact-button-container">
+			<button type="submit" class="btn btn-primary action-button" id="update-contact-button">Update</button>
 		</div>
 	</form>
 </div>
@@ -81,7 +81,7 @@
 
 @if (ViewBag.ShowSuccessMessage != null && ViewBag.ShowSuccessMessage)
 {
-	<div class="alert alert-success" style="display: flex; flex-direction: column;" role="alert">
+	<div class="alert alert-success update-contact" style="display: flex; flex-direction: column;" role="alert">
 		<strong>Contact updated!</strong>
         <br /><br />
 		<p>Name: @ViewBag.NewContactFirstName @ViewBag.NewContactLastName</p>
