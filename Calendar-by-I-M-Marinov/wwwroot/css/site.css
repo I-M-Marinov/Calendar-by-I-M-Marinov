@@ -6,7 +6,7 @@ html {
 
 @media (min-width: 768px) {
   html {
-    font-size: 16px;
+    font-size: 14.5px;
   }
 }
 
@@ -696,6 +696,34 @@ a:hover {
     pointer-events: none;
 }
 
+.contact-birthday label,
+.contact-group label{
+    font-size: 15px;
+    transition: color 0.28s ease; 
+}
+
+.contact-birthday input,
+.contact-group input {
+    padding: 4px;
+    border: 1px solid #007bff;
+    border-radius: 4px;
+    outline: none;
+    transition: background-color 0.28s ease;
+}
+
+.contact-birthday:focus-within label,
+.contact-group:focus-within label {
+    color: white; 
+    background-color: #007bff; 
+    padding: 0 4px; 
+    opacity: 1;
+}
+
+.contact-birthday input:focus,
+.contact-group input:focus {
+    border-color: #007bff; 
+}
+
 .contact-firstname,
 .contact-lastname,
 .contact-email,
@@ -705,6 +733,14 @@ a:hover {
     margin: 15px;
     position: relative;
 }
+
+.contact-group.add {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+    gap: 0;
+ }
 
 .contact-firstname input,
 .contact-lastname input,
@@ -741,7 +777,7 @@ a:hover {
 .contact-email input:not(:placeholder-shown) + label,
 .contact-phoneNumber input:focus + label,
 .contact-phoneNumber input:not(:placeholder-shown) + label{
-    top: -10px;
+    top: -8.5px;
     font-size: 0.65em;
     color: #333;
     background-color: #007bff;
@@ -825,28 +861,58 @@ a:hover {
     justify-content: center;
 }
 
-.add-contact-button {
+.add-contact-button-container,
+.update-contact-button-container {
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.add-contact-button button{
-    border-radius: 6px;
-    color: black;
-    background-color: #007bff;
-    font-size: 16px;
+.add-contact-button-container button,
+.update-contact-button-container button{
+border-radius: 6px;
+color: black;
+background-color: #007bff;
+font-size: 16px;
+
 }
 
-.add-contact-button button:hover {
-    background-color: #0167d4;
-    opacity: 90%;
+#add-contact-button,
+#update-contact-button{
+    width: 8em;
+    height: 3em;
+    font-size: 15px !important;
+    padding: 0.35em !important;
+    margin: 1em;
     color: white;
 }
 
-.alert.alert-success p{
+#add-contact-button:focus,
+#update-contact-button:focus{
+    color: #007bff !important;
+    background-color: white !important;
+    border-color: #007bff !important;
+    transition: box-shadow 0.2s !important;
+}
+
+
+#add-contact-button:hover,
+#update-contact-button:hover {
+    width: 8em;
+    height: 3em;
+    font-size: 15px !important;
+    padding: 0.35em !important;
+    background-color: white;
+    border: 2px solid #007bff;
+    color: #007bff;
+    margin: 1em;
+}
+
+
+.alert.alert-success p {
     margin-bottom: 0.5em;
 }
+
 /* Specific CSS that is for the pop-up window for creating a new label / contact group */
 .modal {
     display: none;
@@ -960,3 +1026,12 @@ a:hover {
     transform: scale(1.10) !important;
     font-weight: 500;
 }
+
+/* UpdatedContact Specific CSS */
+
+.alert.alert-success.update-contact {
+    margin-right: -25%;
+    margin-top: -35%;
+    margin-bottom: 15em;
+}
+
