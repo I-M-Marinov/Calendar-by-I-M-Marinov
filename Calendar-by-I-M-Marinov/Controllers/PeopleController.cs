@@ -102,25 +102,24 @@ namespace Calendar_by_I_M_Marinov.Controllers
         [Route("/add-contact")]
         public async Task<IActionResult> AddContact(ContactViewModel newContact, string selectedGroup)
         {
-            //newContact.Labels = newContact.Labels ?? new List<string>();
-
             var contactGroups = await _peopleGoogleService.GetContactGroupsAsync();
             var myContactsGroup = contactGroups.FirstOrDefault(g => g.Name == "myContacts");
-
-            if (string.IsNullOrEmpty(selectedGroup) && myContactsGroup != null)
-            {
-                selectedGroup = myContactsGroup.ResourceName; 
-            }
+            var newGroup = contactGroups.FirstOrDefault(g => g.ResourceName == selectedGroup);
+            var newContactGroups = new List<string>();
 
             if (string.IsNullOrEmpty(selectedGroup))
             {
-                newContact.Labels.Add(myContactsGroup.ResourceName); 
-            }
+                newContact.Labels.Add(myContactsGroup.ResourceName);
+                newContactGroups.Add(myContactsGroup.FormattedName);
+
+			}
             else
             {
-                newContact.Labels.Add(selectedGroup);
+                newContact.Labels.Add(newGroup.ResourceName);
                 newContact.Labels.Add(myContactsGroup.ResourceName);
-            }
+                newContactGroups.Add(newGroup.FormattedName);
+                newContactGroups.Add(myContactsGroup.FormattedName);
+			}
 
             
             if (string.IsNullOrEmpty(newContact.FirstName))
@@ -136,12 +135,18 @@ namespace Calendar_by_I_M_Marinov.Controllers
 	            ViewBag.NewContactEmail = string.IsNullOrWhiteSpace(newContact.Email) ? "N/A" : newContact.Email;
 				ViewBag.NewContactPhoneNumber = string.IsNullOrWhiteSpace(newContact.PhoneNumber) ? "N/A" : newContact.PhoneNumber;
 				ViewBag.NewContactBirthday = string.IsNullOrWhiteSpace(newContact.Birthday) ? "N/A" : newContact.Birthday;
-				ViewBag.NewContactLabels = newContact.Labels;
 
-                ViewBag.ShowSuccessMessage = true;
+				ViewBag.NewContactLabels = new List<string>();
 
-                string resourceId = await _peopleGoogleService.AddContactAsync(newContact, selectedGroup);
-                // Ok($"Contact added successfully. Resource ID: {resourceId}");
+				foreach (var label in newContactGroups)
+				{
+					ViewBag.NewContactLabels.Add(label);
+				}
+
+
+				ViewBag.ShowSuccessMessage = true;
+
+	            await _peopleGoogleService.AddContactAsync(newContact, selectedGroup);
                 return View();
 
 
@@ -217,9 +222,9 @@ namespace Calendar_by_I_M_Marinov.Controllers
 				ViewBag.ShowSuccessMessage = true;
 				ViewBag.NewContactFirstName = updatedContact.FirstName;
 				ViewBag.NewContactLastName = updatedContact.LastName;
-				ViewBag.NewContactEmail = updatedContact.Email;
-				ViewBag.NewContactPhoneNumber = updatedContact.PhoneNumber;
-				ViewBag.NewContactBirthday = updatedContact.Birthday;
+				ViewBag.NewContactEmail = string.IsNullOrWhiteSpace(updatedContact.Email) ? "N/A" : updatedContact.Email;
+				ViewBag.NewContactPhoneNumber = string.IsNullOrWhiteSpace(updatedContact.PhoneNumber) ? "N/A" : updatedContact.PhoneNumber;
+				ViewBag.NewContactBirthday = string.IsNullOrWhiteSpace(updatedContact.Birthday) ? "N/A" : updatedContact.Birthday;
 				ViewBag.NewContactLabels = updatedPerson.Memberships?
 					.Select(m => groupMapping.TryGetValue(m.ContactGroupMembership.ContactGroupResourceName, out var groupName) ? groupName : "Unknown")
 					.ToList();
