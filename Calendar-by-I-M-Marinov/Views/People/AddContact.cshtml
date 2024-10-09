@@ -26,12 +26,12 @@
 
 		<div class="contact-birthday">
 			<label for="birthday">Birthday</label>
-			<input type="date" id="birthday" name="Birthday" />
+			<input type="date" id="birthday" name="Birthday" placeholder=" " />
 		</div>
 
-		<div class="contact-group">
+		<div class="contact-group add">
 			<label for="contactGroup">Label/Group</label>
-			<select id="contactGroup" name="SelectedGroup">
+			<select id="contactGroup" name="SelectedGroup" placeholder=" ">
 				<option value="">--No Label--</option>
 				@foreach (var group in ViewBag.ContactGroups)
 				{
@@ -44,8 +44,8 @@
 			</select>
 		</div>
 
-		<div class="add-contact-button">
-			<button type="submit">Add Contact</button>
+		<div class="add-contact-button-container">
+			<button type="submit" class="btn btn-primary action-button" id="add-contact-button">Add</button>
 		</div>
 	</form>
 </div>
