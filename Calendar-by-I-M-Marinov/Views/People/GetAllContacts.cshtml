@@ -231,7 +231,7 @@ else
 
 		                    @if (group.Any(contact => contact.PhoneNumber != "N/A"))
 		                    {
-				                <td style="font-size: 0.75em;">@contact.PhoneNumber</td>
+				                <td>@contact.PhoneNumber</td>
 		                    }
 		                    <td>
 			                    @if (contact.Labels != null && contact.Labels.Count > 0)
