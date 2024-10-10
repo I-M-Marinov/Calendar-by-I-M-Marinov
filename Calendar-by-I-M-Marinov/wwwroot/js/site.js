@@ -200,9 +200,11 @@ function closePopup() {
 
 
 // FUNCTION TO SET THE RETURN URL 
-function submitDeleteForm() {
-    document.getElementById('returnUrl').value = window.location.href; // Set returnUrl
-    document.getElementById('deleteContactForm').submit(); // Submit the form
+
+function submitDeleteForm(button) {
+    var form = button.closest('form'); // Get the closest form to the button
+    form.querySelector('#returnUrl').value = window.location.href; // Set returnUrl
+    form.submit(); // Submit the form
 }
 
 
@@ -234,6 +236,5 @@ document.addEventListener("DOMContentLoaded", function () {
             errorMessage.style.display = 'none';
         }, 3200);
     }
-    
 
 });
