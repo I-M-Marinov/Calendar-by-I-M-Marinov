@@ -638,9 +638,14 @@ a:hover {
 }
 
 .fade-out {
-    opacity: 0;
-    transition: opacity 2s ease-out; 
+    opacity: 1;
+    transition: opacity 2s ease-out;
 }
+
+.fade-out {
+    opacity: 0;
+}
+
 
 /* GetContactsFromAGroup CSS */
 .btn-selected-group {
@@ -1029,7 +1034,8 @@ font-size: 16px;
 
 /* UpdatedContact Specific CSS */
 
-.alert.alert-success.update-contact {
+.alert.alert-success.update-contact,
+.alert.alert-success.add-contact{
     margin-right: -25%;
     margin-top: -35%;
     margin-bottom: 15em;
