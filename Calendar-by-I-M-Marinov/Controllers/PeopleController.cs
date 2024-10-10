@@ -73,7 +73,8 @@ namespace Calendar_by_I_M_Marinov.Controllers
                 var contactGroupList = await _peopleGoogleService.GetContactGroupsAsync();
                 if (contactGroupList == null || !contactGroupList.Any())
                 {
-                    return StatusCode(500, "No contact groups returned from the service.");
+	                TempData["ErrorMessage"] = "No contact groups returned from the service.";
+					return StatusCode(500, "No contact groups returned from the service.");
                 }
 
                 var formattedNameSelectedGroup =
@@ -87,7 +88,6 @@ namespace Calendar_by_I_M_Marinov.Controllers
                 {
 	                ViewBag.ContactGroupSelected = formattedNameSelectedGroup; // Save the name of the group to use it in the next View
 				}
-
 
 
                 return View(groupedContacts);
@@ -263,8 +263,6 @@ namespace Calendar_by_I_M_Marinov.Controllers
 				TempData["Message"] = "Contact was successfully removed!";
 			}
 
-			TempData["ShowSuccessMessage"] = true;
-
 			await _peopleGoogleService.DeleteContactAsync(resourceName);
 
 			if (!string.IsNullOrEmpty(returnUrl))
@@ -358,7 +356,7 @@ namespace Calendar_by_I_M_Marinov.Controllers
 			if (string.IsNullOrWhiteSpace(text))
 	        {
 		        TempData["ErrorMessage"] = "Please enter a name to search.";
-		        return View(new List<ContactViewModel>());
+				return View(new List<ContactViewModel>());
 	        }
 
 			try
@@ -371,7 +369,7 @@ namespace Calendar_by_I_M_Marinov.Controllers
 
 				if (foundContacts == null || !foundContacts.Any())
 				{
-					TempData["ErrorMessage"] = "No contacts found.";
+					TempData["ErrorMessage"] = "No contacts were found. Try again.";
 					return View("SearchContacts", new List<ContactViewModel>());
 				}
 
