@@ -41,9 +41,17 @@ else
 	    </div>
 
 		
-	    @if (TempData["ShowSuccessMessage"] != null)
+	    @if (TempData["ErrorMessage"] != null)
 	    {
-			<div class="alert alert-success get-all-contacts" id="success-message" role="alert">
+		    <div class="alert alert-danger search-contacts" id="error-message" role="alert">
+			    @TempData["ErrorMessage"]
+		    </div>
+	    }
+	
+		
+	    @if (TempData["Message"] != null)
+	    {
+		    <div class="alert alert-success get-all-contacts" id="success-message" role="alert">
 			    <strong>@TempData["Message"]</strong></div>
 	    }
 
@@ -259,7 +267,7 @@ else
 			                    <form asp-controller="People" asp-action="DeleteContact" method="post">
 				                    <input type="hidden" name="resourceName" value="@contact.ResourceName" />
 				                    <input type="hidden" id="returnUrl" name="returnUrl" />
-									<button type="submit" class="btn btn-danger action-button" id="delete-btn" onclick="setReturnUrl()">Delete</button>
+									<button type="submit" class="btn btn-danger action-button" id="delete-btn" onclick="submitDeleteForm(this)">Delete</button>
 			                    </form>
 		                    </td>
 	                    </tr>
