@@ -146,19 +146,19 @@
 </p>
 
 <p align="center">
-<img src="./Screenshots/contact-list.PNG">
+<img src="./Screenshots/contact-list.png">
 </p>
 
 <p align="center">
-<img src="./Screenshots/search-contacts.PNG">
+<img src="./Screenshots/search-contacts.png">
 </p>
 
 <p align="center">
-<img src="./Screenshots/add-contact-blank.PNG">
+<img src="./Screenshots/add-contact-blank.png">
 </p>
 
 <p align="center">
-<img src="./Screenshots/add-contact-test.PNG">
+<img src="./Screenshots/add-contact-test.png">
 </p>
 
 
