@@ -621,7 +621,7 @@ a:hover {
 }
 
 #delete-btn:hover,
-#edit-btn:hover {
+#edit-btn:hover{
     transform: scale(1.20);
     transition: transform 0.4s, box-shadow 0.3s !important;
 }
@@ -1015,6 +1015,60 @@ font-size: 16px;
     transform: scale(1.15) !important;
     transition: transform 0.2s, box-shadow 0.2s !important;
 }
+
+#search-contacts {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100% !important;
+    padding: 1em;
+}
+
+.btn.btn-primary.search-contacts{
+    align-self: center;
+    width: 185px;
+}
+
+.contacts-count {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+#search-contacts-btn{
+    margin: 1em;
+    padding: 0.35em;
+}
+
+#search-contacts-btn:hover,
+#search-contacts-btn:focus{
+    background-color: white;
+    border: 2px solid #007bff;
+    color: #007bff;
+    transform: scale(1.15) !important;
+    transition: transform 0.2s, box-shadow 0.2s !important;
+    font-weight: 700;
+}
+
+.form-group input:focus,
+.form-group input:hover {
+    border: 2px solid #007bff;
+}
+
+/*#search-contacts:focus-within .form-control {
+    border: 2px solid #007bff;
+    padding: 0 4px;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}*/
+
+.hover-target:hover input {
+    border: 2px solid #007bff;
+    padding: 0 4px;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
 
 /* Shows the user where he clicked while it loads that page*/
 .page-link:focus {
