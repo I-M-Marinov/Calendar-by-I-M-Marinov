@@ -145,9 +145,27 @@
 <img src="./Screenshots/scrn13.PNG">
 </p>
 
+<p align="center">
+<img src="./Screenshots/contact-list.PNG">
+</p>
+
+<p align="center">
+<img src="./Screenshots/search-contacts.PNG">
+</p>
+
+<p align="center">
+<img src="./Screenshots/add-contact-blank.PNG">
+</p>
+
+<p align="center">
+<img src="./Screenshots/add-contact-test.PNG">
+</p>
+
+
 <h2 align="center">
  If you would like to try this Web App yourself:
 </h2>
+
 
 - 🍴: Fork  the repo ! :) 
 - Go to https://console.cloud.google.com/, login with the google account you want to use and create a new web application, then activate the Google Calendar API and the Google People API for that application.
