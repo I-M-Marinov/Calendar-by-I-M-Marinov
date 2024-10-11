@@ -19,6 +19,7 @@
    - [Events --> Search Events](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov?tab=readme-ov-file#large_blue_diamond-events----search-events)
    - [Contacts --> Show Contacts](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov/blob/master/README.md#large_orange_diamond-contacts----show-contacts)
    - [Contacts --> Add a contact](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov/blob/master/README.md#large_orange_diamond-contacts----add-a-contact)
+   - [Contacts --> Search Contacts]()
 4. [Screenshots](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov?tab=readme-ov-file#-screenshots)
 5. [If You Would Like to Try This Web App Yourself](https://github.com/I-M-Marinov/Calendar-by-I-M-Marinov?tab=readme-ov-file#-if-you-would-like-to-try-this-web-app-yourself)
 
@@ -83,6 +84,10 @@
 #### :large_orange_diamond: Contacts --> Add a contact
 - Adds a contact to the user's Google Contacts List.
 ###### 📢:  As of now the user can add the First name, Last name, Email, Phone Number, Birthday and add the new contact in a group at the time of creation. 
+#### :large_orange_diamond: Contacts --> Search Contacts
+- Searches a contact based on FirstName, LastName, Email and PhoneNumber from the user's Google Contacts List.
+  ###### 📢:  Pagination for results if over 20 contacts ( 20 contacts per Page ).
+  ###### 📢:  Edit and Delete functions available for each contact in the results directly in the Search Contacts View.
 <h2 align="center">
  Screenshots:
 </h2>
