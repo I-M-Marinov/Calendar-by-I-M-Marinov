@@ -28,7 +28,7 @@
 
 		<div class="contact-birthday">
 			<label for="birthday">Birthday</label>
-			<input type="date" id="birthday" name="Birthday" value="@Model.Birthday"/>
+			<input type="date" id="birthday" name="Birthday" value="@(!string.IsNullOrEmpty(Model.Birthday) && DateTime.TryParse(Model.Birthday, out var date) ? date.ToString("yyyy-MM-dd") : "")" />
 		</div>
 
 		<div>
