@@ -6,6 +6,7 @@ using Google.Apis.Calendar.v3;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Calendar_by_I_M_Marinov.Common;
 using Calendar = Google.Apis.Calendar.v3.Data.Calendar;
+using Newtonsoft.Json;
 
 public class CalendarController : Controller
 {
@@ -157,14 +158,20 @@ public class CalendarController : Controller
     }
 
 	[HttpGet]
+	[Route("/calendar/event")]
 	public async Task<IActionResult> CreateEvent(string calendarId, string? eventId)
 	{
-		// Initialize the model
+
 		var model = new EventViewModel
 		{
-			Attendants = new List<string>(),
-            CalendarId = calendarId
+			Attendants = new List<string>(), 
+			CalendarId = calendarId
 		};
+
+		if (TempData["EventViewModel"] != null)
+		{
+			model = JsonConvert.DeserializeObject<EventViewModel>(TempData["EventViewModel"].ToString());
+		}
 
 		model.VisibilityOptions = new List<SelectListItem>
 	{
@@ -245,6 +252,7 @@ public class CalendarController : Controller
 	}
 
 	[HttpPost]
+	[Route("/calendar/event")]
 	public async Task<IActionResult> CreateEvent(EventViewModel model)
 	{
 		
