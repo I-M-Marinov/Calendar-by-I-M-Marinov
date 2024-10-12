@@ -193,7 +193,10 @@ namespace Calendar_by_I_M_Marinov.Controllers
 					LastName = contact.Names?.FirstOrDefault()?.FamilyName ?? string.Empty,
 					Email = contact.EmailAddresses?.FirstOrDefault()?.Value ?? string.Empty,
 					PhoneNumber = contact.PhoneNumbers?.FirstOrDefault()?.Value ?? string.Empty,
-					Birthday = contact.Birthdays?.FirstOrDefault()?.Date.ToString(), 
+					Birthday = contact.Birthdays?.FirstOrDefault() != null
+						? $"{contact.Birthdays.FirstOrDefault().Date.Year}/{contact.Birthdays.FirstOrDefault().Date.Month}/{contact.Birthdays.FirstOrDefault().Date.Day}"
+						: string.Empty, // Format as MM/DD/YYYY if available
+
 					Labels = contact.Memberships?.Select(m => m.ContactGroupMembership?.ContactGroupResourceName).Where(resourceName => resourceName != null).ToList() ?? new List<string>()
 				};
 
