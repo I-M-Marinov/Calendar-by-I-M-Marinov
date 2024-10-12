@@ -20,12 +20,12 @@ namespace Calendar_by_I_M_Marinov.Models
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-ddTHH:mm}", ApplyFormatInEditMode = true)]
         public DateTime? End { get; set; }
 
-        public string Visibility { get; set; }  
+        public string Visibility { get; set; } 
         public string EventType { get; set; }  // Options: single, annual
         public bool IsAllDayEvent { get; set; }
         public List<string> Attendants { get; set; } = new();
         public string SendUpdates { get; set; } // Options: all, externalOnly, none 
-       
+        
 
 		public List<SelectListItem> VisibilityOptions { get; set; }
         public List<SelectListItem> EventTypeOptions { get; set; }
