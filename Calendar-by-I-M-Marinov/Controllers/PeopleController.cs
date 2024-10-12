@@ -2,7 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Calendar_by_I_M_Marinov.Models.People;
 using Google.Apis.PeopleService.v1.Data;
-using System.Xml.Linq;
+using Calendar_by_I_M_Marinov.Models;
+using Newtonsoft.Json;
 
 
 namespace Calendar_by_I_M_Marinov.Controllers
@@ -10,11 +11,13 @@ namespace Calendar_by_I_M_Marinov.Controllers
 	public class PeopleController : Controller
 	{
 		private readonly IGooglePeopleService _peopleGoogleService;
+		private readonly IGoogleCalendarService _calendarService;
 
 
-		public PeopleController(IGooglePeopleService peopleGoogleService)
+		public PeopleController(IGooglePeopleService peopleGoogleService, IGoogleCalendarService calendarService)
 		{
 			_peopleGoogleService = peopleGoogleService;
+			_calendarService = calendarService;
 		}
 
 
@@ -399,6 +402,23 @@ namespace Calendar_by_I_M_Marinov.Controllers
 			}
 
 		}
+
+		[HttpPost]
+		public IActionResult CreateEventForContact(string calendarId, string contactEmail)
+		{
+
+			var model = new EventViewModel
+			{
+				CalendarId = calendarId,
+				Attendants = new List<string> { contactEmail }
+			};
+
+			TempData["EventViewModel"] = JsonConvert.SerializeObject(model);
+
+			return RedirectToAction("CreateEvent", "Calendar");
+
+		}
+
 	}
 
 }
