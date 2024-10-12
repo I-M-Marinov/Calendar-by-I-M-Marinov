@@ -162,21 +162,29 @@ namespace Calendar_by_I_M_Marinov.Services
 			// Updating the birthday if provided
 			if (!string.IsNullOrEmpty(updatedContact.Birthday))
 			{
-				var birthDateParts = updatedContact.Birthday.Split('/');
-				personToUpdate.Birthdays = new List<Birthday>
-		{
-			new Birthday
-			{
-				Date = new Date
+				var birthDateParts = updatedContact.Birthday.Split('-');
+				try
 				{
-					Day = int.Parse(birthDateParts[1]),  // Day
-                    Month = int.Parse(birthDateParts[0]), // Month
-                    Year = int.Parse(birthDateParts[2])   // Year
-                }
-			}
-            
-		};
-				
+					personToUpdate.Birthdays = new List<Birthday>
+					{
+						new Birthday
+						{
+							Date = new Date
+							{
+								Day = int.Parse(birthDateParts[2]),  // Day
+								Month = int.Parse(birthDateParts[1]), // Month
+								Year = int.Parse(birthDateParts[0])   // Year
+							}
+						}
+					};
+				}
+				catch (Exception ex)
+				{
+					// Log the format error and rethrow with a detailed message
+					Console.WriteLine($"Invalid date format: {ex.Message}");
+					throw;
+				}
+
 			}
 			else
 			{
