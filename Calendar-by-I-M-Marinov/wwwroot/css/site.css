@@ -620,8 +620,11 @@ a:hover {
     vertical-align: central !important;
 }
 
+/* SPECIFIC CSS HANDLING THE HOVER EFFECTS AND STYLE OF THE EDIT / DELETE / EVENT BUTTONS OF ALL CONTACTS IN THE VIEWS */
+
 #delete-btn:hover,
-#edit-btn:hover{
+#edit-btn:hover,
+#create-event-btn:hover{
     transform: scale(1.20);
     transition: transform 0.4s, box-shadow 0.3s !important;
 }
@@ -635,6 +638,12 @@ a:hover {
     border: 1px #007bff solid !important;
     background-color: white !important;
     color: #007bff !important; 
+}
+
+#create-event-btn:hover {
+    border: 1px #28a745 solid !important;
+    background-color: white !important;
+    color: #28a745 !important;
 }
 
 .fade-out {
@@ -1057,11 +1066,11 @@ font-size: 16px;
     border: 2px solid #007bff;
 }
 
-/*#search-contacts:focus-within .form-control {
+#search-contacts:focus-within .form-control {
     border: 2px solid #007bff;
     padding: 0 4px;
     box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-}*/
+}
 
 .hover-target:hover input {
     border: 2px solid #007bff;
