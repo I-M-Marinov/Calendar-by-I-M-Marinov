@@ -655,7 +655,9 @@ a:hover {
     opacity: 0;
 }
 
-
+.table-striped {
+    border: 1px solid #dee2e6 !important;
+}
 /* GetContactsFromAGroup CSS */
 .btn-selected-group {
     background-color: #21900b !important;
