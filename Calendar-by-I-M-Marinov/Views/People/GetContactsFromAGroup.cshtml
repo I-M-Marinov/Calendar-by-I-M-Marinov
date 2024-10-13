@@ -82,7 +82,7 @@ else
 								<button type="submit"
 								        name="selectedGroup"
 								        value="@contactGroup.Name"
-								        class="btn group-button @(ViewBag.ContactGroupSelected == contactGroup.Name ? "btn-selected-group" : "btn-info")"
+								        class="btn group-button @(ViewBag.ContactGroupSelected == contactGroup.FormattedName ? "btn-selected-group" : "btn-info")"
 								        id="group-button">
 									@contactGroup.FormattedName
 								</button>
