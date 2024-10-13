@@ -91,10 +91,10 @@ else
 				        <form id="addLabelForm" method="post" action="@Url.Action("CreateContactGroup", "People")">
 							<input type="text" id="labelName" name="labelName" class="form-control" placeholder="Enter a group name" required />
 
-					        <div class="modal-footer">
-						        <button type="button" class="btn btn-danger" onclick="closePopup()">Cancel</button>
-						        <button type="submit" class="btn btn-success">Add</button>
-					        </div>
+							<div class="modal-footer">
+								<button type="submit" class="btn btn-success">Add</button>
+								<button type="button" class="btn btn-danger" onclick="closePopup()">Cancel</button>
+							</div>
 
 				        </form>
 			        </div>
@@ -119,8 +119,8 @@ else
 					        </div>
 
 					        <div class="modal-footer">
-								<button type="button" class="btn btn-danger" onclick="closePopup()">Cancel</button>
-								<button type="submit" class="btn btn-primary">Remove</button>
+						        <button type="submit" class="btn btn-primary">Remove</button>
+						        <button type="button" class="btn btn-danger" onclick="closePopup()">Cancel</button>
 					        </div>
 				        </form>
 			        </div>
@@ -147,8 +147,8 @@ else
 
 					        </div>
 					        <div class="modal-footer">
-								<button type="button" class="btn btn-danger" onclick="closePopup()">Cancel</button>
 						        <button type="submit" class="btn btn-success">Update</button>
+						        <button type="button" class="btn btn-danger" onclick="closePopup()">Cancel</button>
 					        </div>
 				        </form>
 			        </div>
