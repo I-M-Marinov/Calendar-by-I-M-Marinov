@@ -100,7 +100,7 @@ else
 
 							<div class="modal-footer">
 								<button type="submit" class="btn btn-success">Add</button>
-								<button type="button" class="btn btn-danger" onclick="closePopup()">Cancel</button>
+								<button type="button" id="modal-cancel-button1" class="btn btn-danger" onclick="closePopup()">Cancel</button>
 							</div>
 
 						</form>
@@ -113,7 +113,7 @@ else
 						<h4>Remove a group/label</h4>
 						<form id="removeLabelForm" method="post" action="@Url.Action("RemoveContactGroup", "People")">
 							<div class="form-group">
-								<select id="labelSelect" name="labelName" class="form-control" required>
+								<select id="removeLabelSelect" name="labelName" class="form-control" required>
 									<option value="" disabled selected>Select a label</option>
 									@foreach (var contactGroup in ViewBag.ContactGroups)
 									{
@@ -127,7 +127,7 @@ else
 
 							<div class="modal-footer">
 								<button type="submit" class="btn btn-primary">Remove</button>
-								<button type="button" class="btn btn-danger" onclick="closePopup()">Cancel</button>
+								<button type="button" id="modal-cancel-button2" class="btn btn-danger" onclick="closePopup()">Cancel</button>
 							</div>
 						</form>
 					</div>
@@ -139,7 +139,7 @@ else
 						<h4>Edit a group/label</h4>
 						<form id="removeLabelForm" method="post" action="@Url.Action("EditContactGroup", "People")">
 							<div class="form-group">
-								<select id="labelSelect" name="groupResourceName" class="form-control" required>
+								<select id="updateLabelSelect" name="groupResourceName" class="form-control" required>
 									<option value="" disabled selected>Select a label</option>
 									@foreach (var contactGroup in ViewBag.ContactGroups)
 									{
@@ -155,7 +155,7 @@ else
 							</div>
 							<div class="modal-footer">
 								<button type="submit" class="btn btn-success">Update</button>
-								<button type="button" class="btn btn-danger" onclick="closePopup()">Cancel</button>
+								<button type="button" id="modal-cancel-button3" class="btn btn-danger" onclick="closePopup()">Cancel</button>
 							</div>
 						</form>
 					</div>
