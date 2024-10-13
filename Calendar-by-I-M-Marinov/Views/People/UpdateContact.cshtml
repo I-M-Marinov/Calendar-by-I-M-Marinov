@@ -59,6 +59,12 @@
 
 		<div class="update-contact-button-container">
 			<button type="submit" class="btn btn-primary action-button" id="update-contact-button">Update</button>
+
+			<div>
+				<a asp-action="GetAllContacts" id="back-button" class="btn btn-primary btn-sm">
+					Back to Contact List
+				</a>
+			</div>
 		</div>
 	</form>
 </div>
@@ -102,7 +108,8 @@
         {
             <p>No labels added.</p>
         }
-    </div>
+
+	</div>
 }
 
 
