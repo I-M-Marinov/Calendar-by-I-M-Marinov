@@ -969,6 +969,20 @@ font-size: 16px;
     font-size: 0.75em;
     margin-bottom: 0.1em;
 }
+#updateLabelSelect {
+    margin-bottom: 1em;
+}
+
+#updateLabelSelect:hover,
+#labelName:hover,
+#removeLabelSelect:hover{
+    border: 2px solid #007bff;
+}
+
+#newGroupName:focus{
+    background-color: white;
+}
+
 
 .add-label-container {
     margin-bottom: 20px;
