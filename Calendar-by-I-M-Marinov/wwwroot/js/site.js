@@ -156,41 +156,68 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 
-// FUNCTIONS TO HANDLE THE POP-UP WHEN CREATING OR REMOVING A NEW LABEL / CONTACT GROUP
+// FUNCTIONS TO HANDLE THE POP-UP WHEN CREATING, REMOVING OR UPDATING A NEW LABEL / CONTACT GROUP
+
+const cancelButtonAddElement = document.getElementById('modal-cancel-button1');
+const cancelButtonRemoveElement = document.getElementById('modal-cancel-button2');
+const cancelButtonUpdateElement = document.getElementById('modal-cancel-button3');
 
 // For adding Label Modal
-var addLabelModal = document.getElementById("addLabelModal");
-var addLabelBtn = document.getElementById("addLabelButton");
+const addLabelModal = document.getElementById('addLabelModal');
+const addLabelBtn = document.getElementById('addLabelButton');
+const labelNameElement = document.getElementById('labelName');
 
 addLabelBtn.onclick = function() {
-    addLabelModal.style.display = "block";
+    addLabelModal.style.display = 'block';
 }
 
 // For removing Label Modal
-var removeLabelModal = document.getElementById("removeLabelModal");
-var removeLabelBtn = document.getElementById("removeLabelButton");
+const removeLabelModal = document.getElementById('removeLabelModal');
+const removeLabelBtn = document.getElementById('removeLabelButton');
+const removeLabelSelectElement = document.getElementById('removeLabelSelect');
 
 removeLabelBtn.onclick = function() {
-    removeLabelModal.style.display = "block";
+    removeLabelModal.style.display = 'block';
 }
 
 // For editing Label Modal
 
-var editLabelModal = document.getElementById("editLabelModal");
-var editLabelBtn = document.getElementById("editLabelButton");
+const editLabelModal = document.getElementById('editLabelModal');
+const editLabelBtn = document.getElementById('editLabelButton');
+const updateLabelSelectElement = document.getElementById('updateLabelSelect');
+const newGroupNameElement = document.getElementById('newGroupName');
+
 editLabelBtn.onclick = function() {
-    editLabelModal.style.display = "block";
+    editLabelModal.style.display = 'block';
 }
 
 window.onclick = function (event) {
     if (event.target == addLabelModal) {
-        addLabelModal.style.display = "none";
+        addLabelModal.style.display = 'none';
     } else if (event.target == removeLabelModal) {
-        removeLabelModal.style.display = "none";
+        removeLabelModal.style.display = 'none';
     } else if (event.target == editLabelModal) {
-        editLabelModal.style.display = "none";
+        editLabelModal.style.display = 'none';
     }
 }
+
+cancelButtonAddElement.addEventListener('click', function () {
+    labelNameElement.value = '';  
+    addLabelModal.style.display = 'none';  
+});
+
+cancelButtonRemoveElement.addEventListener('click', function () {
+    removeLabelSelectElement.value = '';
+    removeLabelModal.style.display = 'none';
+});
+
+cancelButtonUpdateElement.addEventListener('click', function () {
+    updateLabelSelectElement.value = '';
+    newGroupNameElement.value = '';
+    editLabelModal.style.display = 'none';
+});
+
+
 function closePopup() {
     addLabelModal.style.display = 'none';
     removeLabelModal.style.display = 'none';
