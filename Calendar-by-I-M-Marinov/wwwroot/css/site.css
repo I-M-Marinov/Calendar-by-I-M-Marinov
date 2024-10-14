@@ -1118,7 +1118,7 @@ font-size: 16px;
 
 .alert.alert-success.update-contact,
 .alert.alert-success.add-contact{
-    margin-right: -25%;
+    margin-right: -20%;
     margin-top: -35%;
     margin-bottom: 15em;
 }
