@@ -1124,13 +1124,13 @@ font-size: 16px;
 }
 
 #back-button {
-    background-color: #FABC3F;
+    background-color: #007bff;
     width: 8em;
-    height: 3.5em;
+    height: 4em;
     font-size: 10px;
-    padding: 0.35em;
+    padding: 0.5em;
     margin: 1em;
-    color: black;
+    color: white;
     border: 2px solid black;
 }
 
@@ -1142,12 +1142,13 @@ font-size: 16px;
 }
 
 
-#back-button:hover {
-    width: 8em;
-    height: 3.5em;
-    font-size: 12px;
-    background-color: white;
-    border: 2px solid #007bff;
-    color: #007bff;
-}
+    #back-button:hover {
+        width: 8em;
+        height: 4em;
+        font-size: 10px;
+        padding: 0.5em;
+        background-color: white;
+        border: 2px solid #007bff;
+        color: #007bff;
+    }
 
