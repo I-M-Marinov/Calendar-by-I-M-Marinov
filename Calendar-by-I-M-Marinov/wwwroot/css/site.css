@@ -560,7 +560,7 @@ a:hover {
     padding: 5px 10px;
     background-color: #007bff;
     color: white;
-    font-size: 15px;
+    font-size:0.85em;
     border: none;
     border-radius: 0.5em;
     cursor: pointer;
@@ -577,7 +577,7 @@ a:hover {
     padding: 5px 10px;
     background-color: #007bff;
     color: white;
-    font-size: 15px;
+    font-size: 0.85em;
     border: none;
     border-radius: 0.5em;
     cursor: pointer;
@@ -611,12 +611,12 @@ a:hover {
     gap: 0.5em;
     align-items: center;
     justify-content: center;
-    border: none !important;
+    height:auto;
 }
 
 .action-button {
     width: 3.5em;
-    height: 2em;
+    height: auto;
     font-size: 0.70em !important;
     padding: 0.20em !important;
     text-align: center !important;
