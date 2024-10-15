@@ -1154,7 +1154,8 @@ public class CalendarController : Controller
 	}
 
 	[HttpGet]
-    public IActionResult CreateNewCalendar()
+	[Route("/calendar/create")]
+	public IActionResult CreateNewCalendar()
     {
         var localTimeZoneId = TimeZoneInfo.Local.Id;
 
@@ -1175,7 +1176,8 @@ public class CalendarController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateNewCalendar(string calendarName, string timeZone, string? description = null)
+    [Route("/calendar/create")]
+	public async Task<IActionResult> CreateNewCalendar(string calendarName, string timeZone, string? description = null)
     {
         var localTimeZoneId = TimeZoneInfo.Local.Id;
 
@@ -1225,8 +1227,8 @@ public class CalendarController : Controller
         }
 
 
-        // Re-populate time zones
-        var timeZones = TimeZoneInfo.GetSystemTimeZones()
+		// Re-populate time zones
+		ViewBag.TimeZones = TimeZoneInfo.GetSystemTimeZones()
             .Select(tz => new SelectListItem
             {
                 Value = tz.Id,
