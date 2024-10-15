@@ -248,20 +248,6 @@ document.addEventListener("DOMContentLoaded", function () {
         setTimeout(function() {
             successMessage.style.display = 'none';
         }, 3200);
-
-    }
-
-    // Error Message
-
-    var errorMessage = document.getElementById('error-message');
-    if (errorMessage) {
-        setTimeout(function() {
-            errorMessage.classList.add('fade-out');
-        }, 1000);
-
-        setTimeout(function() {
-            errorMessage.style.display = 'none';
-        }, 3200);
     }
 
 });
