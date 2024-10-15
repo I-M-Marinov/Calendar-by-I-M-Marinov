@@ -16,8 +16,9 @@ public class CalendarController : Controller
     {
         _googleCalendarService = googleCalendarService;
 	}
-
-    public async Task<IActionResult> ListCalendars()
+	[HttpGet]
+	[Route("/calendars-list")]
+	public async Task<IActionResult> ListCalendars()
     {
         var calendars = await _googleCalendarService.GetAllCalendarsAsync();
 
@@ -50,7 +51,8 @@ public class CalendarController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> ListCalendarsAndEvents(string selectedCalendarId)
+    [Route("/calendar/")]
+	public async Task<IActionResult> ListCalendarsAndEvents(string selectedCalendarId)
     {
         try
         {
@@ -141,6 +143,8 @@ public class CalendarController : Controller
 		return View("ViewNewEventAdded", duplicatedEvent);
 	}
 
+	[HttpGet]
+	[Route("/calendar/primary/view-new-event")]
 	public async Task<IActionResult> ViewNewEventUpdated(string calendarId, string eventId)
     {
         // Retrieve the specific event by its ID
@@ -158,7 +162,7 @@ public class CalendarController : Controller
     }
 
 	[HttpGet]
-	[Route("/calendar/event")]
+	[Route("/calendar/primary/add-event")]
 	public async Task<IActionResult> CreateEvent(string calendarId, string? eventId)
 	{
 
@@ -252,7 +256,7 @@ public class CalendarController : Controller
 	}
 
 	[HttpPost]
-	[Route("/calendar/event")]
+	[Route("/calendar/primary/add-event")]
 	public async Task<IActionResult> CreateEvent(EventViewModel model)
 	{
 		
@@ -586,7 +590,8 @@ public class CalendarController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> SearchEventByName(SearchEventViewModel model)
+    [Route("/calendar/events/search")]
+	public async Task<IActionResult> SearchEventByName(SearchEventViewModel model)
     {
         if (string.IsNullOrEmpty(model.EventName))
         {
