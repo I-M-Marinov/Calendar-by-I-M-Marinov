@@ -1,5 +1,6 @@
 ﻿@model List<Calendar_by_I_M_Marinov.Models.People.ContactViewModel>
 
+
 @{
     ViewBag.Title = "Search Contacts";
 
@@ -286,5 +287,41 @@
 	}
 </div>
 
-<script src="~/js/site.js?v=@DateTime.Now.Ticks"></script>
+
+
+@*  // FUNCTION TO HIDE THE SUCCESS / ERROR MESSAGE  *@
+
+
+<script>
+
+	document.addEventListener("DOMContentLoaded", function () {
+		// Success Message
+		var successMessage = document.getElementById('success-message');
+		if (successMessage) {
+			setTimeout(function () {
+				successMessage.classList.add('fade-out');
+			}, 1000);
+
+			setTimeout(function () {
+				successMessage.style.display = 'none';
+			}, 3200);
+		}
+
+	});
+
+	document.addEventListener("DOMContentLoaded", function () {
+		var errorMessage = document.getElementById('error-message');
+		if (errorMessage) {
+			setTimeout(function () {
+				errorMessage.classList.add('fade-out');
+			}, 1000);
+
+			setTimeout(function () {
+				errorMessage.style.display = 'none';
+			}, 4000);
+		}
+	});
+</script>
+
+ 
 
