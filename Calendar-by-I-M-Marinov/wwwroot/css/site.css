@@ -130,14 +130,50 @@ h4{
     font-size: .875rem;
     line-height: 1.5;
     border-radius: .2rem;
+
 }
 
 .btn.btn-duplicate-event:hover {
-    background-color: #19e4c5;
+    color: #28c4ac !important;
+    font-weight: 500;
+    background-color: white !important;
+    border: 2px solid #28c4ac;
+    animation: scale-text 2s infinite;
+    transition: transform 0.2s, box-shadow 0.3s !important;
 }
 
-/* CSS for the SearchEventByName View  */
+.edit-event-btn:hover {
+    color: #ffc107 !important;
+    font-weight: 500;
+    background-color: white !important;
+    border: 2px solid #ffc107;
+    animation: scale-text 2s infinite;
+    transition: transform 0.2s, box-shadow 0.3s !important;
+}
 
+.delete-event-btn:hover {
+    color: #dc3545 !important;
+    font-weight: 500;
+    background-color: white !important;
+    border: 2px solid #dc3545;
+    animation: scale-text 3s infinite;
+    transition: transform 0.2s, box-shadow 0.3s !important;
+}
+
+@keyframes scale-text {
+    0% {
+        transform: scale(1); 
+    }
+
+    50% {
+        transform: scale(1.25); 
+    }
+
+    100% {
+        transform: scale(1); 
+    }
+}
+/* CSS for the SearchEventByName View  */
 .form-group-search {
     margin: 0 auto;
     display: flex;
@@ -156,7 +192,10 @@ h4{
 }
 
 #calendarSelect {
-    max-width: 55%;
+    text-align: center;
+    font-size: 1.1em;
+    max-width: 45%;
+    height: 3em;
     margin: 0 auto;
 }
 
@@ -316,7 +355,7 @@ h4{
 }
 
 .allDay-icon{
-    width: 30px;
+    width: 24px;
     margin-right: 0.5em;
     pointer-events: none;
 }
@@ -672,6 +711,41 @@ a:hover {
 .btn-selected-group:hover {
     color: black !important;
     opacity: 75%;
+
+}
+
+#calendar-dropdown:hover,
+#calendar-dropdown:focus,
+#calendarSelect:hover,
+#calendarSelect:focus{
+    border: 2px solid #007bff;
+}
+
+.cancel-event-copy-btn {
+    color: white !important;
+    background-color: #d9534f !important;
+}
+
+.cancel-event-copy-btn:hover {
+    color: #d9534f !important;
+    font-weight: 650;
+    background-color: white !important;
+    transition: transform 0.2s, box-shadow 0.2s !important;
+    transform: scale(1.05);
+}
+
+.copy-event-btn {
+    color: white !important;
+    background-color: #28a745 !important;
+
+}
+
+.copy-event-btn:hover {
+    color: #28a745 !important;
+    font-weight: 650;
+    background-color: white !important;
+    transition: transform 0.2s, box-shadow 0.2s !important;
+    transform: scale(1.05);
 
 }
 
@@ -1143,13 +1217,13 @@ font-size: 16px;
 }
 
 
-    #back-button:hover {
-        width: 8em;
-        height: 4em;
-        font-size: 10px;
-        padding: 0.5em;
-        background-color: white;
-        border: 2px solid #007bff;
-        color: #007bff;
-    }
+#back-button:hover {
+    width: 8em;
+    height: 4em;
+    font-size: 10px;
+    padding: 0.5em;
+    background-color: white;
+    border: 2px solid #007bff;
+    color: #007bff;
+}
 

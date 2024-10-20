@@ -204,12 +204,12 @@
 		                <a asp-action="CreateEvent" 
 		                   asp-route-calendarId="@(Model.SelectedCalendarId == "all" ? Model.EventCalendarMap[evt.Id] : Model.SelectedCalendarId)" 
 		                   asp-route-eventId="@evt.Id" 
-		                   class="btn btn-warning btn-sm">Edit</a>
+		                   class="btn btn-warning btn-sm edit-event-btn">Edit</a>
 
 		                <form asp-action="ConfirmDelete" method="get">
 			                <input type="hidden" name="calendarId" value="@(Model.SelectedCalendarId == "all" ? Model.EventCalendarMap[evt.Id] : Model.SelectedCalendarId)" />
 			                <input type="hidden" name="eventId" value="@evt.Id" />
-			                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+			                <button type="submit" class="btn btn-danger btn-sm delete-event-btn">Delete</button>
 		                </form>
 
 		                @if (!isAllDayEvent)
