@@ -271,7 +271,7 @@ else
 					                    <button type="submit" class="btn btn-danger action-button" id="delete-btn" onclick="submitDeleteForm(this)">Delete</button>
 				                    </form>
 
-				                    @if (contact.Email != null && contact.Email != "N/A" && contact.Email.Contains("@gmail.com"))
+				                    @if (contact.Email != null && contact.Email != "N/A")
 				                    {
 					                    <!-- Add event button linking to the AddEvent action from the Calendar Controller -->
 					                    <form asp-controller="People" asp-action="CreateEventForContact" method="post">
