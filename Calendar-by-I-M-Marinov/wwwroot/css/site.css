@@ -162,7 +162,7 @@ h4{
 
 @keyframes scale-text {
     0% {
-        transform: scale(1); 
+        transform: scale(1);
     }
 
     50% {
@@ -540,9 +540,17 @@ a:hover {
 
 #group-button {
     padding: 0.358em;
-    margin: 0.3em 0.30em;
+    margin: 0.3em;
+    border: 2px solid transparent; 
 }
 
+#group-button:hover {
+    color: #17a2b8 !important;
+    background-color: white !important;
+    border: 2px solid #17a2b8;
+    animation: scale-text 2s infinite;
+    transition: transform 0.2s, box-shadow 0.3s !important;
+}
 
 .alphabet-card {
     background: #f0f0f0;
@@ -625,20 +633,20 @@ a:hover {
     text-decoration: none;
 }
 
-    #goToTop-button1:hover,
-    #goToTop-button2:hover {
-        background-color: white;
-        border: 1px solid #007bff;
-        color: #007bff;
-        transform: scale(1.20);
-        transition: transform 0.5s, box-shadow 0.3s !important;
-    }
+#goToTop-button1:hover,
+#goToTop-button2:hover {
+    background-color: white;
+    border: 1px solid #007bff;
+    color: #007bff;
+    transform: scale(1.20);
+    transition: transform 0.5s, box-shadow 0.3s !important;
+}
 
-    #goToTop-button1 a,
-    #goToTop-button2 a {
-        color: #007bff;
-        text-decoration: none;
-    }
+#goToTop-button1 a,
+#goToTop-button2 a {
+    color: #007bff;
+    text-decoration: none;
+}
 
 #goToTop-button1 a:hover,
 #goToTop-button2 a:hover {
@@ -662,11 +670,12 @@ a:hover {
     vertical-align: central !important;
 }
 
-/* SPECIFIC CSS HANDLING THE HOVER EFFECTS AND STYLE OF THE EDIT / DELETE / EVENT BUTTONS OF ALL CONTACTS IN THE VIEWS */
 
+
+/* SPECIFIC CSS HANDLING THE HOVER EFFECTS AND STYLE OF THE EDIT / DELETE / EVENT BUTTONS OF ALL CONTACTS IN THE VIEWS */
 #delete-btn:hover,
 #edit-btn:hover,
-#create-event-btn:hover{
+#create-event-btn:hover {
     transform: scale(1.20);
     transition: transform 0.4s, box-shadow 0.3s !important;
 }
@@ -711,7 +720,6 @@ a:hover {
 .btn-selected-group:hover {
     color: black !important;
     opacity: 75%;
-
 }
 
 #calendar-dropdown:hover,
@@ -1133,14 +1141,39 @@ font-size: 16px;
     width: 185px;
 }
 
-.contacts-count {
+.count-and-keyword-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5em;
+}
+
+.contacts-count,
+.contacts-keyword {
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
 }
 
-#search-contacts-btn{
+.contacts-count h4,
+.contacts-keyword h4 {
+    background-color: #007bff;
+    color: white;
+    font-size: 15px;
+    padding: 0.5em;
+    text-align: center;
+    border: 1px solid black;
+    border-radius: 0.25em;
+}
+
+.contacts-keyword span:first-of-type,
+.contacts-count span:first-of-type {
+    color: #FF8300;
+    font-size: 18px;
+}
+
+#search-contacts-btn {
     margin: 1em;
     padding: 0.35em;
 }
@@ -1206,7 +1239,7 @@ font-size: 16px;
     padding: 0.5em;
     margin: 1em;
     color: white;
-    border: 2px solid black;
+    border: 2px transparent black;
 }
 
 #back-button:focus {
