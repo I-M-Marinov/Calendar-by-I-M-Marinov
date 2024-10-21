@@ -6,6 +6,20 @@
 
 // Function to toggle date input types
 
+
+
+// function to show dropdown on hover 
+$(document).ready(function () {
+    $(".nav-item .dropdown").hover(
+        function () {
+            $(this).find(".dropdown-menu").stop(true, true).delay(200).fadeIn(200);
+        },
+        function () {
+            $(this).find(".dropdown-menu").stop(true, true).delay(200).fadeOut(200);
+        }
+    );
+});
+
 document.addEventListener('DOMContentLoaded', function () {
     var startDateInput = document.getElementById('startDateInput');
     var endDateInput = document.getElementById('endDateInput');
