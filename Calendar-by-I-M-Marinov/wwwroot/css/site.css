@@ -1,8 +1,9 @@
-@import url('https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
+﻿@import url('https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
 
 html {
     font-size: 14px;
-    background: #FFF7D1;
+    position: relative;
+    min-height: 100%;
 }
 
 @media (min-width: 768px) {
@@ -10,17 +11,6 @@ html {
     font-size: 14.5px;
   }
 }
-
-html {
-  position: relative;
-  min-height: 100%;
-}
-
-body {
-    margin-bottom: 60px;
-    background: #FFF7D1;
-}
-
 
 form-group{
     align-items: center;
@@ -35,6 +25,99 @@ form-group{
     width: 500px;
     margin: 0 auto;
     margin-top: 1em;
+}
+
+/* CSS to show dropdown on hover */
+.navbar-nav .dropdown:hover .dropdown-menu {
+    display: block; 
+    margin-top: 0.20em; 
+    margin-left: -25%;
+}
+
+/* Navigation bar specific CSS */
+.navbar .dropdown-toggle::after {
+    display: none; /* Hides the dropdown icon */
+}
+
+.nav-item {
+    width: 120px;
+    height: 35px;
+    font-size: 14px;
+    border: 2px solid #5a5a5a;
+    border-radius: 0.75em 0.75em 0.75em 0;
+    padding: 3px 10px;
+    margin-left: 0.25em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.3s, border-color 0.2s ease;
+    color: black;
+    text-align: center;
+    background-color: #007bff;
+}
+
+.nav-item:hover {
+    background-color: ghostwhite !important;
+}
+
+
+#navbarDropdown,
+#navbarDropdown1,
+#navbarDropdown2,
+#navbar-home,
+#navbar-dashboard {
+    color: ghostwhite;
+}
+
+#navbar-home:hover,
+#navbar-dashboard:hover,
+#navbarDropdown:hover,
+#navbarDropdown1:hover,
+#navbarDropdown2:hover {
+    color: #007bff !important;
+    font-weight: 650;
+}
+
+#navbar-home,
+#navbar-dashboard {
+    color: ghostwhite !important;
+}
+
+
+.dropdown-menu {
+    width: 200px;
+    display: flex;
+    border: 2px solid #007bff !important;
+    border-radius: 0.5em;
+}
+
+.dropdown-menu a {
+    border: 2px solid transparent;
+    border-radius: 0.5em;
+    text-align: center;
+    margin: 0.5em;
+}
+
+.dropdown-menu .nav-link:hover {
+    color: ghostwhite !important;
+    font-weight: 600;
+    background-color: #007bff;
+    border: 2px solid #5a5a5a;
+    transition: transform 0.2s, box-shadow 0.5s, border-color 0.4s ease;
+}
+
+.nav-item:hover,
+.nav-item:focus {
+    border: 2px solid #007bff;
+    border-radius: 0.5em 0 0.5em 0.5em;
+    color: #007bff;
+    padding-top: 0.15em;
+}
+
+.nav-item.dropdown:hover .nav-link.dropdown-toggle {
+    color: #007bff !important; /* Color while hovering over dropdown items */
+    font-weight: 650;
 }
 
 /* CSS for the table in the ListAllCalendars View */
