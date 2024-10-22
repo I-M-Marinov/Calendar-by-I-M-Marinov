@@ -1,4 +1,4 @@
-namespace Calendar_by_I_M_Marinov.Models
+namespace Calendar_by_I_M_Marinov.Models.Calendar
 {
     public class ErrorViewModel
     {

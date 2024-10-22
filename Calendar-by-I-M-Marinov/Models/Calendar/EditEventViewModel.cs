@@ -1,6 +1,6 @@
 ﻿using Google.Apis.Calendar.v3.Data;
 
-namespace Calendar_by_I_M_Marinov.Models
+namespace Calendar_by_I_M_Marinov.Models.Calendar
 {
     public class EditEventViewModel
     {
@@ -8,10 +8,10 @@ namespace Calendar_by_I_M_Marinov.Models
         public string CalendarId { get; set; } = null!;
         public string Summary { get; set; } = null!;
         public string? Description { get; set; }
-		public DateTime? Start { get; set; }
+        public DateTime? Start { get; set; }
         public DateTime? End { get; set; }
         public string? Location { get; set; }
-        
+
         // New properties to verify the bool isEditable
         public bool IsCreator { get; set; }
         public bool GuestsCanModify { get; set; }
@@ -31,8 +31,8 @@ namespace Calendar_by_I_M_Marinov.Models
         public bool IsEditable =>
             (IsCreator || GuestsCanModify) &&
             Status != "cancelled" &&
-            (Locked != true) &&
-            (Source?.ToLower() != "gmail");
+            Locked != true &&
+            Source?.ToLower() != "gmail";
 
     }
 

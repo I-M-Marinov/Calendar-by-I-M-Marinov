@@ -99,6 +99,10 @@ form-group{
     margin: 0.5em;
 }
 
+.navbar-nav:hover {
+    color: ghostwhite !important;
+}
+
 .dropdown-menu .nav-link:hover {
     color: ghostwhite !important;
     font-weight: 600;

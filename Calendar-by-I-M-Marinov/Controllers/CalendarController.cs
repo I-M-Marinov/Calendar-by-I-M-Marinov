@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Google.Apis.Calendar.v3.Data;
 using Calendar_by_I_M_Marinov.Services.Contracts;
-using Calendar_by_I_M_Marinov.Models;
 using Google.Apis.Calendar.v3;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Calendar_by_I_M_Marinov.Common;
 using Calendar = Google.Apis.Calendar.v3.Data.Calendar;
 using Newtonsoft.Json;
+using Calendar_by_I_M_Marinov.Models.Calendar;
 
 public class CalendarController : Controller
 {

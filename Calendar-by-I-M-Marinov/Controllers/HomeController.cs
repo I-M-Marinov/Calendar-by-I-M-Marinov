@@ -1,4 +1,4 @@
-﻿using Calendar_by_I_M_Marinov.Models;
+﻿using Calendar_by_I_M_Marinov.Models.Calendar;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 

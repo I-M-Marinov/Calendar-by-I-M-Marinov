@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Calendar_by_I_M_Marinov.Models.People;
 using Google.Apis.PeopleService.v1.Data;
-using Calendar_by_I_M_Marinov.Models;
+using Calendar_by_I_M_Marinov.Models.Calendar;
 using Newtonsoft.Json;
 
 
