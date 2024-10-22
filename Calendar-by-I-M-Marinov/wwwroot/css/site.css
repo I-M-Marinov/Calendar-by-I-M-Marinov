@@ -89,7 +89,7 @@ form-group{
     width: 200px;
     display: flex;
     border: 2px solid #007bff !important;
-    border-radius: 0.5em;
+    border-radius: 10em;
 }
 
 .dropdown-menu a {
@@ -99,9 +99,17 @@ form-group{
     margin: 0.5em;
 }
 
-.navbar-nav:hover {
+.navbar-nav:hover{
     color: ghostwhite !important;
 }
+
+.navbar-nav:hover #navbar-home,
+.dashboard:hover #navbar-dashboard {
+    color: #007bff !important;
+    font-weight: 600;
+    transition: transform 0.2s, box-shadow 0.5s, border-color 0.4s ease;
+}
+
 
 .dropdown-menu .nav-link:hover {
     color: ghostwhite !important;
@@ -1331,7 +1339,7 @@ font-size: 16px;
 
 #back-button:focus {
     color: #007bff;
-    background-color: white ;
+    background-color: white;
     border-color: #007bff;
     transition: box-shadow 0.2s;
 }
@@ -1346,4 +1354,100 @@ font-size: 16px;
     border: 2px solid #007bff;
     color: #007bff;
 }
+
+.button-effect-container {
+    width: 100%;
+    display: flex;
+    display: webkit-flex;
+    justify-content: center;
+}
+
+#add-contact-button2 {
+    color: black;
+    width: 8em;
+    height: 3em;
+    background: ghostwhite;
+    position: relative;
+    border: 4px solid #007bff;
+    border-radius: 0.90em;
+    cursor: pointer;
+    background-color: #007bff;
+}
+
+#add-contact-button2 a{
+    color: white;
+}
+
+
+    #add-contact-button2:focus,
+    #add-button-button2:hover {
+        border: none;
+        box-shadow: none;
+    }
+
+.spiral-top::before,
+.spiral-top::after,
+.spiral-bottom::before,
+.spiral-bottom::after {
+    content: " ";
+    position: absolute;
+    border-radius: 0.5em;
+    -webkit-box-shadow: 0 0 15px 0 black;
+    box-shadow: 0 0 5px 0 black;
+    -webkit-transition-duration: 0.3s;
+    -moz-transition-duration: 0.3s;
+    -o-transition-duration: 0.3s;
+    transition-duration: 0.3s;
+    border: 2px #007bff solid;
+}
+
+.spiral-top::before {
+    top: 0px;
+    left: 0px;
+    width: 3px;
+    height: 0px;
+}
+
+.spiral-top::after {
+    top: 0px;
+    right: 0px;
+    width: 0px;
+    height: 3px;
+}
+
+.spiral-bottom::before {
+    bottom: 0px;
+    left: 0px;
+    width: 0px;
+    height: 3px;
+}
+
+.spiral-bottom::after {
+    bottom: 0px;
+    right: 0px;
+    width: 3px;
+    height: 0px;
+}
+
+#add-contact-button2:hover
+.spiral-top::before {
+    height: 2em;
+}
+
+#add-contact-button2:hover
+.spiral-top::after {
+    width: 7em;
+}
+
+#add-contact-button2:hover
+.spiral-bottom::before {
+    width: 7em;
+}
+
+#add-contact-button2:hover
+.spiral-bottom::after {
+    height: 2em;
+}
+
+
 
