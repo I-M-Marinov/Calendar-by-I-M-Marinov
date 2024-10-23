@@ -4,14 +4,18 @@
 <script src="~/js/site.js"></script>
 
 @{
-    var isEdit = Model.EventId != null;  // Determine if it's an edit or create
-	var actionUrl = isEdit ? "CreateEvent" : "CreateEvent";
-    var submitButtonText = isEdit ? "Update Event" : "Create Event"; // Button text changes
+    var isEdited = Model.EventId != null;  // Determine if it's an edit or create
+	var actionUrl = isEdited ? "CreateEvent" : "CreateEvent"; 
+    var submitButtonText = isEdited ? "Update Event" : "Create Event"; // Button text changes
     var calendarId = Model.CalendarId; 
+
+    ViewBag.Title = isEdited ? "Update an Event" : "Create an Event" + " - " + "G Easy Calendar";
+    ViewBag.Header = isEdited ? "Update an Event" : "Create an Event";
+
 }
 
 
-<h2>@(isEdit ? "Update an Event" : "Create an Event")</h2>
+<h2>@ViewBag.Header</h2>
 
 <form asp-action="@actionUrl" method="post">
 	<input type="hidden" name="calendarId" value="@calendarId" />
