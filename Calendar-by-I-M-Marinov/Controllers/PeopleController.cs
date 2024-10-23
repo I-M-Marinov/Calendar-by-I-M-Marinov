@@ -123,7 +123,6 @@ namespace Calendar_by_I_M_Marinov.Controllers
             {
                 newContact.Labels.Add(myContactsGroup.ResourceName);
                 newContactGroups.Add(myContactsGroup.FormattedName);
-
 			}
             else
             {

@@ -6,11 +6,12 @@
 	sb.AppendLine($"Events for today:");
 	sb.AppendLine($"{DateTime.Now.Date.ToString("D")}");
 
-	ViewBag.Title = sb;
+	ViewBag.Header = sb;
+	ViewBag.Title = "Dashboard - View the events for today and next week";
 }
 
 <div id="todays-container">
-	<h2><pre>@ViewBag.Title</pre></h2>
+	<h2><pre>@ViewBag.Header</pre></h2>
 
 	@if (Model != null && Model.Count > 0)
 	{
