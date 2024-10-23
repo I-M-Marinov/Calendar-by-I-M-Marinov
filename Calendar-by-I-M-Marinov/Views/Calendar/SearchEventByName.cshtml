@@ -1,7 +1,12 @@
 ﻿@using Calendar_by_I_M_Marinov.Models.Calendar;
 @model SearchEventViewModel
 
-<h2>Search Events</h2>
+@{
+	ViewData["Header"] = "Search primary events by name";
+	ViewBag.Title = "Search Events - G Easy Calendar";
+}
+
+<h2 style="text-align: center;">@ViewData["Header"]</h2>
 
 <form method="get" asp-controller="Calendar" asp-action="SearchEventByName">
 	<div class="form-group-search">
