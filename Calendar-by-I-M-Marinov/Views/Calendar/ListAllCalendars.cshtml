@@ -5,10 +5,11 @@
 
 
 @{
-    ViewData["Title"] = "Calendars List";
+    ViewData["Header"] = "Calendars List";
+    ViewBag.Title = "List of calendars - G Easy Calendar";
 }
 
-<h2 style="text-align: center;">@ViewData["Title"]</h2>
+<h2 style="text-align: center;">@ViewData["Header"]</h2>
 
 <!-- Success message for calendar deletion -->
 @if (TempData["DeleteSuccessMessage"] != null)
