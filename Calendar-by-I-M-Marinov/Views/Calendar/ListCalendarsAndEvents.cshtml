@@ -3,31 +3,47 @@
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @model CalendarEventsViewModel
 
-<h2>Select a Calendar</h2>
+
+@{
+	if (string.IsNullOrEmpty(Model.SelectedCalendarName))
+	{
+		ViewBag.Title = "Select a calendar to view - G Easy Calendar";
+		ViewData["Header"] = "Select a calendar to view events";
+	}
+	else
+	{
+		ViewBag.Title = $"{Model.SelectedCalendarName} events - G Easy Calendar";
+		ViewData["Header"] = $"{Model.SelectedCalendarName} events";
+	}
+}
+
+<h2>@ViewData["Header"]</h2>
 
 <form method="get" asp-action="ListCalendarsAndEvents">
-    <div class="form-group">
-        <select id="calendarSelect" name="selectedCalendarId" class="form-control">
-            <option value="all">All Calendars</option>
+	<div class="form-group">
+		<select id="calendarSelect" name="selectedCalendarId" class="form-control">
+			<!-- Empty option if no calendar is selected -->
+			var selectedCalendar = string.IsNullOrEmpty(Model.SelectedCalendarId) ? "selected" : "";
+			var allCalendars = Model.SelectedCalendarId == "all" ? "selected" : "";
+			var isSelected = isSelected ? "selected" : "";
 
-            @foreach (var calendar in Model.Calendars)
-            {
-                var isSelected = calendar.CalendarId == Model.SelectedCalendarId;
-                <option value="@calendar.CalendarId" selected="@(isSelected ? "selected" : "")">
-                    @calendar.CalendarName
-                </option>
-            }
-        </select>
-    </div>
-    <br />
-    <button type="submit" class="btn btn-primary-load-events">Load Events</button>
-    <br />
+			<option value="" selectedCalendar>Select a calendar</option>
+
+			<option value="all" allCalendars>All Calendars</option>
+
+			@foreach (var calendar in Model.Calendars)
+			{
+				var isSelected = calendar.CalendarId == Model.SelectedCalendarId;
+				<option value="@calendar.CalendarId" isSelected>
+					@calendar.CalendarName
+				</option>
+			}
+		</select>
+	</div>
+	<br />
+	<button type="submit" class="btn btn-primary-load-events">Load Events</button>
+	<br />
 </form>
-
-@if (!string.IsNullOrEmpty(Model.SelectedCalendarName))
-{
-	<h2>Events for @Model.SelectedCalendarName</h2>
-}
 
 @if (Model.Events != null && Model.Events.Any())
 {
